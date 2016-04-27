@@ -1,0 +1,12 @@
+# Core
+src/app/code/community/EbayEnterprise/* app/code/community/EbayEnterprise/
+src/app/etc/*.xml.sample app/etc/
+src/app/etc/modules/*.xml app/etc/modules/
+
+# Layout
+src/app/design/frontend/base/default/layout/* app/design/frontend/base/default/layout/
+# Templates
+src/app/design/frontend/base/default/template/* app/design/frontend/base/default/template/
+
+# Locale
+src/app/locale/en_US/EbayEnterprise_Eb2cFraud.csv app/locale/en_US/EbayEnterprise_Eb2cFraud.csv
