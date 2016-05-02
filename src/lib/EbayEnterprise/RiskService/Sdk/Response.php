@@ -16,59 +16,34 @@
  */
 
 class EbayEnterprise_RiskService_Sdk_Response
-	extends EbayEnterprise_RiskService_Sdk_Response_Abstract
+	extends EbayEnterprise_RiskInsight_Sdk_Payload_Top
 	implements EbayEnterprise_RiskService_Sdk_IResponse
 {
 	/** @var string */
-	protected $_responseReasonCode;
-	/** @var string */
-	protected $_responseReasonCodeDescription;
+	protected $_receved;
 
 	public function __construct(array $initParams=array())
 	{
 		parent::__construct($initParams);
 		$this->_extractionPaths = array(
-			'setPrimaryLangId' => 'string(x:PrimaryLangId)',
-			'setResponseReasonCode' => 'string(x:ResponseReasonCode)',
-		);
-		$this->_optionalExtractionPaths = array(
-			'setOrderId' => 'x:OrderId',
-			'setStoreId' => 'x:StoreId',
-			'setResponseReasonCodeDescription' => 'x:ResponseReasonCodeDescription',
+			'setReceived' => 'string(x:Received)',
 		);
 	}
 
 	/**
-	 * @see EbayEnterprise_RiskService_Sdk_IResponse::getResponseReasonCode()
+	 * @see EbayEnterprise_RiskService_Sdk_IResponse::getReceived()
 	 */
-	public function getResponseReasonCode()
+	public function getReceived()
 	{
-		return $this->_responseReasonCode;
+		return $this->_received;
 	}
 
 	/**
-	 * @see EbayEnterprise_RiskService_Sdk_IResponse::setResponseReasonCode()
+	 * @see EbayEnterprise_RiskService_Sdk_IResponse::setReceived()
 	 */
-	public function setResponseReasonCode($responseReasonCode)
+	public function setReceived($received)
 	{
-		$this->_responseReasonCode = $responseReasonCode;
-		return $this;
-	}
-
-	/**
-	 * @see EbayEnterprise_RiskService_Sdk_IResponse::getResponseReasonCodeDescription()
-	 */
-	public function getResponseReasonCodeDescription()
-	{
-		return $this->_responseReasonCodeDescription;
-	}
-
-	/**
-	 * @see EbayEnterprise_RiskService_Sdk_IResponse::setResponseReasonCodeDescription()
-	 */
-	public function setResponseReasonCodeDescription($responseReasonCodeDescription)
-	{
-		$this->_responseReasonCodeDescription = $responseReasonCodeDescription;
+		$this->_received = $received;
 		return $this;
 	}
 
@@ -101,10 +76,6 @@ class EbayEnterprise_RiskService_Sdk_Response
 	 */
 	protected function _serializeContents()
 	{
-		return $this->_serializeNode('PrimaryLangId', $this->getPrimaryLangId())
-			. $this->_serializeOptionalValue('OrderId', $this->getOrderId())
-			. $this->_serializeOptionalValue('StoreId', $this->getStoreId())
-			. $this->_serializeNode('ResponseReasonCode', $this->getResponseReasonCode())
-			. $this->_serializeOptionalValue('ResponseReasonCodeDescription', $this->getResponseReasonCodeDescription());
+		return $this->_serializeNode('Received', $this->getReceived());
 	}
 }
