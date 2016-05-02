@@ -20,12 +20,12 @@
  */
 class EbayEnterprise_RiskService_Helper_Config
 {
-	const ENABLED = 'eb2cfraud/risk_service/enabled';
+	const ENABLED = 'eb2ccore/fraud/enabledmod';
 	const STORE_ID = 'eb2ccore/general/store_id';
 	const API_HOSTNAME = 'eb2ccore/api/hostname';
 	const API_KEY = 'eb2ccore/api/key';
 	const API_TIMEOUT = 'eb2ccore/api/timeout';
-	const DEBUG = 'eb2cfraud/risk_service/debug';
+	const DEBUG = 'eb2ccore/fraud/debug';
 	const LANGUAGE_CODE = 'eb2ccore/general/language_code';
 
 	/**
