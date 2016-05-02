@@ -77,17 +77,34 @@ http://opensource.org/licenses/osl-3.0.php
             </eb2cfraud>
         </blocks>
         <events>
-            <!-- Update the order create request with collected context data -->
-            <ebayenterprise_order_create_context>
-                <observers>
-                    <ebayenterprise_eb2cfraud_order_create_context_observer>
-                        <type>model</type>
-                        <class>eb2cfraud/observer</class>
-                        <method>handleOrderCreateContextEvent</method>
-                    </ebayenterprise_eb2cfraud_order_create_context_observer>
-                </observers>
-            </ebayenterprise_order_create_context>
-        </events>
+        	<sales_model_service_quote_submit_after>
+			<observers>
+				<handle_order_risk_fraud>
+					<class>eb2cfraud/observer</class>
+					<method>handleSalesModelServiceQuoteSubmitAfter</method>
+					<type>singleton</type>
+				</handle_order_risk_fraud>
+			</observers>
+		</sales_model_service_quote_submit_after>
+		<checkout_submit_all_after>
+			<observers>
+				<handle_multi_shipping_orders_risk_fraud>
+					<class>eb2cfraud/observer</class>
+					<method>handleCheckoutSubmitAllAfter</method>
+					<type>singleton</type>
+				</handle_multi_shipping_orders_risk_fraud>
+			</observers>
+		</checkout_submit_all_after>
+		<sales_order_save_after>
+			<observers>
+				<handle_order_final_action_risk_feedback>
+					<class>eb2cfraud/observer</class>
+					<method>handleSalesOrderSaveAfter</method>
+					<type>singleton</type>
+				</handle_order_final_action_risk_feedback>
+			</observers>
+		</sales_order_save_after>
+	</events>
     </global>
     <frontend>
         <layout>
