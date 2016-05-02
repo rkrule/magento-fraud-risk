@@ -19,6 +19,8 @@ class EbayEnterprise_Eb2cFraud_Model_Observer
 	protected $_helper;
 	/** @var EbayEnterprise_RiskService_Helper_Config */
 	protected $_config;
+	/** @var EbayEnterprise_RiskInsight_Model_Risk_Order */
+	protected $_riskOrder;
 
 	/**
 	 * @param array $initParams optional keys:
@@ -27,6 +29,8 @@ class EbayEnterprise_Eb2cFraud_Model_Observer
 	 */
 	public function __construct(array $initParams=array())
 	{
+		$this->_riskOrder = Mage::getModel('eb2cfraud/risk_order');
+
 		list($this->_helper, $this->_config) = $this->_checkTypes(
 			$this->_nullCoalesce($initParams, 'helper', Mage::helper('eb2cfraud')),
 			$this->_nullCoalesce($initParams, 'config', Mage::helper('eb2cfraud/config'))
@@ -61,19 +65,6 @@ class EbayEnterprise_Eb2cFraud_Model_Observer
 	}
 
 	/**
-	 * @param  Mage_Sales_Model_Order
-	 * @return self
-	 */
-	protected function _handleProcessOrder(Mage_Sales_Model_Order $order)
-	{
-		Mage::getModel('eb2cfraud/risk_fraud', array(
-			'order' => $order,
-			'helper' => $this->_helper,
-		))->process();
-		return $this;
-	}
-
-	/**
 	 * @param  mixed
 	 * @return bool
 	 */
@@ -94,43 +85,6 @@ class EbayEnterprise_Eb2cFraud_Model_Observer
 	}
 
 	/**
-	 * Consume the event 'sales_model_service_quote_submit_after'. Pass the Mage_Sales_Model_Order object
-	 * from the event down to the 'eb2cfraud/risk_fraud' instance. Invoke the process
-	 * method on the 'eb2cfraud/risk_fraud' instance.
-	 *
-	 * @param  Varien_Event_Observer
-	 * @return self
-	 */
-	public function handleSalesModelServiceQuoteSubmitAfter(Varien_Event_Observer $observer)
-	{
-		$order = $observer->getEvent()->getOrder();
-		if ($this->_isValidOrder($order)) {
-			$this->_handleProcessOrder($order);
-		} else {
-			$logMessage = sprintf('[%s] No sales/order instance was found.', __CLASS__);
-			$this->_logWarning($logMessage);
-		}
-		return $this;
-	}
-
-	/**
-	 * @param  array
-	 * @return self
-	 */
-	protected function _handleProcessMultipleOrders(array $orders)
-	{
-		foreach ($orders as $index => $order) {
-			if ($this->_isValidOrder($order)) {
-				$this->_handleProcessOrder($order);
-			} else {
-				$logMessage = sprintf('[%s] Multi-shipping order index %d was not a valid instance of sales/order class.', __CLASS__, $index);
-				$this->_logWarning($logMessage);
-			}
-		}
-		return $this;
-	}
-
-	/**
 	 * Handle multi-shipping orders.
 	 *
 	 * @param  Varien_Event_Observer
@@ -140,30 +94,17 @@ class EbayEnterprise_Eb2cFraud_Model_Observer
 	{
 		$orders = (array) $observer->getEvent()->getOrders();
 		if (!empty($orders)) {
-			$this->_handleProcessMultipleOrders($orders);
+			foreach( $orders as $order )
+			{
+				$service = $this->_helper->getRiskService($order);
+				try{
+					$this->_riskOrder->processRiskOrder($service, $order);
+				} catch (Exception $e) {
+					$this->_getSession()->addError($this->__("The following error has occurred: {$e->getMessage()}"));
+				}
+			}	
 		} else {
 			$logMessage = sprintf('[%s] No multi-shipping sales/order instances was found.', __CLASS__);
-			$this->_logWarning($logMessage);
-		}
-		return $this;
-	}
-
-	/**
-	 * Consume the event 'sales_order_save_after'. Get the sales/order object
-	 * from the event. Validate we have a valid sales/order object, then pass it
-	 * down to self::_processOrderFeedback() protected method. If we don't have
-	 * a valid sales/order object we simply log a warning message.
-	 *
-	 * @param  Varien_Event_Observer
-	 * @return self
-	 */
-	public function handleSalesOrderSaveAfter(Varien_Event_Observer $observer)
-	{
-		$order = $observer->getEvent()->getOrder();
-		if ($this->_isValidOrder($order)) {
-			$this->_handleOrderFeedback($order);
-		} else {
-			$logMessage = sprintf('[%s] No sales/order instance was found to send risk feedback request.', __CLASS__);
 			$this->_logWarning($logMessage);
 		}
 		return $this;
