@@ -41,7 +41,7 @@ class EbayEnterprise_RiskService_Sdk_Api
 	public function __construct(EbayEnterprise_RiskService_Sdk_Config $config)
 	{
 		$this->_config = $config;
-		$this->_helperConfig = Mage::helper('ebayenterprise_riskinsight/config');
+		$this->_helperConfig = Mage::helper('eb2cfraud/config');
 		Requests_Requests::register_autoloader();
 	}
 
