@@ -15,6 +15,32 @@
  *
  */
 
-interface EbayEnterprise_RiskService_Model_Process_Feedback_IResponse extends EbayEnterprise_RiskService_Model_Process_IResponse
+interface EbayEnterprise_RiskService_Sdk_IAuthorization extends EbayEnterprise_RiskService_Sdk_IPayload
 {
+	const ROOT_NODE = 'Authorization';
+	const XML_NS = 'http://api.gsicommerce.com/schema/checkout/1.0';
+
+	/**
+	 * xsd restrictions - boolean
+	 * @return string
+	 */
+	public function getDecline();
+
+	/**
+	 * @param  Boolean
+	 * @return self
+	 */
+	public function setDecline($decline);
+
+    	/**
+     	 * xsd restrictions - integer
+         * @return string
+         */
+    	public function getCode();
+
+    	/**
+     	 * @param  string
+         * @return self
+         */
+        public function setCode($code);
 }

@@ -18,7 +18,7 @@
 interface EbayEnterprise_RiskService_Sdk_Line_IItem extends EbayEnterprise_RiskService_Sdk_IPayload
 {
 	const ROOT_NODE = 'LineItem';
-	const XML_NS = 'http://api.gsicommerce.com/schema/checkout/1.0/';
+	const XML_NS = 'http://api.gsicommerce.com/schema/checkout/1.0';
 
 	/**
 	 * @return string
@@ -43,37 +43,103 @@ interface EbayEnterprise_RiskService_Sdk_Line_IItem extends EbayEnterprise_RiskS
 	public function setShipmentId($shipmentId);
 
 	/**
-	 * @return string
+         * @return float
 	 */
-	public function getProductId();
+	public function getLineTotalAmount();
 
-	/**
-	 * @param  string
-	 * @return self
-	 */
-	public function setProductId($productId);
-
-	/**
-	 * @return string
-	 */
-	public function getDescription();
-
-	/**
-	 * @param  string
-	 * @return self
-	 */
-	public function setDescription($description);
-
-	/**
-	 * @return float
-	 */
-	public function getUnitCost();
-
-	/**
+        /**
 	 * @param  float
 	 * @return self
 	 */
-	public function setUnitCost($unitCost);
+	public function setLineTotalAmount($lineTotalAmount);
+
+	/**
+         * @return float
+         */
+        public function getUnitCost();
+
+        /**
+         * @param  float
+         * @return self
+         */
+        public function setUnitCost($unitCost);
+
+	/**
+         * @return int
+         */
+        public function getQuantity();
+
+        /**
+         * @param  int
+         * @return self
+         */
+        public function setQuantity($quantity);
+
+	/**
+         * @return string
+         */
+        public function getProductName();
+
+        /**
+         * @param  string
+         * @return self
+         */
+        public function setProductName($productName);
+
+	/**
+         * @return string
+         */
+        public function getDescription();
+
+        /**
+         * @param  string
+         * @return self
+         */
+        public function setDescription($description);
+
+	/**
+         * @return float
+         */
+        public function getUnitWeight();
+
+        /**
+         * @param  float
+         * @return self
+         */
+        public function setUnitWeight($unitWeight);
+
+	/**
+         * @return string
+         */
+        public function getCategory();
+
+        /**
+         * @param  string
+         * @return self
+         */
+        public function setCategory($category);
+
+	/**
+	 * @return string
+	 */
+	public function getPromoCode();
+
+	/**
+	 * @param  string
+	 * @return self
+	 */
+	public function setPromoCode($promoCode);
+
+	 /**
+         * @return string
+         */
+        public function getUnitOfMeasure();
+
+        /**
+         * @param  string
+         * @return self
+         */
+        public function setUnitOfMeasure($unitOfMeasure);
 
 	/**
 	 * @return string
@@ -87,35 +153,13 @@ interface EbayEnterprise_RiskService_Sdk_Line_IItem extends EbayEnterprise_RiskS
 	public function setUnitCurrencyCode($unitCurrencyCode);
 
 	/**
-	 * @return int
-	 */
-	public function getQuantity();
+         * @return string
+         */
+        public function getProductId();
 
-	/**
-	 * @param  int
-	 * @return self
-	 */
-	public function setQuantity($quantity);
-
-	/**
-	 * @return string
-	 */
-	public function getCategory();
-
-	/**
-	 * @param  string
-	 * @return self
-	 */
-	public function setCategory($category);
-
-	/**
-	 * @return string
-	 */
-	public function getPromoCode();
-
-	/**
-	 * @param  string
-	 * @return self
-	 */
-	public function setPromoCode($promoCode);
+        /**
+         * @param  string
+         * @return self
+         */
+        public function setProductId($productId);
 }

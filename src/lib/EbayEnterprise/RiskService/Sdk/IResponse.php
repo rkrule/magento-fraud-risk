@@ -17,18 +17,29 @@
 
 interface EbayEnterprise_RiskService_Sdk_IResponse extends EbayEnterprise_RiskService_Sdk_Payload_ITop
 {
-	const ROOT_NODE = 'AckReply';
+	const ROOT_NODE = 'RiskServiceResponse';
 	const XML_NS = 'http://api.gsicommerce.com/schema/checkout/1.0';
-	const XSD = 'Risk_Service-ACK-1.0.xsd';
+	const XSD = 'RiskServiceResponse.xsd';
 
 	/**
-         * @return string
-         */
-        public function getReceived();
+	 * @return string
+	 */
+	public function getResponseReasonCode();
 
-        /**
-         * @param  string
-         * @return self
-         */
-        public function setReceived($received);
+	/**
+	 * @param  string
+	 * @return self
+	 */
+	public function setResponseReasonCode($responseReasonCode);
+
+	/**
+	 * @return string
+	 */
+	public function getResponseReasonCodeDescription();
+
+	/**
+	 * @param  string
+	 * @return self
+	 */
+	public function setResponseReasonCodeDescription($responseReasonCodeDescription);
 }

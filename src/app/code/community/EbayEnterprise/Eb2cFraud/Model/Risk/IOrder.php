@@ -15,21 +15,12 @@
  *
  */
 
-interface EbayEnterprise_RiskService_Model_Risk_IOrder
+interface EbayEnterprise_Eb2cFraud_Model_Risk_IOrder
 {
 	/**
-	 * Get a collection of risk service, send UCP Service Request, base on the response
-	 * either change the order status to what is configured from the response code or
-	 * simply log message and do nothing.
-	 *
-	 * @return self
-	 */
-	public function process();
-
-	/**
-	 * @param  EbayEnterprise_RiskService_Model_Risk_Service
+	 * @param  EbayEnterprise_Eb2cFraud_Model_Risk_Service
 	 * @param  Mage_Sales_Model_Order
 	 * @return self
 	 */
-	public function processRiskOrder(EbayEnterprise_RiskService_Model_Risk_Service $service, Mage_Sales_Model_Order $order);
+	public function processRiskOrder(Mage_Sales_Model_Order $order, Varien_Event_Observer $observer);
 }

@@ -21,14 +21,22 @@ class EbayEnterprise_RiskService_Sdk_Total
 {
 	/** @var EbayEnterprise_RiskService_Sdk_Cost_Totals */
 	protected $_costTotals;
+	/** @var EbayEnterprise_RiskInsight_Sdk_Payment */
+	protected $_formOfPayment;
+        protected $_failedCc;
 
 	public function __construct(array $initParams=array())
 	{
 		parent::__construct($initParams);
 		$this->setCostTotals($this->_buildPayloadForModel(static::COST_TOTALS_MODEL));
+        	$this->setFormOfPayment($this->_buildPayloadForModel(static::PAYMENTS_MODEL));
 		$this->_subpayloadExtractionPaths = array(
 			'setCostTotals' => 'x:CostTotals',
+			'setFormOfPayment' => 'x:FormOfPayment',
 		);
+        	$this->_optionalExtractionPaths = array(
+        	    	'setFailedCc' => 'x:FailedCc/@number',
+        	);
 	}
 
 	/**
@@ -48,12 +56,49 @@ class EbayEnterprise_RiskService_Sdk_Total
 		return $this;
 	}
 
+    /**
+     * @see EbayEnterprise_RiskService_Sdk_IOrder::getFormOfPayment()
+     */
+    public function getFormOfPayment()
+    {
+        return $this->_formOfPayment;
+    }
+
+    /**
+     * @see EbayEnterprise_RiskService_Sdk_IOrder::setFormOfPayment()
+     */
+    public function setFormOfPayment(EbayEnterprise_RiskService_Sdk_IPayment $formOfPayment)
+    {
+        $this->_formOfPayment = $formOfPayment;
+        return $this;
+    }
+
+    /**
+     * Failed CC Attempts in 1 Session Before Success
+     *
+     * @return string
+     */
+    public function getFailedCc()
+    {
+        return $this->_failedCc;
+    }
+
+    /**
+     * @param  string
+     * @return self
+     */
+    public function setFailedCc($failedCc)
+    {
+        $this->_failedCc = $failedCc;
+        return $this;
+    }
+
 	/**
 	 * @see EbayEnterprise_RiskService_Sdk_Payload::_canSerialize()
 	 */
 	protected function _canSerialize()
 	{
-		return (trim($this->getCostTotals()->serialize()) !== '');
+		return (trim($this->getCostTotals()->serialize()) !== '' || trim($this->getFailedCc()) !== '');
 	}
 
 	/**
@@ -77,6 +122,14 @@ class EbayEnterprise_RiskService_Sdk_Total
 	 */
 	protected function _serializeContents()
 	{
-		return $this->getCostTotals()->serialize();
+		return $this->getFormOfPayment()->serialize() 
+		. $this->getCostTotals()->serialize()
+                . $this->_serializeCcFailed();
+	}
+
+	protected function _serializeCcFailed()
+	{
+                $failedCc = $this->getFailedCc();
+                return $failedCc ? "<FailedCc Number=\"${failedCc}\"/>" : '';
 	}
 }

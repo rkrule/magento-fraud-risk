@@ -30,29 +30,12 @@ class EbayEnterprise_RiskService_Sdk_Cost_Totals
 	{
 		parent::__construct($initParams);
 		$this->_extractionPaths = array(
-			'setCurrencyCode' => 'string(x:CurrencyCode)',
 			'setAmountBeforeTax' => 'number(x:AmountBeforeTax)',
+			'setCurrencyCode' => 'string(x:AmountBeforeTax/@currencyCode)',
 		);
 		$this->_optionalExtractionPaths = array(
 			'setAmountAfterTax' => 'x:AmountAfterTax',
 		);
-	}
-
-	/**
-	 * @see EbayEnterprise_RiskService_Sdk_Cost_ITotals::getCurrencyCode()
-	 */
-	public function getCurrencyCode()
-	{
-		return $this->_currencyCode;
-	}
-
-	/**
-	 * @see EbayEnterprise_RiskService_Sdk_Cost_ITotals::setCurrencyCode()
-	 */
-	public function setCurrencyCode($currencyCode)
-	{
-		$this->_currencyCode = $currencyCode;
-		return $this;
 	}
 
 	/**
@@ -90,11 +73,28 @@ class EbayEnterprise_RiskService_Sdk_Cost_Totals
 	}
 
 	/**
+	 * @see EbayEnterprise_RiskService_Sdk_Cost_ITotals::getCurrencyCode()
+	 */
+	public function getCurrencyCode()
+	{
+		return $this->_currencyCode;
+	}
+
+	/**
+	 * @see EbayEnterprise_RiskService_Sdk_Cost_ITotals::setCurrencyCode()
+	 */
+	public function setCurrencyCode($currencyCode)
+	{
+		$this->_currencyCode = $currencyCode;
+		return $this;
+	}
+
+	/**
 	 * @see EbayEnterprise_RiskService_Sdk_Payload::_canSerialize()
 	 */
 	protected function _canSerialize()
 	{
-		return (trim($this->getCurrencyCode()) !== '' && trim($this->getAmountBeforeTax()) !== '');
+		return (trim($this->getAmountBeforeTax()) !== '');
 	}
 
 	/**
@@ -118,8 +118,7 @@ class EbayEnterprise_RiskService_Sdk_Cost_Totals
 	 */
 	protected function _serializeContents()
 	{
-		return $this->_serializeNode('CurrencyCode', $this->getCurrencyCode())
-			. $this->_serializeAmountNode('AmountBeforeTax', $this->getAmountBeforeTax())
-			. $this->_serializeOptionalAmount('AmountAfterTax', $this->getAmountAfterTax());
+		return $this->_serializeAmountNode('AmountBeforeTax', $this->getAmountBeforeTax(), $this->_currencyCode)
+			. $this->_serializeOptionalAmount('AmountAfterTax', $this->getAmountAfterTax(), $this->_currencyCode);
 	}
 }

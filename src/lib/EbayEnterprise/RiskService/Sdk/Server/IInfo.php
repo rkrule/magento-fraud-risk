@@ -17,52 +17,54 @@
 
 interface EbayEnterprise_RiskService_Sdk_Server_IInfo extends EbayEnterprise_RiskService_Sdk_IPayload
 {
-	const HTTP_HEADER_MODEL = 'EbayEnterprise_RiskService_Sdk_Server_Info';
 	const ROOT_NODE = 'ServerInfo';
-	const SUBPAYLOAD_XPATH = 'ServerInfo';
 	const XML_NS = 'http://api.gsicommerce.com/schema/checkout/1.0';
 
-	 /**
-         * @return EbayEnterprise_RiskService_Sdk_Server_IInfo
-         */
-        public function getTime();
-
-        /**
-         * @param  EbayEnterprise_RiskService_Sdk_Server_IInfo
-         * @return self
-         */
-        public function setTime(EbayEnterprise_RiskService_Sdk_Server_IInfo $time);
+	/**
+	 * xsd restrictions - datetime format
+	 * @return string
+	 */
+	public function getTime();
 
 	/**
-         * @return EbayEnterprise_RiskService_Sdk_Server_IInfo
-         */
-        public function getTZOffset();
+	 * @param  DateTime
+	 * @return self
+	 */
+	public function setTime($time);
 
-        /**
-         * @param  EbayEnterprise_RiskService_Sdk_Server_IInfo
-         * @return self
-         */
-        public function setTZOffset(EbayEnterprise_RiskService_Sdk_Server_IInfo $tzOffset);
+    /**
+     * xsd restrictions - in hours
+     * @return string
+     */
+    public function getTZOffset();
 
-	/**
-         * @return EbayEnterprise_RiskService_Sdk_Server_IInfo
-         */
-        public function getTZOffsetRaw();
+    /**
+     * @param  string
+     * @return self
+     */
+    public function setTZOffset($tzOffset);
 
-        /**
-         * @param  EbayEnterprise_RiskService_Sdk_Server_IInfo
-         * @return self
-         */
-        public function setTZOffsetRaw(EbayEnterprise_RiskService_Sdk_Server_IInfo $tzOffsetRaw);
+    /**
+     * xsd restrictions - in hours
+     * @return string
+     */
+    public function getTZOffsetRaw();
 
-	/**
-         * @return EbayEnterprise_RiskService_Sdk_Server_IInfo
-         */
-        public function getDSTActive();
+    /**
+     * @param  string
+     * @return self
+     */
+    public function setTZOffsetRaw($tzOffsetRaw);
 
-        /**
-         * @param  EbayEnterprise_RiskService_Sdk_Server_IInfo
-         * @return self
-         */
-        public function setDSTActive(EbayEnterprise_RiskService_Sdk_Server_IInfo $dstActive);
+    /**
+     * xsd restrictions - boolean DST Active
+     * @return string
+     */
+    public function getDSTActive();
+
+    /**
+     * @param  boolean
+     * @return self
+     */
+    public function setDSTActive($dstActive);
 }

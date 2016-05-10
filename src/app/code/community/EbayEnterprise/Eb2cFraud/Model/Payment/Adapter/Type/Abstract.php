@@ -15,7 +15,7 @@
  *
  */
 
-abstract class EbayEnterprise_RiskService_Model_Payment_Adapter_Type_Abstract
+abstract class EbayEnterprise_Eb2cFraud_Model_Payment_Adapter_Type_Abstract
 {
 	/**
 	 * Initialize the class properties.

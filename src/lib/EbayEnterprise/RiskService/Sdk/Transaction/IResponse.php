@@ -18,7 +18,7 @@
 interface EbayEnterprise_RiskService_Sdk_Transaction_IResponse extends EbayEnterprise_RiskService_Sdk_IPayload
 {
 	const ROOT_NODE = 'TransactionResponse';
-	const XML_NS = 'http://api.gsicommerce.com/schema/checkout/1.0/';
+	const XML_NS = 'http://api.gsicommerce.com/schema/checkout/1.0';
 
 	/**
 	 * value comes from list: {'M'|'N'|'confirmed'|'verified'|'X'}

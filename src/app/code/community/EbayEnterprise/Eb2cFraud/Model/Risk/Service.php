@@ -18,7 +18,7 @@
 /**
  * @codeCoverageIgnore
  */
-class EbayEnterprise_RiskService_Model_Risk_Service
+class EbayEnterprise_Eb2cFraud_Model_Risk_Service
 	extends Mage_Core_Model_Abstract
 {
 	protected function _construct()

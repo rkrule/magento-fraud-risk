@@ -18,8 +18,9 @@
 interface EbayEnterprise_RiskService_Sdk_ITotal extends EbayEnterprise_RiskService_Sdk_IPayload
 {
 	const ROOT_NODE = 'TotalCost';
-	const XML_NS = 'http://api.gsicommerce.com/schema/checkout/1.0/';
+	const XML_NS = 'http://api.gsicommerce.com/schema/checkout/1.0';
 	const COST_TOTALS_MODEL ='EbayEnterprise_RiskService_Sdk_Cost_Totals';
+	const PAYMENTS_MODEL = 'EbayEnterprise_RiskService_Sdk_Payment';
 
 	/**
 	 * Contains the total cost details regarding currency used, before tax amount, and after tax amount.
@@ -33,4 +34,28 @@ interface EbayEnterprise_RiskService_Sdk_ITotal extends EbayEnterprise_RiskServi
 	 * @return self
 	 */
 	public function setCostTotals(EbayEnterprise_RiskService_Sdk_Cost_ITotals $costTotals);
+
+    /**
+     * @return EbayEnterprise_RiskService_Sdk_IPayments
+     */
+    public function getFormOfPayment();
+
+    /**
+     * @param  EbayEnterprise_RiskService_Sdk_IPayments
+     * @return self
+     */
+    public function setFormOfPayment(EbayEnterprise_RiskService_Sdk_IPayment $payment);
+
+    /**
+     * Failed CC Attempts in 1 Session Before Success
+     *
+     * @return string
+     */
+    public function getFailedCc();
+
+    /**
+     * @param  string
+     * @return self
+     */
+    public function setFailedCc($failedCc);
 }

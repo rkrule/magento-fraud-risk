@@ -20,7 +20,7 @@ interface EbayEnterprise_RiskService_Sdk_Line_IItems extends Countable, Iterator
 	const LINE_ITEM_MODEL = 'EbayEnterprise_RiskService_Sdk_Line_Item';
 	const ROOT_NODE = 'LineItems';
 	const SUBPAYLOAD_XPATH = 'LineItem';
-	const XML_NS = 'http://api.gsicommerce.com/schema/checkout/1.0/';
+	const XML_NS = 'http://api.gsicommerce.com/schema/checkout/1.0';
 
 	/**
 	 * get an empty line item

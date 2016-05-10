@@ -20,7 +20,7 @@ interface EbayEnterprise_RiskService_Sdk_Transaction_IResponses extends Countabl
 	const TRANSACTION_RESPONSE_MODEL = 'EbayEnterprise_RiskService_Sdk_Transaction_Response';
 	const ROOT_NODE = 'TransactionResponses';
 	const SUBPAYLOAD_XPATH = 'TransactionResponse';
-	const XML_NS = 'http://api.gsicommerce.com/schema/checkout/1.0/';
+	const XML_NS = 'http://api.gsicommerce.com/schema/checkout/1.0';
 
 	/**
 	 * get an empty transaction response

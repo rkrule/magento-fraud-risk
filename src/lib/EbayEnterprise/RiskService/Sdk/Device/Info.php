@@ -186,7 +186,12 @@ class EbayEnterprise_RiskService_Sdk_Device_Info
 	 */
 	protected function _serializeContents()
 	{
-		return $this->_serializeOptionalValue('DeviceIP', $this->getDeviceIP())
-			. $this->getHttpHeaders()->serialize();
+		return $this->_serializeOptionalValue('JSCData', $this->getJSCData())
+			. $this->_serializeOptionalValue('SessionID', $this->getSessionID())
+			. $this->_serializeOptionalValue('DeviceIP', $this->getDeviceIP())
+			. $this->_serializeOptionalValue('DeviceHostname', $this->getDeviceHostname())
+			. $this->getHttpHeaders()->serialize()
+			. $this->_serializeOptionalValue('UserCookie', $this->getUserCookie());
 	}
 }
+

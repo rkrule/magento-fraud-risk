@@ -17,39 +17,41 @@
 
 interface EbayEnterprise_RiskService_Sdk_IShoppingSession extends EbayEnterprise_RiskService_Sdk_IPayload
 {
-	const ROOT_NODE = 'ShoppingSession';
-	const XML_NS = 'http://api.gsicommerce.com/schema/checkout/1.0';
+    const ROOT_NODE = 'ShoppingSession';
+    const XML_NS = 'http://api.gsicommerce.com/schema/checkout/1.0';
 
-	/**
-	 * @return string
-	 */
-	public function getTimeOnSite();
+    /**
+     * xsd restrictions - integer format in hours / minutes
+     * @return string
+     */
+    public function getTimeOnSite();
 
-	/**
-	 * @param  string
-	 * @return self
-	 */
-	public function setTimeOnSite($timeOnSite);
+    /**
+     * @param  Integer
+     * @return self
+     */
+    public function setTimeOnSite($timeOnSite);
 
-	/**
-	 * @return string
-	 */
-	public function getReturnCustomer();
+    /**
+     * @return boolean
+     */
+    public function getReturnCustomer();
 
-	/**
-	 * @param  string 
-	 * @return self
-	 */
-	public function setReturnCustomer($returnCustomer);
+    /**
+     * @param  boolean
+     * @return self
+     */
+    public function setReturnCustomer($returnCustomer);
 
-	/**
-         * @return string
-         */
-        public function getItemsRemoved();
+    /**
+     * boolean
+     * @return string
+     */
+    public function getItemsRemoved();
 
-        /**
-         * @param  string
-         * @return self
-         */
-        public function setItemsRemoved($itemsRemoved);
+    /**
+     * @param  boolean
+     * @return self
+     */
+    public function setItemsRemoved($itemsRemoved);
 }

@@ -15,14 +15,14 @@
  *
  */
 
-class EbayEnterprise_RiskService_Helper_Data extends Mage_Core_Helper_Abstract
+class EbayEnterprise_Eb2cFraud_Helper_Data extends Mage_Core_Helper_Abstract
 {
 	const DEFAULT_LANGUAGE_CODE = 'en';
 	const FREE_PAYMENT_METHOD = 'free';
 	const RISK_SERVICE_GIFT_CARD_PAYMENT_METHOD = 'GC';
 	const RISK_SERVICE_DEFAULT_PAYMENT_METHOD = 'OTHER';
 
-	/** @var EbayEnterprise_RiskService_Helper_Config */
+	/** @var EbayEnterprise_Eb2cFraud_Helper_Config */
 	protected $_config;
 	/** @var array */
 	protected $_paymentMethodMap;
@@ -30,7 +30,6 @@ class EbayEnterprise_RiskService_Helper_Data extends Mage_Core_Helper_Abstract
 	public function __construct()
 	{
 		$this->_config = Mage::helper('eb2cfraud/config');
-		$this->_paymentMethodMap = $this->_config->getPaymentMethodCardTypeMap();
 	}
 
 	/**
@@ -52,9 +51,9 @@ class EbayEnterprise_RiskService_Helper_Data extends Mage_Core_Helper_Abstract
 	/**
 	 * Get a collection of risk service object where UCP request has not been sent.
 	 *
-	 * @return EbayEnterprise_RiskService_Model_Resource_Risk_Service_Collection
+	 * @return EbayEnterprise_Eb2cFraud_Model_Resource_Risk_Service_Collection
 	 */
-	public function getRiskServiceCollection()
+	public function getEb2cFraudCollection()
 	{
 		return Mage::getResourceModel('eb2cfraud/risk_service_collection')
 			->addFieldToFilter('is_request_sent', 0);
@@ -65,7 +64,7 @@ class EbayEnterprise_RiskService_Helper_Data extends Mage_Core_Helper_Abstract
 	 * there was no successful feedback request sent, and the fail attempt feedback request counter is
 	 * less than the configured threshold.
 	 *
-	 * @return EbayEnterprise_RiskService_Model_Resource_Risk_Service_Collection
+	 * @return EbayEnterprise_Eb2cFraud_Model_Resource_Risk_Service_Collection
 	 */
 	public function getFeedbackOrderCollection()
 	{
@@ -113,9 +112,9 @@ class EbayEnterprise_RiskService_Helper_Data extends Mage_Core_Helper_Abstract
 	 * Get a loaded risk service object by order increment id from the passed in sales order object.
 	 *
 	 * @param  Mage_Sales_Model_Order
-	 * @return EbayEnterprise_RiskService_Model_Risk_Service
+	 * @return EbayEnterprise_Eb2cFraud_Model_Risk_Service
 	 */
-	public function getRiskService(Mage_Sales_Model_Order $order)
+	public function getEb2cFraud(Mage_Sales_Model_Order $order)
 	{
 		return Mage::getModel('eb2cfraud/risk_service')
 			->load($order->getIncrementId(), 'order_increment_id');
@@ -127,9 +126,9 @@ class EbayEnterprise_RiskService_Helper_Data extends Mage_Core_Helper_Abstract
 	 * @param  Mage_Sales_Model_Order
 	 * @return bool
 	 */
-	public function isRiskServiceRequestSent(Mage_Sales_Model_Order $order)
+	public function isEb2cFraudRequestSent(Mage_Sales_Model_Order $order)
 	{
-		return ((int) $this->getRiskService($order)->getIsRequestSent() === 1);
+		return ((int) $this->getEb2cFraud($order)->getIsRequestSent() === 1);
 	}
 
 	/**
@@ -142,8 +141,8 @@ class EbayEnterprise_RiskService_Helper_Data extends Mage_Core_Helper_Abstract
 	public function getOrderSourceByArea(Mage_Sales_Model_Order $order)
 	{
 		return $this->_isAdminOrder($order)
-			? EbayEnterprise_RiskService_Model_System_Config_Source_Ordersource::DASHBOARD
-			: EbayEnterprise_RiskService_Model_System_Config_Source_Ordersource::WEBSTORE;
+			? EbayEnterprise_Eb2cFraud_Model_System_Config_Source_Ordersource::DASHBOARD
+			: EbayEnterprise_Eb2cFraud_Model_System_Config_Source_Ordersource::WEBSTORE;
 	}
 
 	/**
@@ -201,10 +200,13 @@ class EbayEnterprise_RiskService_Helper_Data extends Mage_Core_Helper_Abstract
 	 * @param  Mage_Sales_Model_Order_Payment
 	 * @return string
 	 */
-	public function getMapRiskServicePaymentMethod(Mage_Sales_Model_Order_Payment $payment)
+	public function getMapEb2cFraudPaymentMethod(Mage_Sales_Model_Order_Payment $payment)
 	{
-		$method = $this->getPaymentMethodValueFromMap($payment->getCcType())
-			?: $this->getPaymentMethodValueFromMap($payment->getMethod());
+		Mage::Log("CC Type: ". print_r($payment->getCcType(), true));
+		Mage::Log("CC Method: ". print_r($payment->getMethod(), true));
+
+		$method = $this->_config->getTenderNameForCcType($payment->getCcType())
+			?: $this->_config->getTenderNameForCcType($payment->getMethod());
 		return $method ?: static::RISK_SERVICE_DEFAULT_PAYMENT_METHOD;
 	}
 
@@ -258,8 +260,8 @@ class EbayEnterprise_RiskService_Helper_Data extends Mage_Core_Helper_Abstract
 	 */
 	public function getAccountUniqueId(Mage_Sales_Model_Order_Payment $payment)
 	{
-		$cc = $this->_decryptCc($payment);
-		return $cc ? $this->hashAndEncodeCc($cc) : null;
+		$cc = $payment->getCcNumber();
+		return $cc;
 	}
 
 	/**
@@ -320,12 +322,12 @@ class EbayEnterprise_RiskService_Helper_Data extends Mage_Core_Helper_Abstract
 	 * Determine if feedback request can be sent.
 	 *
 	 * @param  Mage_Sales_Model_Order
-	 * @param  EbayEnterprise_RiskService_Model_Risk_Service
+	 * @param  EbayEnterprise_Eb2cFraud_Model_Risk_Service
 	 * @return bool
 	 */
 	public function canHandleFeedback(
 		Mage_Sales_Model_Order $order,
-		EbayEnterprise_RiskService_Model_Risk_Service $service
+		EbayEnterprise_Eb2cFraud_Model_Risk_Service $service
 	)
 	{
 		return (
@@ -335,4 +337,26 @@ class EbayEnterprise_RiskService_Helper_Data extends Mage_Core_Helper_Abstract
 			&& (int) $service->getFeedbackSentAttemptCount() < $this->_config->getFeedbackResendThreshold()
 		);
 	}
+
+	/**
+         * @param  string
+         * @return self
+         * @codeCoverageIgnore
+         */
+        public function logWarning($logMessage)
+        {
+                Mage::log($logMessage, Zend_Log::WARN);
+                return $this;
+        }
+
+	/**
+         * @param  string
+         * @return self
+         * @codeCoverageIgnore
+         */
+        public function logDebug($logMessage)
+        {
+                Mage::log($logMessage, Zend_Log::DEBUG);
+                return $this;
+        }
 }

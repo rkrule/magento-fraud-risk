@@ -42,7 +42,7 @@ class EbayEnterprise_RiskService_Sdk_Api
 	{
 		$this->_config = $config;
 		$this->_helperConfig = Mage::helper('eb2cfraud/config');
-		Requests_Requests::register_autoloader();
+		Requests::register_autoloader();
 	}
 
 	/**
@@ -187,8 +187,11 @@ class EbayEnterprise_RiskService_Sdk_Api
 			$logMessage = sprintf('[%s] Request Body: %s', __CLASS__, $requestXml);
 			Mage::log($logMessage, Zend_Log::DEBUG);
 		}
-		$this->_lastRequestsResponse = Requests_Requests::post(
-			$this->_config->getEndpoint(),
+	
+		$hostname = "https://". $this->_config->getEndpoint() . "/v1.0/stores/MAGT1/risk/fraud/assess.xml";
+
+		$this->_lastRequestsResponse = Requests::post(
+			$hostname,
 			$this->_buildHeader(),
 			$requestXml
 		);
@@ -216,7 +219,7 @@ class EbayEnterprise_RiskService_Sdk_Api
 	 */
 	protected function _get()
 	{
-		$this->_lastRequestsResponse = Requests_Requests::post(
+		$this->_lastRequestsResponse = Requests::post(
 			$this->_config->getEndpoint(),
 			$this->_buildHeader()
 		);

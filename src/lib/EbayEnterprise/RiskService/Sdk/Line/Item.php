@@ -29,14 +29,20 @@ class EbayEnterprise_RiskService_Sdk_Line_Item
 	protected $_description;
 	/** @var float */
 	protected $_unitCost;
-	/** @var string */
-	protected $_unitCurrencyCode;
 	/** @var int */
 	protected $_quantity;
 	/** @var string */
 	protected $_category;
 	/** @var string */
 	protected $_promoCode;
+	/** @var float */
+	protected $_lineTotalAmount;
+	/** @var float */
+	protected $_unitWeight;
+	/** @var string */
+	protected $_unitOfMeasure;
+	/** @var string */
+	protected $_unitCurrencyCode;
 
 	public function __construct(array $initParams=array())
 	{
@@ -44,16 +50,37 @@ class EbayEnterprise_RiskService_Sdk_Line_Item
 		$this->_extractionPaths = array(
 			'setLineItemId' => 'string(@LineItemId)',
 			'setShipmentId' => 'string(@ShipmentId)',
-			'setUnitCost' => 'number(x:UnitCost)',
-			'setUnitCurrencyCode' => 'string(x:UnitCurrencyCode)',
+			'setLineTotalAmount' => 'string(x:LineTotalAmount)',
 			'setQuantity' => 'number(x:Quantity)',
 		);
 		$this->_optionalExtractionPaths = array(
-			'setProductId' => 'x:ProductId',
-			'setDescription' => 'x:Description',
-			'setCategory' => 'x:Category',
+			'setUnitCost' => 'number(x:UnitCostAmount)',
+			'setProductName' => 'x:ProductName',
+			'setDescription' => 'x:ProductDescription',
+			'setUnitWeight' =>  'x:UnitWeight',
+			'setUnitOfMeasure' => 'x:UnitWeight/@unit',
+			'setUnitCurrencyCode' => 'x:LineTotalAmount/@currencyCode',
+			'setCategory' => 'x:ProductCategory',
 			'setPromoCode' => 'x:PromoCode',
+			'setProductId' => 'x:ItemId',
 		);
+	}
+
+	/**
+	 * @see EbayEnterprise_RiskService_Sdk_Line_IItem::getUnitCurrencyCode()
+	 */
+	public function getUnitCurrencyCode()
+	{
+		return $this->_unitCurrencyCode;
+	}
+
+	/**
+	 * @see EbayEnterprise_RiskService_Sdk_Line_IItem::setUnitCurrencyCode()
+	 */
+	public function setUnitCurrencyCode($unitCurrencyCode)
+	{
+		$this->_unitCurrencyCode = $unitCurrencyCode;
+		return $this;
 	}
 
 	/**
@@ -108,6 +135,23 @@ class EbayEnterprise_RiskService_Sdk_Line_Item
 	}
 
 	/**
+         * @see EbayEnterprise_RiskService_Sdk_Line_IItem::getProductName()
+         */
+        public function getProductName()
+        {
+                return $this->_productName;
+        }
+
+        /**
+         * @see EbayEnterprise_RiskService_Sdk_Line_IItem::setProductName()
+         */
+        public function setProductName($productName)
+        {
+                $this->_productName = $productName;
+                return $this;
+        }
+
+	/**
 	 * @see EbayEnterprise_RiskService_Sdk_Line_IItem::getDescription()
 	 */
 	public function getDescription()
@@ -123,6 +167,23 @@ class EbayEnterprise_RiskService_Sdk_Line_Item
 		$this->_description = $description;
 		return $this;
 	}
+
+	/**
+         * @see EbayEnterprise_RiskService_Sdk_Line_IItem::getLineTotalAmount()
+         */
+        public function getLineTotalAmount()
+        {
+                return $this->_lineTotalAmount;
+        }
+
+        /**
+         * @see EbayEnterprise_RiskService_Sdk_Line_IItem::setLineTotalAmount()
+         */
+        public function setLineTotalAmount($lineTotalAmount)
+        {
+                $this->_lineTotalAmount = $lineTotalAmount;
+                return $this;
+        }
 
 	/**
 	 * @see EbayEnterprise_RiskService_Sdk_Line_IItem::getUnitCost()
@@ -142,21 +203,21 @@ class EbayEnterprise_RiskService_Sdk_Line_Item
 	}
 
 	/**
-	 * @see EbayEnterprise_RiskService_Sdk_Line_IItem::getUnitCurrencyCode()
-	 */
-	public function getUnitCurrencyCode()
-	{
-		return $this->_unitCurrencyCode;
-	}
+         * @see EbayEnterprise_RiskService_Sdk_Line_IItem::getUnitWeight()
+         */
+        public function getUnitWeight()
+        {
+                return $this->_unitWeight;
+        }
 
-	/**
-	 * @see EbayEnterprise_RiskService_Sdk_Line_IItem::setUnitCurrencyCode()
-	 */
-	public function setUnitCurrencyCode($unitCurrencyCode)
-	{
-		$this->_unitCurrencyCode = $unitCurrencyCode;
-		return $this;
-	}
+        /**
+         * @see EbayEnterprise_RiskService_Sdk_Line_IItem::setUnitWeight()
+         */
+        public function setUnitWeight($unitWeight)
+        {
+                $this->_unitWeight = $unitWeight;
+                return $this;
+        }
 
 	/**
 	 * @see EbayEnterprise_RiskService_Sdk_Line_IItem::getQuantity()
@@ -210,6 +271,24 @@ class EbayEnterprise_RiskService_Sdk_Line_Item
 	}
 
 	/**
+         * @see EbayEnterprise_RiskService_Sdk_Line_IItem::getUnitOfMeasure()
+         */
+        public function getUnitOfMeasure()
+        {
+                return $this->_unitOfMeasure;
+        }
+
+        /**
+         * @see EbayEnterprise_RiskService_Sdk_Line_IItem::setUnitOfMeasure()
+         */
+        public function setUnitOfMeasure($unitOfMeasure)
+        {
+                $this->_unitOfMeasure = $unitOfMeasure;
+                return $this;
+        }
+
+
+	/**
 	 * @see EbayEnterprise_RiskService_Sdk_Payload::_getRootNodeName()
 	 */
 	protected function _getRootNodeName()
@@ -230,13 +309,15 @@ class EbayEnterprise_RiskService_Sdk_Line_Item
 	 */
 	protected function _serializeContents()
 	{
-		return $this->_serializeOptionalValue('ProductId', $this->getProductId())
-			. $this->_serializeOptionalValue('Description', $this->getDescription())
-			. $this->_serializeAmountNode('UnitCost', $this->getUnitCost())
-			. $this->_serializeNode('UnitCurrencyCode', $this->getUnitCurrencyCode())
+		return $this->_serializeAmountNode('LineTotalAmount', $this->getLineTotalAmount(), $this->_unitCurrencyCode)
+			. $this->_serializeOptionalAmount('UnitCostAmount', $this->getUnitCost(), $this->_unitCurrencyCode)
 			. $this->_serializeNode('Quantity', $this->getQuantity())
-			. $this->_serializeOptionalValue('Category', $this->getCategory())
-			. $this->_serializeOptionalValue('PromoCode', $this->getPromoCode());
+			. $this->_serializeOptionalValue('ProductName', $this->getProductName())
+			. $this->_serializeOptionalValue('ProductDescription', $this->getDescription())
+			. $this->_serializeWeight()
+			. $this->_serializeOptionalValue('ProductCategory', $this->getCategory())
+			. $this->_serializeOptionalValue('PromoCode', $this->getPromoCode())
+			. $this->_serializeOptionalValue('ItemId', $this->getProductId());
 	}
 
 	/**
@@ -249,4 +330,16 @@ class EbayEnterprise_RiskService_Sdk_Line_Item
 			'ShipmentId' => $this->getShipmentId(),
 		);
 	}
+
+	/**
+	 * Serialize the Unit Weight
+	 *
+	 * @return string
+	 */
+	protected function _serializeWeight()
+	{
+		$unitOfMeasure = $this->getUnitOfMeasure();
+		$unitWeight = $this->getUnitWeight();
+		return $unitWeight ? "<UnitWeight unit=\"{$unitOfMeasure}\">{$unitWeight}</UnitWeight>" : '';
+	}	
 }

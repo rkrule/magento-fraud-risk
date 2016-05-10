@@ -15,17 +15,17 @@
 
 class EbayEnterprise_Eb2cFraud_Model_Observer
 {
-	/** @var EbayEnterprise_RiskService_Helper_Data */
+	/** @var EbayEnterprise_Eb2cFraud_Helper_Data */
 	protected $_helper;
-	/** @var EbayEnterprise_RiskService_Helper_Config */
+	/** @var EbayEnterprise_Eb2cFraud_Helper_Config */
 	protected $_config;
 	/** @var EbayEnterprise_RiskInsight_Model_Risk_Order */
 	protected $_riskOrder;
 
 	/**
 	 * @param array $initParams optional keys:
-	 *                          - 'helper' => EbayEnterprise_RiskService_Helper_Data
-	 *                          - 'config' => EbayEnterprise_RiskService_Helper_Config
+	 *                          - 'helper' => EbayEnterprise_Eb2cFraud_Helper_Data
+	 *                          - 'config' => EbayEnterprise_Eb2cFraud_Helper_Config
 	 */
 	public function __construct(array $initParams=array())
 	{
@@ -40,13 +40,13 @@ class EbayEnterprise_Eb2cFraud_Model_Observer
 	/**
 	 * Type checks for self::__construct $initParams
 	 *
-	 * @param  EbayEnterprise_RiskService_Helper_Data
-	 * @param  EbayEnterprise_RiskService_Helper_Config
+	 * @param  EbayEnterprise_Eb2cFraud_Helper_Data
+	 * @param  EbayEnterprise_Eb2cFraud_Helper_Config
 	 * @return array
 	 */
 	protected function _checkTypes(
-		EbayEnterprise_RiskService_Helper_Data $helper,
-		EbayEnterprise_RiskService_Helper_Config $config
+		EbayEnterprise_Eb2cFraud_Helper_Data $helper,
+		EbayEnterprise_Eb2cFraud_Helper_Config $config
 	) {
 		return array($helper, $config);
 	}
@@ -74,17 +74,6 @@ class EbayEnterprise_Eb2cFraud_Model_Observer
 	}
 
 	/**
-	 * @param  string
-	 * @return self
-	 * @codeCoverageIgnore
-	 */
-	protected function _logWarning($logMessage)
-	{
-		Mage::log($logMessage, Zend_Log::WARN);
-		return $this;
-	}
-
-	/**
 	 * Handle multi-shipping orders.
 	 *
 	 * @param  Varien_Event_Observer
@@ -92,21 +81,27 @@ class EbayEnterprise_Eb2cFraud_Model_Observer
 	 */
 	public function handleCheckoutSubmitAllAfter(Varien_Event_Observer $observer)
 	{
-		$orders = (array) $observer->getEvent()->getOrders();
-		if (!empty($orders)) {
-			foreach( $orders as $order )
-			{
-				$service = $this->_helper->getRiskService($order);
-				try{
-					$this->_riskOrder->processRiskOrder($service, $order);
-				} catch (Exception $e) {
-					$this->_getSession()->addError($this->__("The following error has occurred: {$e->getMessage()}"));
-				}
-			}	
+		$order = $observer->getEvent()->getOrder();
+		if (!empty($order)) {
+			$this->_riskOrder->processRiskOrder($order, $observer);
 		} else {
-			$logMessage = sprintf('[%s] No multi-shipping sales/order instances was found.', __CLASS__);
-			$this->_logWarning($logMessage);
+			$logMessage = sprintf('[%s] No sales/order instances was found.', __CLASS__);
+			$this->_helper->logWarning($logMessage);
 		}
 		return $this;
+	}
+
+	/**
+	  * Log Removed Cart Items
+          * @param   Varien_Event_Observer
+	  * @return  self
+	  */
+	public function addRemovedCartCount(Varien_Event_Observer $observer )
+	{
+		$previous = 0;
+		$previous = Mage::getSingleton('core/session')->getPrevItemQuoteRemoval();
+		$previous++;
+		
+		Mage::getSingleton('core/session')->setPrevItemQuoteRemoval($previous);
 	}
 }

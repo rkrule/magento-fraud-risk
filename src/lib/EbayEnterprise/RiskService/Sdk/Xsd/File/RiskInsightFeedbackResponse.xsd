@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xsd:schema attributeFormDefault="unqualified" elementFormDefault="qualified"
+            xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+            targetNamespace="http://api.gsicommerce.com/schema/checkout/1.0"
+            xmlns="http://api.gsicommerce.com/schema/checkout/1.0"
+            version="1.0">
+
+    <xsd:include schemaLocation="RiskServiceRequest.xsd"/>
+
+    <xsd:element name="RiskServiceFeedbackResponse" type="RiskServiceFeedbackResponseType"/>
+
+    <xsd:complexType name="RiskServiceFeedbackResponseType">
+        <xsd:sequence>
+            <xsd:element type="PrimaryLangIdType" name="PrimaryLangId" minOccurs="0"/>
+            <xsd:element type="OrderIdType" name="OrderId"/>
+            <xsd:element type="StoreIdType" name="StoreId"/>
+            <xsd:element type="xsd:boolean" name="ActionTakenAcknowledgement" minOccurs="0"/>
+            <xsd:element type="xsd:boolean" name="ChargeBackAcknowledgement" minOccurs="0"/>
+        </xsd:sequence>
+    </xsd:complexType>
+
+</xsd:schema>

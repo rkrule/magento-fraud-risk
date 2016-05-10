@@ -1,4 +1,6 @@
-opyright (c) 2015 eBay Enterprise, Inc.
+<?php
+/**
+ * Copyright (c) 2015 eBay Enterprise, Inc.
  *
  * NOTICE OF LICENSE
  *
@@ -13,19 +15,17 @@ opyright (c) 2015 eBay Enterprise, Inc.
  *
  */
 
-interface EbayEnterprise_RiskService_Model_Process_IResponse
+interface EbayEnterprise_RiskService_Sdk_Customer_IList extends Countable, Iterator, ArrayAccess, EbayEnterprise_RiskService_Sdk_IIterable
 {
-	const STATUS_RISK_REVIEW = 'Risk Review';
-	const STATUS_RISK_CANCELED = 'Risk Canceled';
-	const RESPONSE_CODE_HIGH = 'HIGH';
-	const RESPONSE_CODE_MEDIUM = 'MEDIUM';
-	const RESPONSE_CODE_LOW = 'LOW';
-	const RESPONSE_CODE_UNKNOWN = 'UNKNOWN';
+    const ROOT_NODE = 'CustomerList';
+    const XML_NS = 'http://api.gsicommerce.com/schema/checkout/1.0';
+    const CUSTOMER_MODEL ='EbayEnterprise_RiskService_Sdk_Customer';
+    const SUBPAYLOAD_XPATH = 'Customer';
 
-	/**
-	 * Process the response payload.
-	 *
-	 * @return self
-	 */
-	public function process();
+    /**
+     * get an empty shipment
+     *
+     * @return EbayEnterprise_RiskService_Sdk_IShipment
+     */
+     public function getEmptyCustomer();
 }

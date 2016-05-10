@@ -15,13 +15,13 @@
  *
  */
 
-interface EbayEnterprise_RiskService_Model_Payment_IAdapter
+interface EbayEnterprise_Eb2cFraud_Model_Payment_IAdapter
 {
 	const DEFAULT_ADAPTER = 'eb2cfraud/payment_adapter_default';
 	const GIFT_CARD_PAYMENT_METHOD = 'giftcard';
 
 	/**
-	 * @return EbayEnterprise_RiskService_Model_Payment_Adapter_IType
+	 * @return EbayEnterprise_Eb2cFraud_Model_Payment_Adapter_IType
 	 */
 	public function getAdapter();
 }

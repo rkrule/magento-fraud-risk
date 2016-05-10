@@ -180,7 +180,6 @@ class EbayEnterprise_RiskService_Sdk_Payment_Card
 	{
 		return $this->_serializeOptionalValue('CardHolderName', $this->getCardHolderName())
 			. $this->_serializePaymentAccountUniqueId()
-			. $this->_serializeOptionalValue('PaymentAccountBin', $this->getPaymentAccountBin())
 			. $this->_serializeOptionalValue('ExpireDate', $this->getExpireDate())
 			. $this->_serializeOptionalValue('CardType', $this->getCardType());
 	}

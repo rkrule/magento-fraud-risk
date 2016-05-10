@@ -15,8 +15,8 @@
  *
  */
 
-class EbayEnterprise_RiskService_Model_Payment_Adapter_Purchase_Order
-	extends EbayEnterprise_RiskService_Model_Payment_Adapter_Type
+class EbayEnterprise_Eb2cFraud_Model_Payment_Adapter_Purchase_Order
+	extends EbayEnterprise_Eb2cFraud_Model_Payment_Adapter_Type
 {
 	protected function _initialize()
 	{

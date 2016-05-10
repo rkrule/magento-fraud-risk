@@ -21,10 +21,10 @@ interface EbayEnterprise_RiskService_Sdk_IOrder extends EbayEnterprise_RiskServi
 	const XML_NS = 'http://api.gsicommerce.com/schema/checkout/1.0';
 	const SHIPPING_LIST_MODEL ='EbayEnterprise_RiskService_Sdk_Shipping_List';
 	const LINE_ITEMS_MODEL ='EbayEnterprise_RiskService_Sdk_Line_Items';
+	const PAYMENTS_MODEL ='EbayEnterprise_RiskService_Sdk_Payments';
 	const TOTAL_MODEL ='EbayEnterprise_RiskService_Sdk_Total';
-	const CUSTOMER_LIST_MODEL = 'EbayEnterprise_RiskService_Sdk_Info';
-	const EXTERNAL_RISK_RESULTS_MODEL = 'EbayEnterprise_RiskService_Sdk_ExternalRiskResults';
-	const SHOPPING_SESSION_MODEL = 'EbayEnterprise_RiskService_Sdk_ShoppingSession';
+    const SHOPPING_SESSION_MODEL = 'EbayEnterprise_RiskService_Sdk_ShoppingSession';
+    const CUSTOMER_LIST_MODEL = 'EbayEnterprise_RiskService_Sdk_Customer_List';
 
 	/**
 	 * Unique identifier of the order in the web site.
@@ -40,82 +40,72 @@ interface EbayEnterprise_RiskService_Sdk_IOrder extends EbayEnterprise_RiskServi
 	 */
 	public function setOrderId($orderId);
 
-	/**
-	 * Unique identifier of the promotion used for the order
-	 * 
-	 * xsd string
-	 * @return string
-	public function getPromotionCode();
+    /**
+     * Unique identifier of the order in the web site.
+     *
+     * xsd restrictions: 1-40 characters
+     * @return string
+     */
+    public function getPromoCode();
+
+    /**
+     * @param  string
+     * @return self
+     */
+    public function setPromoCode($promoCode);
+
+    /**
+     * @return EbayEnterprise_RiskService_Sdk_Customer_IList
+     */
+    public function getCustomerList();
+
+    /**
+     * @param  EbayEnterprise_RiskService_Sdk_Customer_IList
+     * @return self
+     */
+    public function setCustomerList(EbayEnterprise_RiskService_Sdk_Customer_IList $customerList);
 
 	/**
-	 * @param   string
-	 * @return  self
-         */
-	public function setPromotionCode($promoCode);
+	 * @return EbayEnterprise_RiskService_Sdk_Shipping_IList
+	 */
+	public function getShippingList();
 
 	/**
-         * @return EbayEnterprise_RiskService_Sdk_IInfo
-         */
-        public function getCustomerList();
-
-        /**
-         * @param  EbayEnterprise_RiskService_Sdk_IInfo
-         * @return self
-         */
-        public function setCustomerList(EbayEnterprise_RiskService_Sdk_IInfo $customerList);
+	 * @param  EbayEnterprise_RiskService_Sdk_Shipping_IList
+	 * @return self
+	 */
+	public function setShippingList(EbayEnterprise_RiskService_Sdk_Shipping_IList $shippingList);
 
 	/**
-         * @return EbayEnterprise_RiskService_Sdk_Shipping_IList
-         */
-        public function getShippingList();
-
-        /**
-         * @param  EbayEnterprise_RiskService_Sdk_Shipping_IList
-         * @return self
-         */
-        public function setShippingList(EbayEnterprise_RiskService_Sdk_Shipping_IList $shippingList);
-
-	**
-         * @return EbayEnterprise_RiskService_Sdk_Line_IItems
-         */
-        public function getLineItems();
-
-        /**
-         * @param  EbayEnterprise_RiskService_Sdk_Line_IItems
-         * @return self
-         */
-        public function setLineItems(EbayEnterprise_RiskService_Sdk_Line_IItems $lineItems);
+	 * @return EbayEnterprise_RiskService_Sdk_Line_IItems
+	 */
+	public function getLineItems();
 
 	/**
-         * @return EbayEnterprise_RiskService_Sdk_IExternalRiskResults
-         */
-        public function getExternalRiskResults();
+	 * @param  EbayEnterprise_RiskService_Sdk_Line_IItems
+	 * @return self
+	 */
+	public function setLineItems(EbayEnterprise_RiskService_Sdk_Line_IItems $lineItems);
 
-        /**
-         * @param  EbayEnterprise_RiskService_Sdk_IExternalRiskResults
-         * @return self
-         */
-        public function setExternalRiskResults(EbayEnterprise_RiskService_Sdk_IExternalRiskResults $externalRiskResults);
+    /**
+     * @return EbayEnterprise_RiskService_Sdk_IShoppingSession
+     */
+    public function getShoppingSession();
 
-	/**
-         * @return EbayEnterprise_RiskService_Sdk_IShoppingSession
-         */
-        public function getShoppingSession();
-
-        /**
-         * @param  EbayEnterprise_RiskService_Sdk_IShoppingSession
-         * @return self
-         */
-        public function setShoppingSession(EbayEnterprise_RiskService_Sdk_IShoppingSession $shoppingSession);
+    /**
+     * @param  EbayEnterprise_RiskService_Sdk_IShoppingSession
+     * @return self
+     */
+    public function setShoppingSession(EbayEnterprise_RiskService_Sdk_IShoppingSession $shoppingSession);
 
 	/**
-         * @return EbayEnterprise_RiskService_Sdk_ITotal
-         */
-        public function getTotalCost();
+	 * @return EbayEnterprise_RiskService_Sdk_ITotal
+	 */
+	public function getTotalCost();
 
-        /**
-         * @param  EbayEnterprise_RiskService_Sdk_ITotal
-         * @return self
-         */
-        public function setTotalCost(EbayEnterprise_RiskService_Sdk_ITotal $totalCost);
+	/**
+	 * @param  EbayEnterprise_RiskService_Sdk_ITotal
+	 * @return self
+	 */
+	public function setTotalCost(EbayEnterprise_RiskService_Sdk_ITotal $totalCost);
 }

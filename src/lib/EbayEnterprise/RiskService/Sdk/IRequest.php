@@ -19,10 +19,10 @@ interface EbayEnterprise_RiskService_Sdk_IRequest extends EbayEnterprise_RiskSer
 {
 	const ROOT_NODE = 'RiskAssessmentRequest';
 	const XML_NS = 'http://api.gsicommerce.com/schema/checkout/1.0';
-	const XSD = 'Risk-Service-Datatypes-1.0.xsd';
+	const XSD = 'Risk-Service-RiskAssessment-1.0.xsd';
 	const ORDER_MODEL ='EbayEnterprise_RiskService_Sdk_Order';
-	const DEVICE_INFO_MODEL ='EbayEnterprise_RiskService_Sdk_Device_Info';
-	const SERVER_INFO_MODEL = 'EbayEnterprise_RiskService_Sdk_Server_Info';
+    const SERVER_INFO_MODEL = 'EbayEnterprise_RiskService_Sdk_Server_Info';
+    const DEVICE_INFO_MODEL = 'EbayEnterprise_RiskService_Sdk_Device_Info';
 
 	/**
 	 * Contain order detail information.
@@ -37,25 +37,25 @@ interface EbayEnterprise_RiskService_Sdk_IRequest extends EbayEnterprise_RiskSer
 	 */
 	public function setOrder(EbayEnterprise_RiskService_Sdk_IOrder $order);
 
-	/**
-         * @return EbayEnterprise_RiskService_Sdk_Device_IInfo
-         */
-        public function getDeviceInfo();
+    /**
+     * @return EbayEnterprise_RiskService_Sdk_Device_IInfo
+     */
+    public function getDeviceInfo();
 
-        /**
-         * @param  EbayEnterprise_RiskService_Sdk_Device_IInfo
-         * @return self
-         */
-        public function setDeviceInfo(EbayEnterprise_RiskService_Sdk_Device_IInfo $deviceInfo);
+    /**
+     * @param  EbayEnterprise_RiskService_Sdk_Device_IInfo
+     * @return self
+     */
+    public function setDeviceInfo(EbayEnterprise_RiskService_Sdk_Device_IInfo $deviceInfo);
 
-	/**
-         * @return EbayEnterprise_RiskService_Sdk_Server_IInfo
-         */
-        public function getServerInfo();
+    /**
+     * @return EbayEnterprise_RiskService_Sdk_Server_IInfo
+     */
+    public function getServerInfo();
 
-        /**
-         * @param  EbayEnterprise_RiskService_Sdk_Server_IInfo
-         * @return self
-         */
-        public function setServerInfo(EbayEnterprise_RiskService_Sdk_Server_IInfo $serverInfo);
+    /**
+     * @param  EbayEnterprise_RiskService_Sdk_Server_IInfo
+     * @return self
+     */
+    public function setServerInfo(EbayEnterprise_RiskService_Sdk_Server_IInfo $serverInfo);
 }

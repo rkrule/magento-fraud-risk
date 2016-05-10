@@ -15,8 +15,8 @@
  *
  */
 
-class EbayEnterprise_RiskService_Model_Payment_Adapter_Pbridge
-	extends EbayEnterprise_RiskService_Model_Payment_Adapter_Type
+class EbayEnterprise_Eb2cFraud_Model_Payment_Adapter_Pbridge
+	extends EbayEnterprise_Eb2cFraud_Model_Payment_Adapter_Type
 {
 	const TYPE_AVS_ZIP = 'avsZip';
 	const TYPE_AVS_ADDRESS = 'avsAddr';
@@ -60,7 +60,7 @@ class EbayEnterprise_RiskService_Model_Payment_Adapter_Pbridge
 			->setExtractIsToken(static::IS_NOT_TOKEN)
 			->setExtractPaymentAccountBin(null)
 			->setExtractExpireDate(null)
-			->setExtractCardType($this->_helper->getMapRiskServicePaymentMethod($payment))
+			->setExtractCardType($this->_helper->getMapEb2cFraudPaymentMethod($payment))
 			->setExtractTransactionResponses($this->_getTransactions($payment));
 		return $this;
 	}

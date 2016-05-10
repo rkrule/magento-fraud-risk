@@ -15,18 +15,18 @@
  *
  */
 
-interface EbayEnterprise_RiskService_Model_Build_IRequest
+interface EbayEnterprise_Eb2cFraud_Model_Build_IRequest
 {
-	const RESPONSE_TYPE = 'avs';
-	const DEFAULT_SHIPPING_METHOD ='Unknown';
-	const PHYSICAL_SHIPMENT_TYPE = 'physical';
-	const VIRTUAL_SHIPMENT_TYPE = 'virtual';
-	const VIRTUAL_SHIPPING_METHOD = 'EMAIL';
+    const RESPONSE_TYPE = 'avs';
+    const DEFAULT_SHIPPING_METHOD ='Unknown';
+    const PHYSICAL_SHIPMENT_TYPE = 'physical';
+    const VIRTUAL_SHIPMENT_TYPE = 'virtual';
+    const VIRTUAL_SHIPPING_METHOD = 'EMAIL';
 
-	/**
-	 * Build the Risk Insight request payload.
-	 *
-	 * @return EbayEnterprise_RiskService_Sdk_IPayload
-	 */
-	public function build();
+    /**
+     * Build the Risk Service request payload.
+     *
+     * @return EbayEnterprise_Eb2cFraud_Sdk_IPayload
+     */
+    public function build();
 }

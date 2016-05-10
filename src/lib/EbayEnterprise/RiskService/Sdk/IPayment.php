@@ -18,12 +18,13 @@
 interface EbayEnterprise_RiskService_Sdk_IPayment extends EbayEnterprise_RiskService_Sdk_IPayload
 {
 	const ROOT_NODE = 'FormOfPayment';
-	const XML_NS = 'http://api.gsicommerce.com/schema/checkout/1.0/';
+	const XML_NS = 'http://api.gsicommerce.com/schema/checkout/1.0';
 	const PAYMENT_CARD_MODEL ='EbayEnterprise_RiskService_Sdk_Payment_Card';
 	const PERSON_NAME_MODEL ='EbayEnterprise_RiskService_Sdk_Person_Name';
 	const TELEPHONE_MODEL ='EbayEnterprise_RiskService_Sdk_Telephone';
 	const ADDRESS_MODEL ='EbayEnterprise_RiskService_Sdk_Address';
 	const TRANSACTION_RESPONSES_MODEL ='EbayEnterprise_RiskService_Sdk_Transaction_Responses';
+	const AUTHORIZATION_MODEL = 'EbayEnterprise_RiskService_Sdk_Authorization';
 
 	/**
 	 * Contains credit card and card holder information.
@@ -39,6 +40,19 @@ interface EbayEnterprise_RiskService_Sdk_IPayment extends EbayEnterprise_RiskSer
 	public function setPaymentCard(EbayEnterprise_RiskService_Sdk_Payment_ICard $paymentCard);
 
 	/**
+         * Contains credit card and card holder information.
+         *
+         * @return EbayEnterprise_RiskService_Sdk_IAuthorization
+         */
+        public function getAuthorization();
+
+        /**
+         * @param  EbayEnterprise_RiskService_Sdk_IAuthorization
+         * @return self
+         */
+        public function setAuthorization(EbayEnterprise_RiskService_Sdk_IAuthorization $authorization);
+
+	/**
 	 * @return DateTime
 	 */
 	public function getPaymentTransactionDate();
@@ -48,6 +62,61 @@ interface EbayEnterprise_RiskService_Sdk_IPayment extends EbayEnterprise_RiskSer
 	 * @return self
 	 */
 	public function setPaymentTransactionDate(DateTime $paymentTransactionDate);
+
+	/**
+         * @return int
+         */
+        public function getPaymentTransactionID();
+
+        /**
+         * @param  int
+         * @return self
+         */
+        public function setPaymentTransactionID($paymentTransactionID);
+
+	/**
+         * @return string
+         */
+        public function getPaymentTransactionTypeCode();
+
+        /**
+         * @param  string
+         * @return self
+         */
+        public function setPaymentTransactionTypeCode($paymentTransactionTypeCode);
+
+	/**
+         * @return integer
+         */
+        public function getItemListRPH();
+         
+        /**
+         * @param  integer
+         * @return self
+         */
+        public function setItemListRPH($itemListRPH);
+
+	/**
+         * @return string
+         */
+        public function getAccountID();
+
+        /**
+         * @param  string
+         * @return self
+         */
+        public function setAccountID($accountID);
+
+	 /**
+         * @return boolean
+         */
+        public function getIsToken();
+         
+        /**
+         * @param  boolean
+         * @return self
+         */
+        public function setIsToken($isToken);
 
 	/**
 	 * @return string
@@ -70,17 +139,6 @@ interface EbayEnterprise_RiskService_Sdk_IPayment extends EbayEnterprise_RiskSer
 	 * @return self
 	 */
 	public function setAmount($amount);
-
-	/**
-	 * @return int
-	 */
-	public function getTotalAuthAttemptCount();
-
-	/**
-	 * @param  int
-	 * @return self
-	 */
-	public function setTotalAuthAttemptCount($totalAuthAttemptCount);
 
 	/**
 	 * Contains the list of responses from the payment processor.

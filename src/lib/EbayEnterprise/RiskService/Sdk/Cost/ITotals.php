@@ -18,7 +18,7 @@
 interface EbayEnterprise_RiskService_Sdk_Cost_ITotals extends EbayEnterprise_RiskService_Sdk_IPayload
 {
 	const ROOT_NODE = 'CostTotals';
-	const XML_NS = 'http://api.gsicommerce.com/schema/checkout/1.0/';
+	const XML_NS = 'http://api.gsicommerce.com/schema/checkout/1.0';
 
 	/**
 	 * @return string

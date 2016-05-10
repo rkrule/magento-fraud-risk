@@ -15,19 +15,30 @@
  *
  */
 
-class EbayEnterprise_RiskService_Model_Payment_Adapter_Default
-	extends EbayEnterprise_RiskService_Model_Payment_Adapter_Type
+class EbayEnterprise_Eb2cFraud_Model_Payment_Adapter_Default
+	extends EbayEnterprise_Eb2cFraud_Model_Payment_Adapter_Type
 {
 	protected function _initialize()
 	{
 		$payment = $this->_order->getPayment();
-		$this->setExtractCardHolderName($payment->getCcOwner())
+		$owner = $payment->getCcOwner();
+		$additionalInformation = $payment->getAdditionalInformation();
+
+		if(!$owner)
+		{	
+			$owner = $this->_order->getBillingAddress()->getName();
+		}
+
+		$this->setExtractCardHolderName($owner)
 			->setExtractPaymentAccountUniqueId($this->_helper->getAccountUniqueId($payment))
 			->setExtractIsToken(static::IS_TOKEN)
 			->setExtractPaymentAccountBin($this->_helper->getAccountBin($payment))
 			->setExtractExpireDate($this->_helper->getPaymentExpireDate($payment))
-			->setExtractCardType($this->_helper->getMapRiskServicePaymentMethod($payment))
-			->setExtractTransactionResponses(array());
+			->setExtractCardType($this->_helper->getMapEb2cFraudPaymentMethod($payment))
+			->setExtractTransactionResponses(array(
+					array('type' => 'avsZip', 'response' => $additionalInformation['avs_response_code']),
+					array('type' => 'avsAddr', 'response' => $additionalInformation['avs_response_code']),
+					array('type' => 'cvv2',	   'response' => $additionalInformation['cvv2_response_code'])));
 		return $this;
 	}
 }

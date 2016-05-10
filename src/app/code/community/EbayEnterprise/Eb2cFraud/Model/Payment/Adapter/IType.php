@@ -15,7 +15,7 @@
  *
  */
 
-interface EbayEnterprise_RiskService_Model_Payment_Adapter_IType
+interface EbayEnterprise_Eb2cFraud_Model_Payment_Adapter_IType
 {
 	const IS_TOKEN = 'true';
 	const IS_NOT_TOKEN = 'false';

@@ -20,7 +20,7 @@ interface EbayEnterprise_RiskService_Sdk_IPayments extends Countable, Iterator, 
 	const PAYMENT_MODEL = 'EbayEnterprise_RiskService_Sdk_Payment';
 	const ROOT_NODE = 'FormOfPayments';
 	const SUBPAYLOAD_XPATH = 'FormOfPayment';
-	const XML_NS = 'http://api.gsicommerce.com/schema/checkout/1.0/';
+	const XML_NS = 'http://api.gsicommerce.com/schema/checkout/1.0';
 
 	/**
 	 * get an empty payment

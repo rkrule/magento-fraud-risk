@@ -21,41 +21,39 @@ class EbayEnterprise_RiskService_Sdk_Order
 {
 	/** @var string */
 	protected $_orderId;
-	/** @var string */
-	protected $_promotionCode;
+    /** @var EbayEnterprise_RiskService_Sdk_Customer_List */
+    protected $_customerList;
 	/** @var EbayEnterprise_RiskService_Sdk_Shipping_List */
 	protected $_shippingList;
 	/** @var EbayEnterprise_RiskService_Sdk_Line_Items */
 	protected $_lineItems;
+	/** @var EbayEnterprise_RiskService_Sdk_Payments */
+	protected $_formOfPayments;
 	/** @var EbayEnterprise_RiskService_Sdk_Total */
 	protected $_totalCost;
-	/** @var EbayEnterprise_RiskService_Sdk_Info */
-	protected $_customerList;
-	/** @var EbayEnterprise_RiskService_Sdk_ExternalRiskResults */
-	protected $_externalRiskResults;
-	/** @var EbayEnterprise_RiskService_Sdk_ShoppingSession */
-	protected $_shoppingSession;
+    /** @var string */
+    protected $_promoCode;
 
 	public function __construct(array $initParams=array())
 	{
 		parent::__construct($initParams);
+        $this->setCustomerList($this->_buildPayloadForModel(static::CUSTOMER_LIST_MODEL));
 		$this->setShippingList($this->_buildPayloadForModel(static::SHIPPING_LIST_MODEL));
 		$this->setLineItems($this->_buildPayloadForModel(static::LINE_ITEMS_MODEL));
+        $this->setShoppingSession($this->_buildPayloadForModel(static::SHOPPING_SESSION_MODEL));
 		$this->setTotalCost($this->_buildPayloadForModel(static::TOTAL_MODEL));
-		$this->setCustomerList($this->_buildPayloadForModel(static::CUSTOMER_LIST_MODEL));
-		$this->setExternalRiskResults($this->_buildPayloadForModel(static::EXTERNAL_RISK_RESULTS_MODEL));
-		$this->setShoppingSession($this->_buildPayloadForModel(static::SHOPPING_SESSION_MODEL));
 		$this->_extractionPaths = array(
 			'setOrderId' => 'string(x:OrderId)',
-			'setPromotionCode' => 'string(x:PromotionCode)',
 		);
+        $this->_optionalExtractionPaths = array (
+            'setPromoCode' => 'string(x:PromoCode)',
+        );
 		$this->_subpayloadExtractionPaths = array(
+            'setCustomerList' => 'x:CustomerList',
 			'setShippingList' => 'x:ShippingList',
 			'setLineItems' => 'x:LineItems',
-			'setTotalCost' => 'x:TotalCost',
-			'setCustomerList' => 'x:CustomerList',
-			'setExternalRiskResults' => 'x:ExternalRiskResults',
 			'setShoppingSession' => 'x:ShoppingSession',
+			'setTotalCost' => 'x:TotalCost',
 		);
 	}
 
@@ -76,22 +74,40 @@ class EbayEnterprise_RiskService_Sdk_Order
 		return $this;
 	}
 
-	/**
-         * @see EbayEnterprise_RiskService_Sdk_IOrder::getPromotionCode()
-         */
-        public function getPromotionCode()
-        {
-                return $this->_promotionCode;
-        }
+    /**
+     * @see EbayEnterprise_RiskService_Sdk_IOrder::getPromoCode()
+     */
+    public function getPromoCode()
+    {
+        return $this->_promoCode;
+    }
 
-        /**
-         * @see EbayEnterprise_RiskService_Sdk_IOrder::setPromotionCode()
-         */
-        public function setPromotionCode($promotionCode)
-        {
-                $this->_promotionCode = $promotionCode;
-                return $this;
-        }
+    /**
+     * @see EbayEnterprise_RiskService_Sdk_IOrder::setPromoCode()
+     */
+    public function setPromoCode($promoCode)
+    {
+        $this->_promoCode = $promoCode;
+        return $this;
+    }
+
+    /**
+     * @return EbayEnterprise_RiskService_Sdk_Customer_IList
+     */
+    public function getCustomerList()
+    {
+        return $this->_customerList;
+    }
+
+    /**
+     * @param  EbayEnterprise_RiskService_Sdk_Customer_IList
+     * @return self
+     */
+    public function setCustomerList(EbayEnterprise_RiskService_Sdk_Customer_IList $customerList)
+    {
+        $this->_customerList = $customerList;
+        return $this;
+    }
 
 	/**
 	 * @see EbayEnterprise_RiskService_Sdk_IOrder::getShippingList()
@@ -127,6 +143,23 @@ class EbayEnterprise_RiskService_Sdk_Order
 		return $this;
 	}
 
+    /**
+     * @see EbayEnterprise_RiskService_Sdk_IOrder::getShoppingSession()
+     */
+    public function getShoppingSession()
+    {
+        return $this->_shoppingSession;
+    }
+
+    /**
+     * @see EbayEnterprise_RiskService_Sdk_IOrder::setShoppingSession()
+     */
+    public function setShoppingSession(EbayEnterprise_RiskService_Sdk_IShoppingSession $shoppingSession)
+    {
+        $this->_shoppingSession = $shoppingSession;
+        return $this;
+    }
+
 	/**
 	 * @see EbayEnterprise_RiskService_Sdk_IOrder::getTotalCost()
 	 */
@@ -141,59 +174,6 @@ class EbayEnterprise_RiskService_Sdk_Order
 	public function setTotalCost(EbayEnterprise_RiskService_Sdk_ITotal $totalCost)
 	{
 		$this->_totalCost = $totalCost;
-		return $this;
-	}
-
-	/**
-	 * @see EbayEnterprise_RiskService_Sdk_IOrder::getCustomerList()
-	 */
-	public function getCustomerList()
-	{
-		return $this->_customerList;
-	}
-
-	/**
-         * @see EbayEnterprise_RiskService_Sdk_IOrder::setCustomerList()
-         */
-        public function setCustomerList(EbayEnterprise_RiskService_Sdk_IInfo $customerList)
-        {
-                $this->_customerList = $customerList;
-                return $this;
-        }
-
-	/**
-         * @return EbayEnterprise_RiskService_Sdk_IExternalRiskResults
-         */
-        public function getExternalRiskResults()
-	{
-		return $this->_externalRiskResults;
-	}
-
-        /**
-         * @param  EbayEnterprise_RiskService_Sdk_IExternalRiskResults
-         * @return self
-         */
-        public function setExternalRiskResults(EbayEnterprise_RiskService_Sdk_IExternalRiskResults $externalRiskResults)
-	{
-		$this->_externalRiskResults = $externalRiskResults;
-		return $this;
-	}
-
-	/**
-         * @return EbayEnterprise_RiskService_Sdk_IShoppingSession
-         */
-        public function getShoppingSession()
-	{
-		return $this->_shoppingSession;
-	}
-
-        /**
-         * @param  EbayEnterprise_RiskService_Sdk_IShoppingSession
-         * @return self
-         */
-        public function setShoppingSession(EbayEnterprise_RiskService_Sdk_IShoppingSession $shoppingSession)
-	{
-		$this->_shoppingSession = $shoppingSession;
 		return $this;
 	}
 
@@ -219,14 +199,11 @@ class EbayEnterprise_RiskService_Sdk_Order
 	protected function _serializeContents()
 	{
 		return $this->_serializeNode('OrderId', $this->getOrderId())
-			. $this->_serializeOptionalValue('OrderSource', $this->getOrderSource())
-			. $this->_serializeNode('OrderDate', $this->getOrderDate()->format('c'))
-			. $this->_serializeNode('StoreId', $this->getStoreId())
+			. $this->_serializeOptionalValue('PromoCode', $this->getPromoCode())
+            . $this->getCustomerList()->serialize()
 			. $this->getShippingList()->serialize()
 			. $this->getLineItems()->serialize()
-			. $this->getCustomerList()->serialize()
-			. $this->getTotalCost()->serialize()
-			. $this->getExternalRiskResults()->serialize()
-			. $this->getShoppingSession()->serialize();
+			. $this->getShoppingSession()->serialize()
+			. $this->getTotalCost()->serialize();
 	}
 }

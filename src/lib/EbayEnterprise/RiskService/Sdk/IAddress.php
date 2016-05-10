@@ -90,13 +90,13 @@ interface EbayEnterprise_RiskService_Sdk_IAddress extends EbayEnterprise_RiskSer
 	/**
 	 * @return string
 	 */
-	public function getMainDivisionCode();
+	public function getMainDivision();
 
 	/**
 	 * @param  string
 	 * @return self
 	 */
-	public function setMainDivisionCode($mainDivisionCode);
+	public function setMainDivision($mainDivision);
 
 	/**
 	 * @return string
@@ -108,4 +108,15 @@ interface EbayEnterprise_RiskService_Sdk_IAddress extends EbayEnterprise_RiskSer
 	 * @return self
 	 */
 	public function setCountryCode($countryCode);
+
+        /**
+         * @return string
+         */
+        public function getAddressID();
+
+        /**
+         * @param  string
+         * @return self
+         */
+        public function setAddressID($addressID);
 }

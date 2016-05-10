@@ -22,25 +22,23 @@ class EbayEnterprise_RiskService_Sdk_Shipment
 	/** @var string */
 	protected $_shipmentId;
 	/** @var string */
+	protected $_addressId;
+	/** @var string */
 	protected $_shippingMethod;
+	/** @var EbayEnterprise_RiskService_Sdk_Cost_Totals */
+	protected $_costTotals;
 
 	public function __construct(array $initParams=array())
 	{
 		parent::__construct($initParams);
-		$this->setPersonName($this->_buildPayloadForModel(static::PERSON_NAME_MODEL));
-		$this->setTelephone($this->_buildPayloadForModel(static::TELEPHONE_MODEL));
-		$this->setAddress($this->_buildPayloadForModel(static::ADDRESS_MODEL));
+		$this->setCostTotals($this->_buildPayloadForModel(static::COST_TOTALS_MODEL));
 		$this->_extractionPaths = array(
 			'setShipmentId' => 'string(@ShipmentId)',
+			'setAddressId'  => 'string(@AddressId)',
 			'setShippingMethod' => 'string(x:ShippingMethod)',
 		);
-		$this->_optionalExtractionPaths = array(
-			'setEmail' => 'x:Email',
-		);
 		$this->_subpayloadExtractionPaths = array(
-			'setPersonName' => 'x:PersonName',
-			'setTelephone' => 'x:Telephone',
-			'setAddress' => 'x:Address',
+			'setCostTotals' => 'x:CostTotals',
 		);
 	}
 
@@ -62,6 +60,23 @@ class EbayEnterprise_RiskService_Sdk_Shipment
 	}
 
 	/**
+         * @see EbayEnterprise_RiskService_Sdk_IShipment::getAddressId()
+         */
+        public function getAddressId()
+        {
+                return $this->_addressId;
+        }
+
+        /**
+         * @see EbayEnterprise_RiskService_Sdk_IShipment::setAddressId()
+         */
+        public function setAddressId($addressId)
+        {
+                $this->_addressId = $addressId;
+                return $this;
+        }
+
+	/**
 	 * @see EbayEnterprise_RiskService_Sdk_IShipment::getShippingMethod()
 	 */
 	public function getShippingMethod()
@@ -75,6 +90,23 @@ class EbayEnterprise_RiskService_Sdk_Shipment
 	public function setShippingMethod($shippingMethod)
 	{
 		$this->_shippingMethod = $shippingMethod;
+		return $this;
+	}
+
+	/**
+	 * @see EbayEnterprise_RiskService_Sdk_ITotal::getCostTotals()
+	 */
+	public function getCostTotals()
+	{
+		return $this->_costTotals;
+	}
+
+	/**
+	 * @see EbayEnterprise_RiskService_Sdk_ITotal::setCostTotals()
+	 */
+	public function setCostTotals(EbayEnterprise_RiskService_Sdk_Cost_ITotals $costTotals)
+	{
+		$this->_costTotals = $costTotals;
 		return $this;
 	}
 
@@ -99,10 +131,7 @@ class EbayEnterprise_RiskService_Sdk_Shipment
 	 */
 	protected function _serializeContents()
 	{
-		return $this->getPersonName()->serialize()
-			. $this->_serializeOptionalValue('Email', $this->getEmail())
-			. $this->getTelephone()->serialize()
-			. $this->getAddress()->serialize()
+		return $this->getCostTotals()->serialize()
 			. $this->_serializeNode('ShippingMethod', $this->getShippingMethod());
 	}
 
@@ -112,6 +141,7 @@ class EbayEnterprise_RiskService_Sdk_Shipment
 	protected function _getRootAttributes()
 	{
 		return array(
+			'AddressId'  => $this->getAddressId(),
 			'ShipmentId' => $this->getShipmentId(),
 		);
 	}

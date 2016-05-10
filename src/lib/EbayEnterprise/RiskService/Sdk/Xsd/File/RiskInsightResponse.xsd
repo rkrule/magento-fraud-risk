@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xsd:schema attributeFormDefault="unqualified" elementFormDefault="qualified"
+            xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+            targetNamespace="http://api.gsicommerce.com/schema/checkout/1.0"
+            xmlns="http://api.gsicommerce.com/schema/checkout/1.0"
+            version="1.0">
+
+    <xsd:include schemaLocation="RiskServiceRequest.xsd"/>
+
+    <xsd:element name="RiskServiceResponse" type="RiskServiceResponseType"/>
+    <xsd:complexType name="RiskServiceResponseType">
+        <xsd:sequence>
+            <xsd:element type="PrimaryLangIdType" name="PrimaryLangId" minOccurs="0"/>
+            <xsd:element type="OrderIdType" name="OrderId" minOccurs="0"/>
+            <xsd:element type="StoreIdType" name="StoreId" minOccurs="0"/>
+            <xsd:element type="responseReasonCodeEnums" name="ResponseReasonCode"/>
+            <xsd:element type="xsd:string" name="ResponseReasonCodeDescription" minOccurs="0"/>
+        </xsd:sequence>
+    </xsd:complexType>
+
+    <xsd:simpleType name="responseReasonCodeEnums">
+        <xsd:restriction base="xsd:string">
+            <xsd:enumeration value="HIGH">
+                <xsd:annotation>
+                    <xsd:documentation xml:lang="en">
+                        Definition: This will state that the order is with high risk probability.
+                    </xsd:documentation>
+                </xsd:annotation>
+            </xsd:enumeration>
+            <xsd:enumeration value="MEDIUM">
+                <xsd:annotation>
+                    <xsd:documentation xml:lang="en">
+                        Definition: This will state that the order is with medium risk probability.
+                    </xsd:documentation>
+                </xsd:annotation>
+            </xsd:enumeration>
+            <xsd:enumeration value="LOW">
+                <xsd:annotation>
+                    <xsd:documentation xml:lang="en">
+                        Definition: This will state that the order is with low risk probability.
+                    </xsd:documentation>
+                </xsd:annotation>
+            </xsd:enumeration>
+            <xsd:enumeration value="UNKNOWN">
+                <xsd:annotation>
+                    <xsd:documentation xml:lang="en">
+                        Definition: This will state that application is unable to provide response based on the request data
+                        (application is up and running but unable to provide response for some reason).
+                    </xsd:documentation>
+                </xsd:annotation>
+            </xsd:enumeration>
+        </xsd:restriction>
+    </xsd:simpleType>
+
+</xsd:schema>

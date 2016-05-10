@@ -18,13 +18,13 @@
 /**
  * @codeCoverageIgnore
  */
-class EbayEnterprise_RiskService_Model_Payment_Adapter_Type
-	extends EbayEnterprise_RiskService_Model_Payment_Adapter_Type_Abstract
-	implements EbayEnterprise_RiskService_Model_Payment_Adapter_IType
+class EbayEnterprise_Eb2cFraud_Model_Payment_Adapter_Type
+	extends EbayEnterprise_Eb2cFraud_Model_Payment_Adapter_Type_Abstract
+	implements EbayEnterprise_Eb2cFraud_Model_Payment_Adapter_IType
 {
 	/** @var Mage_Sales_Model_Order */
 	protected $_order;
-	/** @var EbayEnterprise_RiskService_Helper_Data */
+	/** @var EbayEnterprise_Eb2cFraud_Helper_Data */
 	protected $_helper;
 	/** @var string | null */
 	protected $_extractCardHolderName;
@@ -44,7 +44,7 @@ class EbayEnterprise_RiskService_Model_Payment_Adapter_Type
 	/**
 	 * @param array $initParams Must have this key:
 	 *                          - 'order' => Mage_Sales_Model_Order
-	 *                          - 'helper' => EbayEnterprise_RiskService_Helper_Data
+	 *                          - 'helper' => EbayEnterprise_Eb2cFraud_Helper_Data
 	 */
 	public function __construct(array $initParams=array())
 	{
@@ -59,12 +59,12 @@ class EbayEnterprise_RiskService_Model_Payment_Adapter_Type
 	 * Type hinting for self::__construct $initParams
 	 *
 	 * @param  Mage_Sales_Model_Order
-	 * @param  EbayEnterprise_RiskService_Helper_Data
+	 * @param  EbayEnterprise_Eb2cFraud_Helper_Data
 	 * @return array
 	 */
 	protected function _checkTypes(
 		Mage_Sales_Model_Order $order,
-		EbayEnterprise_RiskService_Helper_Data $helper
+		EbayEnterprise_Eb2cFraud_Helper_Data $helper
 	) {
 		return array($order, $helper);
 	}

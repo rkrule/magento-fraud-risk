@@ -62,6 +62,50 @@ class EbayEnterprise_Eb2cFraud_Helper_Http extends Mage_Core_Helper_Http
         return [$cookie];
     }
 
+    public function getHttpHost($clean = true)
+    {
+	return $this->_getHttpCleanValue('HTTP_ACCEPT', $clean);
+    }
+
+    public function getHttpOrigin($clean = true)
+    {
+	return $this->_getHttpCleanValue('HTTP_ORIGIN', $clean);
+    }
+
+    public function getHttpXPrototypeVersion($clean = true )
+    {
+	return $this->_getHttpCleanValue('HTTP_X_PROTOTYPE_VERSION', $clean);
+    }
+
+    public function getHttpXRequestedWith($clean = true )
+    {
+	return $this->_getHttpCleanValue('HTTP_X_REQUESTED_WITH', $clean);
+    }
+
+    public function getHttpUserAgent($clean = true )
+    {
+	return $this->_getHttpCleanValue('HTTP_USER_AGENT', $clean);
+    }
+  
+    public function getHttpCookie($clean = true )
+    {
+	return $this->_getHttpCleanValue('HTTP_COOKIE', $clean);
+    }
+
+    public function getHttpXForwardedProto($clean = true )
+    {
+	return $this->_getHttpCleanValue('HTTP_X_FORWARDED_PROTO', $clean);
+    }
+
+    public function getHttpXForwardedFor($clean = true )
+    {
+	return $this->_getHttpCleanValue('HTTP_X_FORWARDED_FOR', $clean);
+    }
+
+    public function getHttpContentType($clean = true )
+    {
+	return $this->_getHttpCleanValue('HTTP_CONTENT_TYPE', $clean);
+    }
 
     /**
      * Retrieve HTTP Accept header

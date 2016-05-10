@@ -31,6 +31,20 @@ class EbayEnterprise_RiskService_Sdk_Payment
 	protected $_totalAuthAttemptCount;
 	/** @var EbayEnterprise_RiskService_Sdk_Transaction_IResponses */
 	protected $_transactionResponses;
+	/** @var EbayEnterprise_RiskService_Sdk_IAuthorization */
+	protected $_authorization;
+	/** @var string */
+	protected $_paymentTransactionTypeCode;
+	/** @var string */
+	protected $_tenderClass;
+	/** @var string */
+	protected $_paymentTransactionID;
+	/** @var integer */
+	protected $_itemListRPH;
+	/** @var string */
+	protected $_accountID;
+	/** @var bool */
+        protected $_isToken;
 
 	public function __construct(array $initParams=array())
 	{
@@ -40,13 +54,18 @@ class EbayEnterprise_RiskService_Sdk_Payment
 		$this->setTelephone($this->_buildPayloadForModel(static::TELEPHONE_MODEL));
 		$this->setAddress($this->_buildPayloadForModel(static::ADDRESS_MODEL));
 		$this->setTransactionResponses($this->_buildPayloadForModel(static::TRANSACTION_RESPONSES_MODEL));
+		$this->setAuthorization($this->_buildPayloadForModel(static::AUTHORIZATION_MODEL));
 		$this->_extractionPaths = array(
 			'setEmail' => 'string(x:Email)',
+			'setPaymentTransactionTypeCode' => 'string(x:PaymentTransactionTypeCode)',
+			'setTenderClass' => 'string(x:TenderClass)',
+			'setAmount' => 'x:Amount',
 		);
 		$this->_optionalExtractionPaths = array(
-			'setCurrencyCode' => 'x:CurrencyCode',
-			'setAmount' => 'x:Amount',
-			'setTotalAuthAttemptCount' => 'x:TotalAuthAttemptCount',
+			'setCurrencyCode' => 'x:Amount/@currencyCode',
+			'setPaymentTransactionID' => 'x:PaymentTransactionID',
+			'setItemListRPH' =>	'x:ItemListRPH',
+			'setAccountID' =>	'x:AccountID',
 		);
 		$this->_dateTimeExtractionPaths = array(
 			'setPaymentTransactionDate' => 'string(x:PaymentTransactionDate)',
@@ -57,8 +76,30 @@ class EbayEnterprise_RiskService_Sdk_Payment
 			'setTelephone' => 'x:Telephone',
 			'setAddress' => 'x:Address',
 			'setTransactionResponses' => 'x:TransactionResponses',
+			'setAuthorization' => 'x:Authorization',
 		);
+		$this->_booleanExtractionPaths = array(
+                        'setIsToken' => 'string(x:PaymentAccountUniqueId/@isToken)',
+                );
+
 	}
+
+	/**
+         * @see EbayEnterprise_RiskService_Sdk_IPayment::getAccountID()
+         */
+        public function getAccountID()
+        {
+                return $this->_accountID;
+        }
+
+        /**
+         * @see EbayEnterprise_RiskService_Sdk_IPayment::setAccountID()
+         */
+        public function setAccountID($accountID)
+        {
+                $this->_accountID = $accountID;
+                return $this;
+        }
 
 	/**
 	 * @see EbayEnterprise_RiskService_Sdk_IPayment::getPaymentCard()
@@ -78,6 +119,40 @@ class EbayEnterprise_RiskService_Sdk_Payment
 	}
 
 	/**
+         * @see EbayEnterprise_RiskService_Sdk_IPayment::getAuthorization()
+         */
+        public function getAuthorization()
+        {
+                return $this->_authorization;
+        }
+
+        /**
+         * @see EbayEnterprise_RiskService_Sdk_IPayment::setAuthorization()
+         */
+        public function setAuthorization(EbayEnterprise_RiskService_Sdk_IAuthorization $authorization)
+        {
+                $this->_authorization = $authorization;
+                return $this;
+        }
+
+	/**
+         * @see EbayEnterprise_RiskService_Sdk_IPayment::getItemListRPH()
+         */
+        public function getItemListRPH()
+        {
+                return $this->_itemListRPH;
+        }
+
+        /**
+         * @see EbayEnterprise_RiskService_Sdk_IPayment::setItemListRPH()
+         */
+        public function setItemListRPH($itemListRPH)
+        {
+                $this->_itemListRPH = $itemListRPH;
+                return $this;
+        }
+
+	/**
 	 * @see EbayEnterprise_RiskService_Sdk_IPayment::getPaymentTransactionDate()
 	 */
 	public function getPaymentTransactionDate()
@@ -93,6 +168,57 @@ class EbayEnterprise_RiskService_Sdk_Payment
 		$this->_paymentTransactionDate = $paymentTransactionDate;
 		return $this;
 	}
+
+	/**
+         * @see EbayEnterprise_RiskService_Sdk_IPayment::getPaymentTransactionID()
+         */
+        public function getPaymentTransactionID()
+        {
+                return $this->_paymentTransactionID;
+        }
+
+        /**
+         * @see EbayEnterprise_RiskService_Sdk_IPayment::setPaymentTransactionID()
+         */
+        public function setPaymentTransactionID($paymentTransactionID)
+        {
+                $this->_paymentTransactionID = $paymentTransactionID;
+                return $this;
+        }
+
+	/**
+         * @see EbayEnterprise_RiskService_Sdk_IPayment::getPaymentTransactionTypeCode()
+         */
+        public function getPaymentTransactionTypeCode()
+        {
+                return $this->_paymentTransactionTypeCode;
+        }
+
+        /**
+         * @see EbayEnterprise_RiskService_Sdk_IPayment::setPaymentTransactionTypeCode()
+         */
+        public function setPaymentTransactionTypeCode($paymentTransactionTypeCode)
+        {
+                $this->_paymentTransactionTypeCode = $paymentTransactionTypeCode;
+                return $this;
+        }
+
+	/**
+         * @see EbayEnterprise_RiskService_Sdk_IPayment::getTenderClass()
+         */
+        public function getTenderClass()
+        {
+                return $this->_tenderClass;
+        }
+
+        /**
+         * @see EbayEnterprise_RiskService_Sdk_IPayment::setTenderClass()
+         */
+        public function setTenderClass($tenderClass)
+        {
+                $this->_tenderClass = $tenderClass;
+                return $this;
+        }
 
 	/**
 	 * @see EbayEnterprise_RiskService_Sdk_IPayment::getCurrencyCode()
@@ -129,23 +255,6 @@ class EbayEnterprise_RiskService_Sdk_Payment
 	}
 
 	/**
-	 * @see EbayEnterprise_RiskService_Sdk_IPayment::getTotalAuthAttemptCount()
-	 */
-	public function getTotalAuthAttemptCount()
-	{
-		return $this->_totalAuthAttemptCount;
-	}
-
-	/**
-	 * @see EbayEnterprise_RiskService_Sdk_IPayment::setTotalAuthAttemptCount()
-	 */
-	public function setTotalAuthAttemptCount($totalAuthAttemptCount)
-	{
-		$this->_totalAuthAttemptCount = $totalAuthAttemptCount;
-		return $this;
-	}
-
-	/**
 	 * @see EbayEnterprise_RiskService_Sdk_IPayment::getTransactionResponses()
 	 */
 	public function getTransactionResponses()
@@ -161,6 +270,23 @@ class EbayEnterprise_RiskService_Sdk_Payment
 		$this->_transactionResponses = $transactionResponses;
 		return $this;
 	}
+
+	/**
+         * @see EbayEnterprise_RiskService_Sdk_Payment_ICard::getIsToken()
+         */
+        public function getIsToken()
+        {
+                return $this->_isToken;
+        }
+
+	/**
+         * @see EbayEnterprise_RiskService_Sdk_Payment_ICard::setIsToken()
+         */
+        public function setIsToken($isToken)
+        {
+                $this->_isToken = $isToken;
+                return $this;
+        }
 
 	/**
 	 * @see EbayEnterprise_RiskService_Sdk_Payload::_getRootNodeName()
@@ -184,14 +310,31 @@ class EbayEnterprise_RiskService_Sdk_Payment
 	protected function _serializeContents()
 	{
 		return $this->getPaymentCard()->serialize()
-			. $this->getPersonName()->serialize()
+			. $this->getAuthorization()->serialize()
 			. $this->_serializeNode('Email', $this->getEmail())
-			. $this->getTelephone()->serialize()
+			. $this->getPersonName()->serialize()
 			. $this->getAddress()->serialize()
+			. $this->getTelephone()->serialize()
+			. $this->getTransactionResponses()->serialize()
 			. $this->_serializeOptionalDateValue('PaymentTransactionDate', 'c', $this->getPaymentTransactionDate())
-			. $this->_serializeOptionalValue('CurrencyCode', $this->getCurrencyCode())
-			. $this->_serializeOptionalAmount('Amount', $this->getAmount())
-			. $this->_serializeOptionalNumber('TotalAuthAttemptCount', $this->getTotalAuthAttemptCount())
-			. $this->getTransactionResponses()->serialize();
+			. $this->_serializeNode('PaymentTransactionTypeCode', $this->getPaymentTransactionTypeCode())
+			. $this->_serializeOptionalValue('PaymentTransactionID', $this->getPaymentTransactionID())
+			. $this->_serializeOptionalValue('ItemListRPH', $this->getItemListRPH())
+			. $this->_serializeAmountNode('Amount', $this->getAmount(), $this->_currencyCode)
+			. $this->_serializeAccountID()
+			. $this->_serializeNode('TenderClass', $this->getTenderClass());
 	}
+
+	/**
+         * Serialize the payment account unique id node if there's a valid value.
+         *
+         * @return string
+         */
+        protected function _serializeAccountID()
+        {
+                $isToken = $this->getIsToken();
+                $isToken = !is_null($isToken) ? $isToken : false;
+                $accountID = $this->getAccountID();
+                return $accountID ? "<AccountID isToken=\"{$isToken}\">{$accountID}</AccountID>" : '';
+        }
 }

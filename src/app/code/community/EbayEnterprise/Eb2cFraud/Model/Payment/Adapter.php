@@ -15,23 +15,23 @@
  *
  */
 
-class EbayEnterprise_RiskService_Model_Payment_Adapter
-	implements EbayEnterprise_RiskService_Model_Payment_IAdapter
+class EbayEnterprise_Eb2cFraud_Model_Payment_Adapter
+	implements EbayEnterprise_Eb2cFraud_Model_Payment_IAdapter
 {
-	/** @var EbayEnterprise_RiskService_Model_Payment_Adapter_IType */
+	/** @var EbayEnterprise_Eb2cFraud_Model_Payment_Adapter_IType */
 	protected $_adapter;
 	/** @var Mage_Sales_Model_Order */
 	protected $_order;
-	/** @var EbayEnterprise_RiskService_Helper_Data */
+	/** @var EbayEnterprise_Eb2cFraud_Helper_Data */
 	protected $_helper;
-	/** @var EbayEnterprise_RiskService_Helper_Config */
+	/** @var EbayEnterprise_Eb2cFraud_Helper_Config */
 	protected $_config;
 
 	/**
 	 * @param array $initParams Must have this key:
 	 *                          - 'order' => Mage_Sales_Model_Order
-	 *                          - 'helper' => EbayEnterprise_RiskService_Helper_Data
-	 *                          - 'config' => EbayEnterprise_RiskService_Helper_Config
+	 *                          - 'helper' => EbayEnterprise_Eb2cFraud_Helper_Data
+	 *                          - 'config' => EbayEnterprise_Eb2cFraud_Helper_Config
 	 */
 	public function __construct(array $initParams=array())
 	{
@@ -47,14 +47,14 @@ class EbayEnterprise_RiskService_Model_Payment_Adapter
 	 * Type hinting for self::__construct $initParams
 	 *
 	 * @param  Mage_Sales_Model_Order
-	 * @param  EbayEnterprise_RiskService_Helper_Data
-	 * @param  EbayEnterprise_RiskService_Helper_Config
+	 * @param  EbayEnterprise_Eb2cFraud_Helper_Data
+	 * @param  EbayEnterprise_Eb2cFraud_Helper_Config
 	 * @return array
 	 */
 	protected function _checkTypes(
 		Mage_Sales_Model_Order $order,
-		EbayEnterprise_RiskService_Helper_Data $helper,
-		EbayEnterprise_RiskService_Helper_Config $config
+		EbayEnterprise_Eb2cFraud_Helper_Data $helper,
+		EbayEnterprise_Eb2cFraud_Helper_Config $config
 	) {
 		return array($order, $helper, $config);
 	}
@@ -86,7 +86,7 @@ class EbayEnterprise_RiskService_Model_Payment_Adapter
 	}
 
 	/**
-	 * @return EbayEnterprise_RiskService_Model_Payment_Adapter_IType | null
+	 * @return EbayEnterprise_Eb2cFraud_Model_Payment_Adapter_IType | null
 	 */
 	protected function _getPaymentAdapter()
 	{

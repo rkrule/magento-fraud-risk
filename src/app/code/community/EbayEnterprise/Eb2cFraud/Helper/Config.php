@@ -18,7 +18,7 @@
 /**
  * @codeCoverageIgnore
  */
-class EbayEnterprise_RiskService_Helper_Config
+class EbayEnterprise_Eb2cFraud_Helper_Config
 {
 	const ENABLED = 'eb2ccore/fraud/enabledmod';
 	const STORE_ID = 'eb2ccore/general/store_id';
@@ -27,6 +27,11 @@ class EbayEnterprise_RiskService_Helper_Config
 	const API_TIMEOUT = 'eb2ccore/api/timeout';
 	const DEBUG = 'eb2ccore/fraud/debug';
 	const LANGUAGE_CODE = 'eb2ccore/general/language_code';
+        const CARD_TYPE_MAP = 'eb2cfraud/risk_service/card_type_map';
+	const CARD_NAME_MAP = 'eb2cfraud/risk_service/card_name_map';
+        const SHIPPING_METHOD_MAP = 'eb2cfraud/risk_service/shipping_method_map';
+        const PAYMENT_ADAPTER_MAP = 'eb2cfraud/risk_service/payment_adapter_map';
+	const UOM = 'eb2cfraud/risk_service/uom';
 
 	/**
 	 * check if Risk Insight module is enable in the store config
@@ -104,4 +109,88 @@ class EbayEnterprise_RiskService_Helper_Config
 	{
 		return Mage::getStoreConfig(static::API_TIMEOUT, $store);
 	}
+
+
+    /**
+     * retrieve the payment method card type map settings from store config
+     *
+     * @param  mixed
+     * @return string
+     */
+    public function getPaymentMethodCardTypeMap($store=null)
+    {
+        return Mage::getStoreConfig(static::CARD_TYPE_MAP, $store);
+    }
+
+    /**
+     * retrieve the payment method card type name settings from store config
+     *
+     * @param  mixed
+     * @return string
+     */
+    public function getPaymentMethodCardNameMap($store=null)
+    {
+        return Mage::getStoreConfig(static::CARD_NAME_MAP, $store);
+    }
+
+    /**
+     * retrieve the shipping method map settings from store config
+     *
+     * @param  mixed
+     * @return string
+     */
+    public function getShippingMethodMap($store=null)
+    {
+        return Mage::getStoreConfig(static::SHIPPING_METHOD_MAP, $store);
+    }
+
+    /**
+     * retrieve the payment adapter map settings from store config
+     *
+     * @param  mixed
+     * @return string
+     */
+    public function getPaymentAdapterMap($store=null)
+    {
+        return Mage::getStoreConfig(static::PAYMENT_ADAPTER_MAP, $store);
+    }
+
+    /**
+     * retrieve the unit of measure for the store
+     *
+     * @param  mixed
+     * @return string
+     */
+    public function getUnitOfMeasure($store=null)
+    {
+	return Mage::getStoreConfig(static::UOM, $store);
+    }
+
+    /**
+     * Get the ROM Tender Type for the Magento CC Type.
+     * @param  string $creditCardType
+     * @return string
+     */
+    public function getTenderTypeForCcType($creditCardType)
+    {
+        $types = $this->getPaymentMethodCardTypeMap();
+        if (isset($types[$creditCardType])) {
+            return $types[$creditCardType];
+        }
+        throw Mage::exception('EbayEnterprise_CreditCard', self::UNKNOWN_CARD_TYPE);
+    }
+
+    /**
+     * Get the Name for the Magento CC Type.
+     * @param  string $creditCardType
+     * @return string
+     */
+    public function getTenderNameForCcType($creditCardType)
+    {
+        $types = $this->getPaymentMethodCardNameMap();
+        if (isset($types[$creditCardType])) {
+            return $types[$creditCardType];
+        }
+    }
 }
+

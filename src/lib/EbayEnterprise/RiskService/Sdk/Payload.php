@@ -320,9 +320,14 @@ abstract class EbayEnterprise_RiskService_Sdk_Payload
 		return sprintf('<%s>%s</%1$s>', $nodeName, $this->_helper->escapeHtml($value));
 	}
 
-	protected function _serializeAmountNode($nodeName, $amount)
+	protected function _serializeAmountNode($nodeName, $amount, $currencyCode)
 	{
-		return "<$nodeName>{$this->_helper->formatAmount($amount)}</$nodeName>";
+		if( $currencyCode)
+		{
+			return "<$nodeName currencyCode=\"$currencyCode\">{$this->_helper->formatAmount($amount)}</$nodeName>";
+		} else {
+			return "<$nodeName>{$this->_helper->formatAmount($amount)}</$nodeName>";
+		}
 	}
 
 	/**
@@ -345,11 +350,17 @@ abstract class EbayEnterprise_RiskService_Sdk_Payload
 	 *
 	 * @param  string
 	 * @param  float
+	 * @param  string
 	 * @return string
 	 */
-	protected function _serializeOptionalAmount($nodeName, $amount)
+	protected function _serializeOptionalAmount($nodeName, $amount, $currencyCode=null)
 	{
-		return (!is_null($amount) && !is_nan($amount)) ? "<$nodeName>{$this->_helper->formatAmount($amount)}</$nodeName>" : '';
+		if( $currencyCode)
+		{
+			return (!is_null($amount) && !is_nan($amount)) ? "<$nodeName currencyCode=\"$currencyCode\">{$this->_helper->formatAmount($amount)}</$nodeName>" : '';
+		} else {
+			return (!is_null($amount) && !is_nan($amount)) ? "<$nodeName>{$this->_helper->formatAmount($amount)}</$nodeName>" : '';
+		}
 	}
 
 	protected function _serializeOptionalNumber($nodeName, $number)

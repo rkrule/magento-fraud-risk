@@ -15,7 +15,7 @@
  *
  */
 
-abstract class EbayEnterprise_RiskService_Model_Abstract
+abstract class EbayEnterprise_Eb2cFraud_Model_Abstract
 {
 	/**
 	 * Return the value at field in array if it exists. Otherwise, use the default value.

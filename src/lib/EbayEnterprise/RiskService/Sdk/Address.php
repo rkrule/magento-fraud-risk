@@ -32,9 +32,11 @@ class EbayEnterprise_RiskService_Sdk_Address
 	/** @var string */
 	protected $_postalCode;
 	/** @var string */
-	protected $_mainDivisionCode;
+	protected $_mainDivision;
 	/** @var string */
 	protected $_countryCode;
+	/** @var string */
+	protected $_addressID;
 
 	public function __construct(array $initParams=array())
 	{
@@ -43,15 +45,34 @@ class EbayEnterprise_RiskService_Sdk_Address
 			'setLineA' => 'string(x:Line1)',
 			'setPostalCode' => 'string(x:PostalCode)',
 			'setCountryCode' => 'string(x:CountryCode)',
+			'setAddressID'  => 'string(@AddressId)',
 		);
 		$this->_optionalExtractionPaths = array(
 			'setLineB' => 'x:Line2',
 			'setLineC' => 'x:Line3',
 			'setLineD' => 'x:Line4',
 			'setCity' => 'x:City',
-			'setMainDivisionCode' => 'x:MainDivisionCode',
+			'setMainDivision' => 'x:MainDivision',
 		);
 	}
+
+	/**
+         * @see EbayEnterprise_RiskService_Sdk_IAddress::getAddressID()
+         */
+        public function getAddressID()
+        {
+                return $this->_addressID;
+        }
+
+        /**
+         * @see EbayEnterprise_RiskService_Sdk_IAddress::setAddressID()
+         */
+        public function setAddressID($addressID)
+        {
+                $this->_addressID = $addressID;
+                return $this;
+        }
+
 
 	/**
 	 * @see EbayEnterprise_RiskService_Sdk_IAddress::getLineA()
@@ -156,19 +177,19 @@ class EbayEnterprise_RiskService_Sdk_Address
 	}
 
 	/**
-	 * @see EbayEnterprise_RiskService_Sdk_IAddress::getMainDivisionCode()
+	 * @see EbayEnterprise_RiskService_Sdk_IAddress::getMainDivision()
 	 */
-	public function getMainDivisionCode()
+	public function getMainDivision()
 	{
-		return $this->_mainDivisionCode;
+		return $this->_mainDivision;
 	}
 
 	/**
-	 * @see EbayEnterprise_RiskService_Sdk_IAddress::setMainDivisionCode()
+	 * @see EbayEnterprise_RiskService_Sdk_IAddress::setMainDivision()
 	 */
-	public function setMainDivisionCode($mainDivisionCode)
+	public function setMainDivision($mainDivision)
 	{
-		$this->_mainDivisionCode = $mainDivisionCode;
+		$this->_mainDivision = $mainDivision;
 		return $this;
 	}
 
@@ -227,8 +248,18 @@ class EbayEnterprise_RiskService_Sdk_Address
 			. $this->_serializeOptionalValue('Line3', $this->getLineC())
 			. $this->_serializeOptionalValue('Line4', $this->getLineD())
 			. $this->_serializeOptionalValue('City', $this->getCity())
-			. $this->_serializeNode('PostalCode', $this->getPostalCode())
-			. $this->_serializeOptionalValue('MainDivisionCode', $this->getMainDivisionCode())
-			. $this->_serializeNode('CountryCode', $this->getCountryCode());
+			. $this->_serializeOptionalValue('MainDivision', $this->getMainDivision())
+			. $this->_serializeNode('CountryCode', $this->getCountryCode())
+			. $this->_serializeNode('PostalCode', $this->getPostalCode());
 	}
+
+        /**
+         * @see EbayEnterprise_RiskService_Sdk_Payload::_getRootAttributes()
+         */
+        protected function _getRootAttributes()
+        {
+                return array(
+                        'AddressId'  => $this->getAddressID(),
+                );
+        }
 }

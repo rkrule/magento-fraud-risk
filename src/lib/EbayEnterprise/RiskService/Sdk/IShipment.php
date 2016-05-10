@@ -19,9 +19,7 @@ interface EbayEnterprise_RiskService_Sdk_IShipment extends EbayEnterprise_RiskSe
 {
 	const ROOT_NODE = 'Shipment';
 	const XML_NS = 'http://api.gsicommerce.com/schema/checkout/1.0';
-	const PERSON_NAME_MODEL ='EbayEnterprise_RiskService_Sdk_Person_Name';
-	const TELEPHONE_MODEL ='EbayEnterprise_RiskService_Sdk_Telephone';
-	const ADDRESS_MODEL ='EbayEnterprise_RiskService_Sdk_Address';
+	const COST_TOTALS_MODEL ='EbayEnterprise_RiskService_Sdk_Cost_Totals';
 
 	/**
 	 * @return string
@@ -33,6 +31,17 @@ interface EbayEnterprise_RiskService_Sdk_IShipment extends EbayEnterprise_RiskSe
 	 * @return self
 	 */
 	public function setShipmentId($shipmentId);
+
+        /**
+         * @return string
+         */
+        public function getAddressId();
+
+        /**
+         * @param  string
+         * @return self
+         */
+        public function setAddressId($addressId);
 
 	/**
 	 * The method of shipment for the order.
@@ -48,4 +57,17 @@ interface EbayEnterprise_RiskService_Sdk_IShipment extends EbayEnterprise_RiskSe
 	 * @return self
 	 */
 	public function setShippingMethod($shippingMethod);
+
+	/**
+	 * Contains the total cost details regarding currency used, before tax amount, and after tax amount.
+	 *
+	 * @return EbayEnterprise_RiskService_Sdk_Cost_ITotals
+	 */
+	public function getCostTotals();
+
+	/**
+	 * @param  EbayEnterprise_RiskService_Sdk_Cost_ITotals
+	 * @return self
+	 */
+	public function setCostTotals(EbayEnterprise_RiskService_Sdk_Cost_ITotals $costTotals);
 }

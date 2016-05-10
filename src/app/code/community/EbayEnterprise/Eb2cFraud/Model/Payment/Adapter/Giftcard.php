@@ -15,8 +15,8 @@
  *
  */
 
-class EbayEnterprise_RiskService_Model_Payment_Adapter_Giftcard
-	extends EbayEnterprise_RiskService_Model_Payment_Adapter_Type
+class EbayEnterprise_Eb2cFraud_Model_Payment_Adapter_Giftcard
+	extends EbayEnterprise_Eb2cFraud_Model_Payment_Adapter_Type
 {
 	const PAYMENT_METHOD_TYPE = 'giftcard';
 
