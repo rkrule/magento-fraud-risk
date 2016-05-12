@@ -15,27 +15,130 @@
 
 class EbayEnterprise_Eb2cFraud_Model_Observer
 {
-    /**
-     * get the request object in a way that can be stubbed in tests.
-     * @return Mage_Core_Controller_Request_Http
-     * @codeCoverageIgnore
-     */
-    protected function _getRequest()
-    {
-        return Mage::app()->getRequest();
-    }
-    /**
-     * add order context information to the order create
-     * request.
-     * @param  Varien_Event_Observer $observer
-     * @return self
-     */
-    public function handleOrderCreateContextEvent(Varien_Event_Observer $observer)
-    {
-        $event = $observer->getEvent();
-        $orderContext = $event->getOrderContext();
-        Mage::getModel('eb2cfraud/order_create_context')
-            ->addContextInfoToPayload($orderContext);
-        return $this;
-    }
+	/** @var EbayEnterprise_Eb2cFraud_Helper_Data */
+	protected $_helper;
+	/** @var EbayEnterprise_Eb2cFraud_Helper_Config */
+	protected $_config;
+	/** @var EbayEnterprise_RiskInsight_Model_Risk_Order */
+	protected $_riskOrder;
+
+	/**
+	 * @param array $initParams optional keys:
+	 *                          - 'helper' => EbayEnterprise_Eb2cFraud_Helper_Data
+	 *                          - 'config' => EbayEnterprise_Eb2cFraud_Helper_Config
+	 */
+	public function __construct(array $initParams=array())
+	{
+		$this->_riskOrder = Mage::getModel('eb2cfraud/risk_order');
+
+		list($this->_helper, $this->_config) = $this->_checkTypes(
+			$this->_nullCoalesce($initParams, 'helper', Mage::helper('eb2cfraud')),
+			$this->_nullCoalesce($initParams, 'config', Mage::helper('eb2cfraud/config'))
+		);
+	}
+
+	/**
+	 * Type checks for self::__construct $initParams
+	 *
+	 * @param  EbayEnterprise_Eb2cFraud_Helper_Data
+	 * @param  EbayEnterprise_Eb2cFraud_Helper_Config
+	 * @return array
+	 */
+	protected function _checkTypes(
+		EbayEnterprise_Eb2cFraud_Helper_Data $helper,
+		EbayEnterprise_Eb2cFraud_Helper_Config $config
+	) {
+		return array($helper, $config);
+	}
+	/**
+	 * Return the value at field in array if it exists. Otherwise, use the
+	 * default value.
+	 *
+	 * @param array      $arr
+	 * @param string|int $field Valid array key
+	 * @param mixed      $default
+	 * @return mixed
+	 */
+	protected function _nullCoalesce(array $arr, $field, $default)
+	{
+		return isset($arr[$field]) ? $arr[$field] : $default;
+	}
+
+	/**
+	 * @param  mixed
+	 * @return bool
+	 */
+	protected function _isValidOrder($order=null)
+	{
+		return ($order && $order instanceof Mage_Sales_Model_Order);
+	}
+
+	/**
+	 * Handle multi-shipping orders.
+	 *
+	 * @param  Varien_Event_Observer
+	 * @return self
+	 */
+	public function handleCheckoutSubmitAllAfter(Varien_Event_Observer $observer)
+	{
+		$order = $observer->getEvent()->getOrder();
+		if (!empty($order)) {
+			$this->_riskOrder->processRiskOrder($order, $observer);
+		} else {
+			$logMessage = sprintf('[%s] No sales/order instances was found.', __CLASS__);
+			$this->_helper->logWarning($logMessage);
+		}
+		return $this;
+	}
+
+	/**
+	  * Log Removed Cart Items
+          * @param   Varien_Event_Observer
+	  * @return  self
+	  */
+	public function addRemovedCartCount(Varien_Event_Observer $observer )
+	{
+		$previous = 0;
+		$previous = Mage::getSingleton('core/session')->getPrevItemQuoteRemoval();
+		$previous++;
+		
+		Mage::getSingleton('core/session')->setPrevItemQuoteRemoval($previous);
+	}
+
+    	public function updateOrderStatus(Varien_Event_Observer $observer)
+    	{
+    	    $event = $observer->getEvent()->getPayload();
+
+    	    $orderId = $event->getCustomerOrderId();
+	    $responseCode = $event->getResponseCode();
+
+	    $order = Mage::getModel("sales/order")->loadByIncrementId($orderId);
+
+	    if( $orderId )
+	    {
+		if( strcmp($responseCode, "Accept") === 0 )
+		{
+			$order->setState("processing", true);
+			$order->setStatus("risk_accept");
+		} elseif ( strcmp($responseCode, "Cancel") === 0 ) {
+			$order->setState("canceled", true);
+			$order->setStatus("risk_cancel");
+		} elseif ( strcmp($responseCode, "Ignore") === 0 ) {
+			$order->setState("holded", true);
+			$order->setStatus("risk_ignore");
+		} elseif ( strcmp($responseCode, "Suspend") === 0 ) {
+			$order->setState("holded", true);
+			$order->setStatus("risk_suspend");
+		} elseif ( strcmp($responseCode, "Reject_Pending") === 0 ) {
+			$order->setState("holded", true);
+			$order->setStatus("risk_rejectpending");
+		} else {
+			Mage::Log("Error: Not a Valid Fraud State: ". $responseCode, Zend_Log::WARN);
+		}
+
+		$order->save();
+	    }
+
+	    return $this;
+    	}
 }

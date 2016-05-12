@@ -15,7 +15,7 @@ http://opensource.org/licenses/osl-3.0.php
 <config>
     <modules>
         <EbayEnterprise_Eb2cFraud>
-            <version>0.9.0</version>
+            <version>0.9.1</version>
         </EbayEnterprise_Eb2cFraud>
     </modules>
     <global>
@@ -77,17 +77,32 @@ http://opensource.org/licenses/osl-3.0.php
             </eb2cfraud>
         </blocks>
         <events>
-            <!-- Update the order create request with collected context data -->
-            <ebayenterprise_order_create_context>
-                <observers>
-                    <ebayenterprise_eb2cfraud_order_create_context_observer>
-                        <type>model</type>
-                        <class>eb2cfraud/observer</class>
-                        <method>handleOrderCreateContextEvent</method>
-                    </ebayenterprise_eb2cfraud_order_create_context_observer>
-                </observers>
-            </ebayenterprise_order_create_context>
-        </events>
+		<checkout_submit_all_after>
+			<observers>
+				<handle_multi_shipping_orders_risk_fraud>
+					<class>eb2cfraud/observer</class>
+					<method>handleCheckoutSubmitAllAfter</method>
+					<type>singleton</type>
+				</handle_multi_shipping_orders_risk_fraud>
+			</observers>
+		</checkout_submit_all_after>
+		<sales_quote_remove_item>
+                	<observers>
+                	    <eb2cfraud_add_cartcount>
+                	    	<class>eb2cfraud/observer</class>
+                	    	<method>addRemovedCartCount</method>
+                    	    </eb2cfraud_add_cartcount>
+                	</observers>
+            	</sales_quote_remove_item>
+	        <ebayenterprise_amqp_message_risk_assessment_reply>
+			<observers>
+				<eb2cfraud_update_order>
+					<class>eb2cfraud/observer</class>
+					<method>updateOrderStatus</method>
+				</eb2cfraud_update_order>
+			</observers>
+		</ebayenterprise_amqp_message_risk_assessment_reply>
+	</events>
     </global>
     <frontend>
         <layout>
@@ -98,6 +113,85 @@ http://opensource.org/licenses/osl-3.0.php
             </updates>
         </layout>
     </frontend>
+    <default>
+        <eb2cfraud>
+            <risk_service>
+		<!-- Can be: pound, ounce, kilogram, gram, unknown https://gitlab.gspt.net/Cheetah/retailordermanagement-sdk/blob/master/src/eBayEnterprise/RetailOrderManagement/Schemas/checkout/1.0/Risk-Service-Datatypes-1.0.xsd for UnitOfWeightType -->
+		<uom>pound</uom>
+                <card_type_map>
+                    <AE>AM</AE>
+                    <VI>VC</VI>
+                    <MC>MC</MC>
+                    <DI>DC</DI>
+                    <JCB>OTHER</JCB>
+                    <SM>OTHER</SM>
+                    <SO>OTHER</SO>
+                    <OT>OTHER</OT>
+                    <cashondelivery>CASH</cashondelivery>
+                    <paypal_express>PY</paypal_express>
+                    <payflow_advanced>PY</payflow_advanced>
+                    <payflow_link>PY</payflow_link>
+                    <hosted_pro>PY</hosted_pro>
+                    <verisign>PY</verisign>
+                    <paypaluk_direct>PY</paypaluk_direct>
+                    <paypaluk_express>PY</paypaluk_express>
+                    <paypal_standard>PY</paypal_standard>
+                    <paypal_direct>PY</paypal_direct>
+                    <paypal_express_bml>BL</paypal_express_bml>
+                    <free>OTHER</free>
+                    <giftcard>GC</giftcard>
+                    <checkmo>OTHER</checkmo>
+                    <ogone>OTHER</ogone>
+                    <purchaseorder>OTHER</purchaseorder>
+                    <banktransfer>OTHER</banktransfer>
+                </card_type_map>
+		<card_name_map>
+			<AE>American Express</AE>
+			<VI>Visa</VI>
+			<MC>MasterCard</MC>
+			<DI>Diners Card</DI>
+			<JCB>JCB</JCB>
+		</card_name_map>
+                <payment_adapter_map>
+                    <authorizenet>eb2cfraud/payment_adapter_authorizenet</authorizenet>
+                    <giftcard>eb2cfraud/payment_adapter_giftcard</giftcard>
+                    <checkmo>eb2cfraud/payment_adapter_checkmo</checkmo>
+                    <ccsave>eb2cfraud/payment_adapter_default</ccsave>
+                    <payflow_advanced>eb2cfraud/payment_adapter_default</payflow_advanced>
+                    <payflow_link>eb2cfraud/payment_adapter_default</payflow_link>
+                    <hosted_pro>eb2cfraud/payment_adapter_default</hosted_pro>
+                    <paypal_express>eb2cfraud/payment_adapter_paypal_express</paypal_express>
+                    <verisign>eb2cfraud/payment_adapter_default</verisign>
+                    <paypaluk_direct>eb2cfraud/payment_adapter_default</paypaluk_direct>
+                    <paypaluk_express>eb2cfraud/payment_adapter_default</paypaluk_express>
+                    <paypal_standard>eb2cfraud/payment_adapter_default</paypal_standard>
+                    <paypal_direct>eb2cfraud/payment_adapter_default</paypal_direct>
+                    <paypal_express_bml>eb2cfraud/payment_adapter_default</paypal_express_bml>
+                    <pbridge>eb2cfraud/payment_adapter_pbridge</pbridge>
+                    <pbridge_authorizenet>eb2cfraud/payment_adapter_pbridge</pbridge_authorizenet>
+                    <pbridge_ogone_direct>eb2cfraud/payment_adapter_pbridge</pbridge_ogone_direct>
+                    <pbridge_paypal_direct>eb2cfraud/payment_adapter_pbridge</pbridge_paypal_direct>
+                    <pbridge_paypaluk_direct>eb2cfraud/payment_adapter_pbridge</pbridge_paypaluk_direct>
+                    <pbridge_verisign>eb2cfraud/payment_adapter_pbridge</pbridge_verisign>
+                    <pbridge_ogone_direct>eb2cfraud/payment_adapter_pbridge</pbridge_ogone_direct>
+                    <pbridge_ogone_direct_debit>eb2cfraud/payment_adapter_pbridge</pbridge_ogone_direct_debit>
+                    <pbridge_worldpay_direct>eb2cfraud/payment_adapter_pbridge</pbridge_worldpay_direct>
+                    <pbridge_cybersource_soap>eb2cfraud/payment_adapter_pbridge</pbridge_cybersource_soap>
+                    <pbridge_dibs>eb2cfraud/payment_adapter_pbridge</pbridge_dibs>
+                    <pbridge_braintree_basic>eb2cfraud/payment_adapter_pbridge</pbridge_braintree_basic>
+                    <pbridge_sagepay_direct>eb2cfraud/payment_adapter_pbridge</pbridge_sagepay_direct>
+                    <pbridge_firstdata>eb2cfraud/payment_adapter_pbridge</pbridge_firstdata>
+                    <pbridge_eway_direct>eb2cfraud/payment_adapter_pbridge</pbridge_eway_direct>
+                    <pbridge_payone_gate>eb2cfraud/payment_adapter_pbridge</pbridge_payone_gate>
+                    <pbridge_paybox_direct>eb2cfraud/payment_adapter_pbridge</pbridge_paybox_direct>
+                    <pbridge_psigate_basic>eb2cfraud/payment_adapter_pbridge</pbridge_psigate_basic>
+                    <pbridge_payone_debit>eb2cfraud/payment_adapter_pbridge</pbridge_payone_debit>
+                    <ogone>eb2cfraud/payment_adapter_default</ogone>
+                    <purchaseorder>eb2cfraud/payment_adapter_purchase_order</purchaseorder>
+                </payment_adapter_map>
+            </risk_service>
+        </eb2cfraud>
+    </default>
     <phpunit>
         <suite>
             <modules>
@@ -106,3 +200,4 @@ http://opensource.org/licenses/osl-3.0.php
         </suite>
     </phpunit>
 </config>
+

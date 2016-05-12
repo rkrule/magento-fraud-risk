@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xsd:schema attributeFormDefault="unqualified" elementFormDefault="qualified"
+            xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+            targetNamespace="http://api.gsicommerce.com/schema/checkout/1.0"
+            xmlns="http://api.gsicommerce.com/schema/checkout/1.0"
+            version="1.0">
+
+    <xsd:element name="RiskServiceErrorResponse" type="RiskServiceErrorResponseType"/>
+    <xsd:complexType name="RiskServiceErrorResponseType">
+        <xsd:sequence>
+            <xsd:element type="xsd:string" name="PrimaryLangId" minOccurs="0"/>
+            <xsd:element name="OrderId" type="xsd:string" minOccurs="0">
+                <xsd:annotation>
+                    <xsd:documentation xml:lang="en">
+                        Order ID from the UcpServiceRequest
+                    </xsd:documentation>
+                </xsd:annotation>
+            </xsd:element>
+            <xsd:element name="StoreId" type="xsd:string" minOccurs="0">
+                <xsd:annotation>
+                    <xsd:documentation xml:lang="en">
+                        Store ID from the UcpServiceRequest
+                    </xsd:documentation>
+                </xsd:annotation>
+            </xsd:element>
+            <xsd:element name="ErrorCode" type="errorCodeEnums">
+                <xsd:annotation>
+                    <xsd:documentation xml:lang="en">
+                        Error code or exception name
+                    </xsd:documentation>
+                </xsd:annotation>
+            </xsd:element>
+            <xsd:element name="ErrorDescription" type="xsd:string" minOccurs="0">
+                <xsd:annotation>
+                    <xsd:documentation xml:lang="en">
+                        Description of the error
+                    </xsd:documentation>
+                </xsd:annotation>
+            </xsd:element>
+            <xsd:element name="ExceptionLog" type="xsd:string" minOccurs="0">
+                <xsd:annotation>
+                    <xsd:documentation xml:lang="en">
+                        The full exception log occurred, if available.
+                    </xsd:documentation>
+                </xsd:annotation>
+            </xsd:element>
+        </xsd:sequence>
+    </xsd:complexType>
+
+    <xsd:simpleType name="errorCodeEnums">
+        <xsd:restriction base="xsd:string">
+            <xsd:enumeration value="ERROR01">
+                <xsd:annotation>
+                    <xsd:documentation xml:lang="en">
+                        Definition: This error will state that the request xml is not valid to the request schema.
+                    </xsd:documentation>
+                </xsd:annotation>
+            </xsd:enumeration>
+            <xsd:enumeration value="ERROR02">
+                <xsd:annotation>
+                    <xsd:documentation xml:lang="en">
+                        Definition: This error will state that the store id is not set by ebay enterprise.
+                    </xsd:documentation>
+                </xsd:annotation>
+            </xsd:enumeration>
+            <xsd:enumeration value="ERROR03">
+                <xsd:annotation>
+                    <xsd:documentation xml:lang="en">
+                        Definition: This error will state that the application is unable to provide response.
+                    </xsd:documentation>
+                </xsd:annotation>
+            </xsd:enumeration>
+            <xsd:enumeration value="ERROR04">
+                <xsd:annotation>
+                    <xsd:documentation xml:lang="en">
+                        Definition: This will state that there is some System Error.
+                    </xsd:documentation>
+                </xsd:annotation>
+            </xsd:enumeration>
+        </xsd:restriction>
+    </xsd:simpleType>
+
+</xsd:schema>
