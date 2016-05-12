@@ -104,4 +104,41 @@ class EbayEnterprise_Eb2cFraud_Model_Observer
 		
 		Mage::getSingleton('core/session')->setPrevItemQuoteRemoval($previous);
 	}
+
+    	public function updateOrderStatus(Varien_Event_Observer $observer)
+    	{
+    	    $event = $observer->getEvent()->getPayload();
+
+    	    $orderId = $event->getCustomerOrderId();
+	    $responseCode = $event->getResponseCode();
+
+	    $order = Mage::getModel("sales/order")->loadByIncrementId($orderId);
+
+	    if( $orderId )
+	    {
+		if( strcmp($responseCode, "Accept") === 0 )
+		{
+			$order->setState("processing", true);
+			$order->setStatus("risk_accept");
+		} elseif ( strcmp($responseCode, "Cancel") === 0 ) {
+			$order->setState("canceled", true);
+			$order->setStatus("risk_cancel");
+		} elseif ( strcmp($responseCode, "Ignore") === 0 ) {
+			$order->setState("holded", true);
+			$order->setStatus("risk_ignore");
+		} elseif ( strcmp($responseCode, "Suspend") === 0 ) {
+			$order->setState("holded", true);
+			$order->setStatus("risk_suspend");
+		} elseif ( strcmp($responseCode, "Reject_Pending") === 0 ) {
+			$order->setState("holded", true);
+			$order->setStatus("risk_rejectpending");
+		} else {
+			Mage::Log("Error: Not a Valid Fraud State: ". $responseCode, Zend_Log::WARN);
+		}
+
+		$order->save();
+	    }
+
+	    return $this;
+    	}
 }

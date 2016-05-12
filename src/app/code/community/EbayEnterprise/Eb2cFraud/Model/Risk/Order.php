@@ -151,31 +151,9 @@ class EbayEnterprise_Eb2cFraud_Model_Risk_Order
 	$apiConfig = $this->_setupApiConfig($payload, $this->_getNewEmptyResponse());
         $response = $this->_sendRequest($this->_getApi($apiConfig));
 
-	Mage::Log("Response: ". print_r($response, true));
+        $order->setState("payment_review", true);
+	$order->setStatus("risk_processing", true);	
+	$order->save();
 
-	/* Last Data Type to Add to Message
-		$transResponsesNode = $domtree->createElementNS("http://api.gsicommerce.com/schema/checkout/1.0", "TransactionResponses");
-		$cvv2Response = $paymentAdditional['cvv2_response_code'];
-		$avsResponse = $paymentAdditional['avs_response_code'];		
-		$approval = $paymentAdditional['response_code'];
-
-		$transResponseCvv2Node = $domtree->createElementNS("http://api.gsicommerce.com/schema/checkout/1.0", "TransactionResponse", $cvv2Response);
-		$transResponseAttr = $domtree->createAttribute('ResponseType');
-		$transResponseAttr->value = "cvv2";
-		$transResponseCvv2Node->appendChild($transResponseAttr);
-		$transResponsesNode->appendChild($transResponseCvv2Node);
-
-		$avsAddrResponseNode = 	$domtree->createElementNS("http://api.gsicommerce.com/schema/checkout/1.0", "TransactionResponse", $avsResponse);
-		$avsAddrResponseAttr = $domtree->createAttribute('ResponseType');
-		$avsAddrResponseAttr->value = "avsAddr";
-		$avsAddrResponseNode->appendChild($avsAddrResponseAttr);
-		$transResponsesNode->appendChild($avsAddrResponseNode);
-
-		$avsAddrResponseNodeZip =  $domtree->createElementNS("http://api.gsicommerce.com/schema/checkout/1.0", "TransactionResponse", $avsResponse);
-                $avsAddrResponseAttrZip = $domtree->createAttribute('ResponseType');
-                $avsAddrResponseAttrZip->value = "avsZip";
-                $avsAddrResponseNodeZip->appendChild($avsAddrResponseAttrZip);
-                $transResponsesNode->appendChild($avsAddrResponseNodeZip);
-	*/
 	}
 }

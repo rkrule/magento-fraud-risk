@@ -150,6 +150,7 @@ class EbayEnterprise_RiskService_Sdk_Api
 	protected function _setErrorResponseBody()
 	{
 		$this->_replyPayload = $this->_config->getError();
+
 		return $this;
 	}
 
@@ -188,7 +189,8 @@ class EbayEnterprise_RiskService_Sdk_Api
 			Mage::log($logMessage, Zend_Log::DEBUG);
 		}
 	
-		$hostname = "https://". $this->_config->getEndpoint() . "/v1.0/stores/MAGT1/risk/fraud/assess.xml";
+		//Note this is a really crude way of doing this, but since this SDK is only for Risk Assess right now... IDC
+		$hostname = "https://". $this->_config->getEndpoint() . "/v1.0/stores/". $this->_config->getStoreId() . "/risk/fraud/assess.xml";
 
 		$this->_lastRequestsResponse = Requests::post(
 			$hostname,

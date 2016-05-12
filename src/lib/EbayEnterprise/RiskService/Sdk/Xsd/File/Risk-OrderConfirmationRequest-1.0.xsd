@@ -1,0 +1,335 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns="http://api.gsicommerce.com/schema/checkout/1.0" targetNamespace="http://api.gsicommerce.com/schema/checkout/1.0" elementFormDefault="qualified" attributeFormDefault="unqualified" version="1.0">
+<xsd:include schemaLocation="Risk-Service-Datatypes-1.0.xsd"/>
+	<xsd:element name="RiskOrderConfirmationRequest">
+		<xsd:annotation>
+			<xsd:documentation>
+                One of the following actions should apply in order for the RiskOrderConfirmationRequest call to be made:
+                -Credit issued (price adjustment, customer appeasement)
+                -Return processed (merchandise was returned)
+                -Shipment
+                -Cancel
+            </xsd:documentation>
+		</xsd:annotation>
+		<xsd:complexType>
+			<xsd:sequence>
+				<xsd:element name="Order" type="RiskOrderConfirmationType"/>
+			</xsd:sequence>
+		</xsd:complexType>
+	</xsd:element>
+	<xsd:complexType name="RiskOrderConfirmationType">
+		<xsd:sequence>
+			<xsd:element name="OrderId" type="OrderIdType"/>
+			<xsd:element name="StoreId" type="StoreIdType"/>
+			<xsd:element name="StatusDate" type="StatusDateType"/>
+			<xsd:element name="ConfirmationType" type="ConfirmationType"/>
+			<xsd:element name="OrderStatus" type="OrderStatusType" minOccurs="0"/>
+			<xsd:element name="OrderStatusReason" type="OrderStatusReasonType" minOccurs="0"/>
+			<xsd:element name="LineDetails" type="LineDetailsListType" minOccurs="0"/>
+			<xsd:element name="CustomAttributesList" type="CustomAttributesListType" minOccurs="0"/>
+		</xsd:sequence>
+	</xsd:complexType>
+	<xsd:simpleType name="StatusDateType">
+		<xsd:annotation>
+			<xsd:documentation xml:lang="en">
+                DateTime the status change occured.
+            </xsd:documentation>
+		</xsd:annotation>
+		<xsd:restriction base="xsd:dateTime"/>
+	</xsd:simpleType>
+	<xsd:simpleType name="ConfirmationType">
+		<xsd:annotation>
+			<xsd:documentation xml:lang="en">
+                One of the following actions should apply in order for the OrderConfirmation call to be made by a
+                client.
+            </xsd:documentation>
+		</xsd:annotation>
+		<xsd:restriction base="confirmationTypeEnums"/>
+	</xsd:simpleType>
+	<xsd:simpleType name="confirmationTypeEnums">
+		<xsd:restriction base="xsd:string">
+			<xsd:enumeration value="CREDIT ISSUED">
+				<xsd:annotation>
+					<xsd:documentation xml:lang="en">
+                        Definition: use this value if the there is a credit issues due to price adjustment, customer
+                        appeasement or something else.
+                    </xsd:documentation>
+				</xsd:annotation>
+			</xsd:enumeration>
+			<xsd:enumeration value="RETURN PROCESSED">
+				<xsd:annotation>
+					<xsd:documentation xml:lang="en">
+                        Definition: use this value if the merchandise was returned.
+                    </xsd:documentation>
+				</xsd:annotation>
+			</xsd:enumeration>
+			<xsd:enumeration value="SHIPMENT">
+				<xsd:annotation>
+					<xsd:documentation xml:lang="en">
+                        Definition: use this value if the items in this order are shipped (either all the items or
+                        part).
+                    </xsd:documentation>
+				</xsd:annotation>
+			</xsd:enumeration>
+			<xsd:enumeration value="CANCEL">
+				<xsd:annotation>
+					<xsd:documentation xml:lang="en">
+                        Definition: use this value if the order was cancelled.
+                    </xsd:documentation>
+				</xsd:annotation>
+			</xsd:enumeration>
+			<xsd:enumeration value="OTHER">
+				<xsd:annotation>
+					<xsd:documentation xml:lang="en">
+                        Definition: use this value if there is a different reason other than the above.
+                    </xsd:documentation>
+				</xsd:annotation>
+			</xsd:enumeration>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<xsd:simpleType name="OrderStatusType">
+		<xsd:annotation>
+			<xsd:documentation xml:lang="en">
+                One of the following actions should apply in order for the OrderConfirmation call to be made by a
+                client.
+            </xsd:documentation>
+		</xsd:annotation>
+		<xsd:restriction base="orderStatusTypeEnums"/>
+	</xsd:simpleType>
+	<xsd:simpleType name="orderStatusTypeEnums">
+		<xsd:restriction base="xsd:string">
+			<xsd:enumeration value="IN_PROCESS">
+				<xsd:annotation>
+					<xsd:documentation xml:lang="en">
+                        Definition: use this value if the at least few items of the order are in process.
+                    </xsd:documentation>
+				</xsd:annotation>
+			</xsd:enumeration>
+			<xsd:enumeration value="SHIPPED">
+				<xsd:annotation>
+					<xsd:documentation xml:lang="en">
+                        Definition: use this value if the whole order has been shipped.
+                    </xsd:documentation>
+				</xsd:annotation>
+			</xsd:enumeration>
+			<xsd:enumeration value="CANCELLED">
+				<xsd:annotation>
+					<xsd:documentation xml:lang="en">
+                        Definition: use this value if the whole order has been cancelled.
+                    </xsd:documentation>
+				</xsd:annotation>
+			</xsd:enumeration>
+			<xsd:enumeration value="COMPLETED">
+				<xsd:annotation>
+					<xsd:documentation xml:lang="en">
+                        Definition: use this value if the whole order is completed, either shipped or cancelled.
+                    </xsd:documentation>
+				</xsd:annotation>
+			</xsd:enumeration>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<xsd:simpleType name="OrderStatusReasonType">
+		<xsd:annotation>
+			<xsd:documentation xml:lang="en">
+                The order status reason description which gives information about what does the order status means.
+            </xsd:documentation>
+		</xsd:annotation>
+		<xsd:restriction base="xsd:string">
+			<xsd:maxLength value="200"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<xsd:complexType name="LineDetailsListType">
+		<xsd:annotation>
+			<xsd:documentation xml:lang="en">
+                Definition: Contains the line items on the order corresponding to this confirmation type.
+            </xsd:documentation>
+		</xsd:annotation>
+		<xsd:sequence>
+			<xsd:element name="LineDetail" type="LineDetailType" maxOccurs="unbounded"/>
+		</xsd:sequence>
+	</xsd:complexType>
+	<xsd:complexType name="LineDetailType">
+		<xsd:sequence>
+			<xsd:element name="SKU" type="nonEmptyString">
+				<xsd:annotation>
+					<xsd:documentation xml:lang="en">
+                        Definition: A unique identifier for a distinct product.
+                        Sample Data: 13548975
+                    </xsd:documentation>
+				</xsd:annotation>
+			</xsd:element>
+			<xsd:element name="Quantity" type="xsd:int">
+				<xsd:annotation>
+					<xsd:documentation xml:lang="en">
+                        Definition: The number of units in this item corresponding to this confirmation/package.
+                        Doesn't need to match with total quantity for this item in the order.
+                        Sample Data: 3
+                    </xsd:documentation>
+				</xsd:annotation>
+			</xsd:element>
+			<xsd:element name="ItemStatus" type="ItemStatusType"/>
+			<xsd:element name="TrackingNumber" type="TrackingNumberType" minOccurs="0"/>
+			<xsd:element name="ShippingVendorCode" type="ShippingVendorCodeType" minOccurs="0"/>
+			<xsd:element name="DeliveryMethod" type="DeliveryMethodType" minOccurs="0"/>
+			<xsd:element name="ShipScheduledDate" type="xsd:dateTime" minOccurs="0">
+				<xsd:annotation>
+					<xsd:documentation>The scheduled ship date of this item in yyyy-MM-ddThh24:mm:ss format
+                    </xsd:documentation>
+				</xsd:annotation>
+			</xsd:element>
+			<xsd:element name="ShipActualDate" type="xsd:dateTime" minOccurs="0">
+				<xsd:annotation>
+					<xsd:documentation>The actual ship date/time of this item in yyyy-MM-ddThh24:mm:ss format
+                    </xsd:documentation>
+				</xsd:annotation>
+			</xsd:element>
+		</xsd:sequence>
+	</xsd:complexType>
+	<xsd:complexType name="CustomAttributesListType">
+		<xsd:sequence>
+			<xsd:element ref="CustomAttribute" maxOccurs="unbounded"/>
+		</xsd:sequence>
+	</xsd:complexType>
+	<xsd:element name="CustomAttribute">
+		<xsd:annotation>
+			<xsd:documentation>Definition: A custom attribute in key and value pairs.</xsd:documentation>
+		</xsd:annotation>
+		<xsd:complexType>
+			<xsd:sequence>
+				<xsd:element name="AttributeName" type="AttributeNameType"/>
+				<xsd:element name="AttributeValue" type="AttributeValueType" nillable="true"/>
+			</xsd:sequence>
+		</xsd:complexType>
+	</xsd:element>
+	<xsd:simpleType name="AttributeNameType">
+		<xsd:restriction base="xsd:string">
+			<xsd:minLength value="1"/>
+			<xsd:maxLength value="100"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<xsd:simpleType name="AttributeValueType">
+		<xsd:restriction base="xsd:string">
+			<xsd:minLength value="1"/>
+			<xsd:maxLength value="512"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<xsd:simpleType name="ItemStatusType">
+		<xsd:annotation>
+			<xsd:documentation xml:lang="en">
+                Definition: The current status of this item with enumerated values.
+            </xsd:documentation>
+		</xsd:annotation>
+		<xsd:restriction base="itemStatusEnums"/>
+	</xsd:simpleType>
+	<xsd:simpleType name="itemStatusEnums">
+		<xsd:restriction base="xsd:string">
+			<xsd:enumeration value="SHIPPED">
+				<xsd:annotation>
+					<xsd:documentation xml:lang="en">
+                        Definition: use this value if this item is shipped.
+                    </xsd:documentation>
+				</xsd:annotation>
+			</xsd:enumeration>
+			<xsd:enumeration value="PENDING">
+				<xsd:annotation>
+					<xsd:documentation xml:lang="en">
+                        Definition: use this value if this item is awaiting for shipment
+                    </xsd:documentation>
+				</xsd:annotation>
+			</xsd:enumeration>
+			<xsd:enumeration value="RETURNED">
+				<xsd:annotation>
+					<xsd:documentation xml:lang="en">
+                        Definition: use this value if this item is returned.
+                    </xsd:documentation>
+				</xsd:annotation>
+			</xsd:enumeration>
+			<xsd:enumeration value="CANCELLED">
+				<xsd:annotation>
+					<xsd:documentation xml:lang="en">
+                        Definition: use this value if this item is cancelled.
+                    </xsd:documentation>
+				</xsd:annotation>
+			</xsd:enumeration>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<xsd:simpleType name="shippingVendorCodeEnums">
+		<xsd:restriction base="xsd:string">
+			<xsd:enumeration value="UPS">
+				<xsd:annotation>
+					<xsd:documentation xml:lang="en">
+                        Definition: use this value if the the carrier used for thid shipment is United Parcel
+                        Service.
+                    </xsd:documentation>
+				</xsd:annotation>
+			</xsd:enumeration>
+			<xsd:enumeration value="FEDEX">
+				<xsd:annotation>
+					<xsd:documentation xml:lang="en">
+                        Definition: use this value if the the carrier used for this shipment is Federal Express.
+                    </xsd:documentation>
+				</xsd:annotation>
+			</xsd:enumeration>
+			<xsd:enumeration value="USPS">
+				<xsd:annotation>
+					<xsd:documentation xml:lang="en">
+                        Definition: use this value if the the carrier used for this shipment is United States
+                        Parcel Service.
+                    </xsd:documentation>
+				</xsd:annotation>
+			</xsd:enumeration>
+			<xsd:enumeration value="DHL">
+				<xsd:annotation>
+					<xsd:documentation xml:lang="en">
+                        Definition: se this value if the the carrier used for this shipment is DHL.
+                    </xsd:documentation>
+				</xsd:annotation>
+			</xsd:enumeration>
+			<xsd:enumeration value="OTHER">
+				<xsd:annotation>
+					<xsd:documentation xml:lang="en">
+                        Definition: se this value if the the carrier used for this shipment is different from
+                        the above options.
+                    </xsd:documentation>
+				</xsd:annotation>
+			</xsd:enumeration>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<xsd:simpleType name="ShippingVendorCodeType">
+		<xsd:annotation>
+			<xsd:documentation>Carrier Alpha Code code for carriers.
+            </xsd:documentation>
+		</xsd:annotation>
+		<xsd:restriction base="shippingVendorCodeEnums"/>
+	</xsd:simpleType>
+	<xsd:simpleType name="TrackingNumberType">
+		<xsd:annotation>
+			<xsd:documentation>Tracking Number associated with this package if the item is shipped
+            </xsd:documentation>
+		</xsd:annotation>
+		<xsd:restriction base="xsd:string">
+			<xsd:maxLength value="64"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<xsd:simpleType name="DeliveryMethodType">
+		<xsd:annotation>
+			<xsd:documentation><![CDATA[
+                            Represents the selected delivery method (aka shipping methods). Sample possible values include:
+                            <ul>
+                                <li>STANDARD</li>
+                                <li>EXPRESS</li>
+                                <li>1DAY</li>
+                                <li>2DAY</li>
+                                <li>3DAY</li>
+                                <li>SATURDAY</li>
+                                <li>INSTOREPICKUP</li>
+                                <li>SHIPTOSTORE</li>
+                                <li>EMAIL</li>
+                            </ul>
+                          ]]></xsd:documentation>
+		</xsd:annotation>
+		<xsd:restriction base="xsd:string">
+			<xsd:maxLength value="20"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+</xsd:schema>

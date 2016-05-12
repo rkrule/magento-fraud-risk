@@ -31,8 +31,6 @@ class EbayEnterprise_RiskService_Sdk_Xsd_Validator
 		$doc = $this->_loadXmlDoc($xmlString);
 		$originalUseErrors = $this->_setupValidationErrorHandling();
 
-		Mage::Log("XML Payload: ". print_r($doc->saveXML(), true));
-
 		$isValid = $doc->schemaValidate($schemaFile);
 		$errors = $this->_retrieveErrors();
 		$this->_teardownValidationErrorHandling($originalUseErrors);

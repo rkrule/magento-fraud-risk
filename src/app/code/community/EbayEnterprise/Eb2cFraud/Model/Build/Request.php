@@ -514,7 +514,7 @@ class EbayEnterprise_Eb2cFraud_Model_Build_Request
 	$subPayloadCustomer->setEmail($this->_order->getCustomerEmail());
 
 	$this->_buildTelephone($subPayloadCustomer->getTelephone(), $this->_order->getBillingAddress())
-                ->_buildAddress($subPayloadCustomer->getAddress(), $this->_order->getBillingAddress());
+                ->_buildAddress($subPayloadCustomer->getAddress(), $this->_order->getShippingAddress());
 
 	// MemberLoggedIn
 	$sessionCustomer = Mage::getSingleton("customer/session");
@@ -792,8 +792,6 @@ class EbayEnterprise_Eb2cFraud_Model_Build_Request
      */
     protected function _buildHttpHeaders(EbayEnterprise_RiskService_Sdk_Http_IHeaders $subPayloadHttpHeaders)
     {
-	Mage::Log("HTTP Headers: ". print_r($this->_getHttpHeaders(), true));
-
 	$httpHeaderZend = array(
 		array( 'name' => 'host', 'message' => $this->_httpHelper->getHttpHost()),
 		array( 'name' => 'origin', 'message' => $this->_httpHelper->getHttpOrigin()),
@@ -810,11 +808,14 @@ class EbayEnterprise_Eb2cFraud_Model_Build_Request
 	);
 
 	foreach ($httpHeaderZend as $headerProperty) {
-		if( $headerProperty['message'] )
+		if( array_key_exists('message', $headerProperty) )
 		{
-			$subPayloadHttpHeader = $subPayloadHttpHeaders->getEmptyHttpHeader();
-			$this->_buildHttpHeader($subPayloadHttpHeader, $headerProperty['name'], $headerProperty['message']);
-			$subPayloadHttpHeaders->offsetSet($subPayloadHttpHeader);
+			if( $headerProperty['message'] )
+			{
+				$subPayloadHttpHeader = $subPayloadHttpHeaders->getEmptyHttpHeader();
+				$this->_buildHttpHeader($subPayloadHttpHeader, $headerProperty['name'], $headerProperty['message']);
+				$subPayloadHttpHeaders->offsetSet($subPayloadHttpHeader);
+			}
 		}
 	}
 

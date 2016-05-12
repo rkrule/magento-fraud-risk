@@ -124,6 +124,14 @@ class EbayEnterprise_RiskService_Sdk_Config
 	/**
 	 * @return string
 	 */
+	public function getStoreId()
+	{
+		return $this->_storeId;
+	}
+
+	/**
+	 * @return string
+	 */
 	public function getEndpoint()
 	{
 		return $this->_host;

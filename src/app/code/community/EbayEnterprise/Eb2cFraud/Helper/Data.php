@@ -202,9 +202,6 @@ class EbayEnterprise_Eb2cFraud_Helper_Data extends Mage_Core_Helper_Abstract
 	 */
 	public function getMapEb2cFraudPaymentMethod(Mage_Sales_Model_Order_Payment $payment)
 	{
-		Mage::Log("CC Type: ". print_r($payment->getCcType(), true));
-		Mage::Log("CC Method: ". print_r($payment->getMethod(), true));
-
 		$method = $this->_config->getTenderNameForCcType($payment->getCcType())
 			?: $this->_config->getTenderNameForCcType($payment->getMethod());
 		return $method ?: static::RISK_SERVICE_DEFAULT_PAYMENT_METHOD;

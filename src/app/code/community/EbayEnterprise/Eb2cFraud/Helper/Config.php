@@ -96,7 +96,7 @@ class EbayEnterprise_Eb2cFraud_Helper_Config
 	 */
 	public function getApiKey($store=null)
 	{
-		return Mage::helper('core')->decrypt(Mage::getStoreConfig(static::API_KEY, $store));
+		return Mage::getStoreConfig(static::API_KEY, $store);
 	}
 
 	/**
