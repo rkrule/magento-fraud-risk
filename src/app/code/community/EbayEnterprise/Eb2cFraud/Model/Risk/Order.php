@@ -29,6 +29,10 @@ class EbayEnterprise_Eb2cFraud_Model_Risk_Order
     	protected $_request;
 	/** @var EbayEnterprise_RiskService_Sdk_Response */
 	protected $_response;
+	/** @var EbayEnterprise_MageLog_Helper_Data */
+    	protected $_logger;
+	/** @var EbayEnterprise_MageLog_Helper_Context */
+   	protected $_context;
 
 	/**
 	 * @param array $initParams optional keys:
@@ -39,12 +43,14 @@ class EbayEnterprise_Eb2cFraud_Model_Risk_Order
 	public function __construct(array $initParams=array())
 	{
 
-		list($this->_helper, $this->_httpHelper, $this->_request, $this->_config, $this->_response) = $this->_checkTypes(
+		list($this->_helper, $this->_httpHelper, $this->_request, $this->_config, $this->_response, $this->_logger, $this->_context) = $this->_checkTypes(
 			$this->_nullCoalesce($initParams, 'helper', Mage::helper('eb2cfraud')),
 			$this->_nullCoalesce($initParams, 'http_helper', Mage::helper('eb2cfraud/http')),
 		        $this->_nullCoalesce($initParams, 'request', $this->_getNewSdkInstance('EbayEnterprise_RiskService_Sdk_Request')),
 			$this->_nullCoalesce($initParams, 'config', Mage::helper('eb2cfraud/config')),
-			$this->_nullCoalesce($initParams, 'request', $this->_getNewSdkInstance('EbayEnterprise_RiskService_Sdk_Response'))
+			$this->_nullCoalesce($initParams, 'request', $this->_getNewSdkInstance('EbayEnterprise_RiskService_Sdk_Response')),
+			$this->_nullCoalesce($initParams, 'logger', Mage::helper('ebayenterprise_magelog')),
+			$this->_nullCoalesce($initParams, 'context', Mage::helper('ebayenterprise_magelog/context'))
 		);
 	}
 
@@ -54,6 +60,8 @@ class EbayEnterprise_Eb2cFraud_Model_Risk_Order
 	 * @param  EbayEnterprise_Eb2cFraud_Helper_Data
 	 * @param  EbayEnterprise_Eb2cFraud_Helper_Http
 	 * @param  EbayEnterprise_Eb2cFraud_Helper_Config
+	 * @param  EbayEnterprise_MageLog_Helper_Data
+	 * @param  EbayEnterprise_MageLog_Helper_Context
 	 * @return array
 	 */
 	protected function _checkTypes(
@@ -61,9 +69,11 @@ class EbayEnterprise_Eb2cFraud_Model_Risk_Order
 		EbayEnterprise_Eb2cFraud_Helper_Http $httpHelper,
         EbayEnterprise_RiskService_Sdk_Request $request,
 		EbayEnterprise_Eb2cFraud_Helper_Config $config,
-		EbayEnterprise_RiskService_Sdk_Response $response
+		EbayEnterprise_RiskService_Sdk_Response $response,
+		EbayEnterprise_MageLog_Helper_Data $logger,
+		EbayEnterprise_MageLog_Helper_Context $context
 	) {
-		return array($helper, $httpHelper, $request, $config, $response);
+		return array($helper, $httpHelper, $request, $config, $response, $logger, $context);
 	}
 
     /**
@@ -149,7 +159,14 @@ class EbayEnterprise_Eb2cFraud_Model_Risk_Order
         ))->build();
 
 	$apiConfig = $this->_setupApiConfig($payload, $this->_getNewEmptyResponse());
+
+	$logMessage = 'Sending fraud assessment request.';
+        $this->_logger->debug($logMessage, $this->_context->getMetaData(__CLASS__, ['rom_request_body' => $payload->serialize()]));
+
         $response = $this->_sendRequest($this->_getApi($apiConfig));
+
+	$logMessage = 'Received fraud assessment request response / ack.';
+        $this->_logger->debug($logMessage, $this->_context->getMetaData(__CLASS__, ['rom_request_body' => $response->serialize()]));
 
         $order->setState("payment_review", true);
 	$order->setStatus("risk_processing", true);	
