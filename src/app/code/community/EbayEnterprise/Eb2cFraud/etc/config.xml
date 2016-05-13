@@ -189,6 +189,24 @@ http://opensource.org/licenses/osl-3.0.php
                     <ogone>eb2cfraud/payment_adapter_default</ogone>
                     <purchaseorder>eb2cfraud/payment_adapter_purchase_order</purchaseorder>
                 </payment_adapter_map>
+		<response_codes>
+			<Accept>risk_accept</Accept>
+			<Manual_Accept>risk_accept</Manual_Accept>
+			<Cancel>risk_cancel</Cancel>
+			<Reject>risk_reject</Reject>
+			<Ignore>risk_ignore</Ignore>
+			<Suspend>risk_suspend</Suspend>
+			<Reject_Pending>risk_rejectpending</Reject_Pending>
+		</response_codes>
+		<response_codes_states>
+			<Accept>processing</Accept>
+			<Manual_Accept>processing</Manual_Accept>
+			<Cancel>canceled</Cancel>
+			<Reject>canceled</Reject>
+			<Ignore>holded</Ignore>
+			<Suspend>holded</Suspend>
+			<Reject_Pending>holded</Reject_Pending>
+		</response_codes_states>
             </risk_service>
         </eb2cfraud>
     </default>

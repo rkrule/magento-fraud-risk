@@ -82,6 +82,7 @@ class EbayEnterprise_Eb2cFraud_Model_Observer
 	public function handleCheckoutSubmitAllAfter(Varien_Event_Observer $observer)
 	{
 		$order = $observer->getEvent()->getOrder();
+
 		if (!empty($order)) {
 			$this->_riskOrder->processRiskOrder($order, $observer);
 		} else {
@@ -114,28 +115,10 @@ class EbayEnterprise_Eb2cFraud_Model_Observer
 
 	    $order = Mage::getModel("sales/order")->loadByIncrementId($orderId);
 
-	    if( $orderId )
+	    if( !empty($order) )
 	    {
-		if( strcmp($responseCode, "Accept") === 0 )
-		{
-			$order->setState("processing", true);
-			$order->setStatus("risk_accept");
-		} elseif ( strcmp($responseCode, "Cancel") === 0 ) {
-			$order->setState("canceled", true);
-			$order->setStatus("risk_cancel");
-		} elseif ( strcmp($responseCode, "Ignore") === 0 ) {
-			$order->setState("holded", true);
-			$order->setStatus("risk_ignore");
-		} elseif ( strcmp($responseCode, "Suspend") === 0 ) {
-			$order->setState("holded", true);
-			$order->setStatus("risk_suspend");
-		} elseif ( strcmp($responseCode, "Reject_Pending") === 0 ) {
-			$order->setState("holded", true);
-			$order->setStatus("risk_rejectpending");
-		} else {
-			Mage::Log("Error: Not a Valid Fraud State: ". $responseCode, Zend_Log::WARN);
-		}
-
+		$order->setState($this->_config->getOrderStateForResponseCode($responseCode), true);
+		$order->setStatus($this->_config->getOrderStatusForResponseCode($responseCode));
 		$order->save();
 	    }
 

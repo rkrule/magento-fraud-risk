@@ -31,6 +31,8 @@ class EbayEnterprise_Eb2cFraud_Helper_Config
 	const CARD_NAME_MAP = 'eb2cfraud/risk_service/card_name_map';
         const SHIPPING_METHOD_MAP = 'eb2cfraud/risk_service/shipping_method_map';
         const PAYMENT_ADAPTER_MAP = 'eb2cfraud/risk_service/payment_adapter_map';
+	const FRAUD_RESPONSE_CODE_MAP = 'eb2cfraud/risk_service/response_codes';
+	const FRAUD_RESPONSE_CODE_STATES_MAP = 'eb2cfraud/risk_service/response_codes_states';
 	const UOM = 'eb2cfraud/risk_service/uom';
 
 	/**
@@ -156,6 +158,28 @@ class EbayEnterprise_Eb2cFraud_Helper_Config
     }
 
     /**
+     * retrieve the fraud reason code map settings from store config
+     *
+     * @param  mixed
+     * @return string
+     */
+    public function getFraudResponseCodeMap($store=null)
+    {
+        return Mage::getStoreConfig(static::FRAUD_RESPONSE_CODE_MAP, $store);
+    }
+
+    /**
+     * retrieve the fraud reason code map to order states from store config
+     *
+     * @param  mixed
+     * @return string
+     */
+    public function getFraudResponseCodeStatesMap($store=null)
+    {
+        return Mage::getStoreConfig(static::FRAUD_RESPONSE_CODE_STATES_MAP, $store);
+    }
+
+    /**
      * retrieve the unit of measure for the store
      *
      * @param  mixed
@@ -177,7 +201,7 @@ class EbayEnterprise_Eb2cFraud_Helper_Config
         if (isset($types[$creditCardType])) {
             return $types[$creditCardType];
         }
-        throw Mage::exception('EbayEnterprise_CreditCard', self::UNKNOWN_CARD_TYPE);
+        throw Mage::exception('EbayEnterprise_Eb2cFraud', self::UNKNOWN_CARD_TYPE);
     }
 
     /**
@@ -191,6 +215,36 @@ class EbayEnterprise_Eb2cFraud_Helper_Config
         if (isset($types[$creditCardType])) {
             return $types[$creditCardType];
         }
+    }
+
+    /**
+     * Get Order Status for Fraud ResponseCode.
+     * @param  string $responseCode
+     * @return string
+     */
+    public function getOrderStatusForResponseCode($responseCode)
+    {
+        $codes = $this->getFraudResponseCodeMap();
+        if (isset($codes[$responseCode])) {
+            return $codes[$responseCode];
+        }
+
+	throw Mage::exception('EbayEnterprise_Eb2cFraud', "Unknown Fraud Response Code");
+    }
+
+    /**
+     * Get Order State for Fraud ResponseCode.
+     * @param  string $responseCode
+     * @return string
+     */
+    public function getOrderStateForResponseCode($responseCode)
+    {
+        $codes = $this->getFraudResponseCodeStatesMap();
+        if (isset($codes[$responseCode])) {
+            return $codes[$responseCode];
+        }
+
+        throw Mage::exception('EbayEnterprise_Eb2cFraud', "Unknown Fraud Response Code");
     }
 }
 

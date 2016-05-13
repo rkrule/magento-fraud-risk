@@ -356,4 +356,16 @@ class EbayEnterprise_Eb2cFraud_Helper_Data extends Mage_Core_Helper_Abstract
                 Mage::log($logMessage, Zend_Log::DEBUG);
                 return $this;
         }
+	
+	/**
+         * Scrub the auth request XML message of any sensitive data - CVV, CC number.
+         * @param  string $xml
+         * @return string
+         */
+        public function cleanAuthXml($xml)
+        {
+             $xml = preg_replace('#(\<(?:Encrypted)?CardSecurityCode\>).*(\</(?:Encrypted)?CardSecurityCode\>)#', '$1***$2', $xml);
+             $xml = preg_replace('#(\<(?:Encrypted)?PaymentAccountUniqueId.*?\>).*(\</(?:Encrypted)?PaymentAccountUniqueId\>)#', '$1***$2', $xml);
+             return $xml;
+        }
 }
