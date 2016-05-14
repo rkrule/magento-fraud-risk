@@ -34,11 +34,16 @@ class EbayEnterprise_Eb2cFraud_Model_Payment_Adapter_Default
 			->setExtractIsToken(static::IS_TOKEN)
 			->setExtractPaymentAccountBin($this->_helper->getAccountBin($payment))
 			->setExtractExpireDate($this->_helper->getPaymentExpireDate($payment))
-			->setExtractCardType($this->_helper->getMapEb2cFraudPaymentMethod($payment))
-			->setExtractTransactionResponses(array(
+			->setExtractCardType($this->_helper->getMapEb2cFraudPaymentMethod($payment));
+
+		if( array_key_exists('avs_response_code', $additionalInformation) && array_key_exists('cvv2_response_code', $additionalInformation))
+		{
+			$this->setExtractTransactionResponses(array(
 					array('type' => 'avsZip', 'response' => $additionalInformation['avs_response_code']),
 					array('type' => 'avsAddr', 'response' => $additionalInformation['avs_response_code']),
 					array('type' => 'cvv2',	   'response' => $additionalInformation['cvv2_response_code'])));
+		}
+
 		return $this;
 	}
 }
