@@ -115,7 +115,7 @@ class EbayEnterprise_Eb2cFraud_Model_Observer
 
 	    $order = Mage::getModel("sales/order")->loadByIncrementId($orderId);
 
-	    if( !empty($order) )
+	    if( $order->getId() )
 	    {
 		$order->setState($this->_config->getOrderStateForResponseCode($responseCode), true);
 		$order->setStatus($this->_config->getOrderStatusForResponseCode($responseCode));
