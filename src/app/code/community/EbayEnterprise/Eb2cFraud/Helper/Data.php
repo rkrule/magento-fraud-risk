@@ -250,15 +250,15 @@ class EbayEnterprise_Eb2cFraud_Helper_Data extends Mage_Core_Helper_Abstract
 	}
 
 	/**
-	 * Decrypt the encrypted credit card number and return base64 encoded string hash with sha1 algorithm.
+	 * Decrypt the encrypted credit card number
 	 *
 	 * @param  Mage_Sales_Model_Order_Payment $payment
 	 * @return string | null
 	 */
 	public function getAccountUniqueId(Mage_Sales_Model_Order_Payment $payment)
 	{
-		$cc = $payment->getCcNumber();
-		return $cc;
+		$cc = $this->_decryptCc($payment);
+		return $cc ? $cc : $payment->getCcNumber();
 	}
 
 	/**
