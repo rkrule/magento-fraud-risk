@@ -196,4 +196,20 @@ class EbayEnterprise_Eb2cFraud_Helper_Http extends Mage_Core_Helper_Http
         $request = $this->_getRequest();
         return $request->getPost($request->getPost(static::JSC_FIELD_NAME, ''), '');
     }
+
+    /**
+     * Get all header data.
+     *
+     * @return array
+     */
+     public function getHeaderData()
+     {
+	$headers = array();
+	foreach ($_SERVER as $name => $value) {
+		if (substr($name, 0, 5) == 'HTTP_') {
+			$headers[str_replace(' ', '-', ucwords(strtolower(str_replace('_', ' ', substr($name, 5)))))] = $value;
+		}
+	}
+	return $headers;
+     }
 }
