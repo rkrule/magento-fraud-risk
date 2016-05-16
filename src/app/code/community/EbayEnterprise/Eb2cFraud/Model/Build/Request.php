@@ -832,21 +832,6 @@ class EbayEnterprise_Eb2cFraud_Model_Build_Request
      */
     protected function _buildHttpHeaders(EbayEnterprise_RiskService_Sdk_Http_IHeaders $subPayloadHttpHeaders)
     {
-	/*$httpHeaderZend = array(
-		array( 'name' => 'host', 'message' => $this->_httpHelper->getHttpHost()),
-		array( 'name' => 'origin', 'message' => $this->_httpHelper->getHttpOrigin()),
-		array( 'name' => 'x-prototype-version', 'message' => $this->_httpHelper->getHttpXPrototypeVersion()),
-		array( 'name' => 'x-requested-with', 'message' => $this->_httpHelper->getHttpXRequestedWith()),
-		array( 'name' => 'user-agent', 'message' => $this->_httpHelper->getHttpUserAgent()),
-		array( 'name' => 'accept', 'messsage' => $this->_httpHelper->getHttpAccept()),
-		array( 'name' => 'accept-language', 'message' => $this->_httpHelper->getHttpAcceptLanguage()),
-		array( 'name' => 'accept-encoding', 'message' => $this->_httpHelper->getHttpAcceptEncoding()),
-		array( 'name' => 'cookie', 'message' => $this->_httpHelper->getHttpCookie()),
-		array( 'name' => 'x-forwarded-proto', 'message' => $this->_httpHelper->getHttpXForwardedProto()),
-		array( 'name' => 'x-forwarded-for', 'message' => $this->_httpHelper->getHttpXForwardedFor()),
-		array( 'name' => 'content-type', 'message' => $this->_httpHelper->getHttpContentType())
-	); */
-
 	foreach ($this->_httpHelper->getHeaderData() as $name => $message ) {
 		$subPayloadHttpHeader = $subPayloadHttpHeaders->getEmptyHttpHeader();
 		$this->_buildHttpHeader($subPayloadHttpHeader, $name, $message);
