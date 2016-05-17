@@ -405,12 +405,14 @@ class EbayEnterprise_Eb2cFraud_Model_Build_Request
 	    ->setCurrencyCode($this->_order->getBaseCurrencyCode());
         $subPayloadTotalCost->setCostTotals($subPayloadCostTotals);
        
-	if( Mage::getSingleton('core/session')->getFailedCCAttempts() )
+	$failedCc = Mage::getSingleton('core/session')->getCCAttempts() - 1;
+
+        if($failedCc < 0 )
         {
-                $subPayloadTotalCost->setFailedCc(Mage::getSingleton('core/session')->getFailedCCAttempts());
-        } else {
-                $subPayloadTotalCost->setFailedCc(0);
+                $failedCc = 0;
         }
+
+        $subPayloadTotalCost->setFailedCc($failedCc);
  
 	$orderBillingAddress = $this->_order->getBillingAddress();
         $orderPayment = $this->_order->getPayment();

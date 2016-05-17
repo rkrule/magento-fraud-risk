@@ -119,6 +119,25 @@ class EbayEnterprise_Eb2cFraud_Model_Observer
 		Mage::getSingleton('core/session')->setPrevItemQuoteRemoval($previous);
 	}
 
+	 /**
+          * Log Auth Attempts in a Session, Reset when successful
+          * @param   none
+          * @return  self
+          */
+        public function countAuthAttempts()
+        {
+                $previous = Mage::getSingleton('core/session')->getCCAttempts();
+
+                if(!$previous)
+                {
+                        $previous = 1;
+                } else {
+                        $previous++;
+                }
+
+                Mage::getSingleton('core/session')->setCCAttempts($previous);
+        }
+
     	public function updateOrderStatus(Varien_Event_Observer $observer)
     	{
     	    $event = $observer->getEvent()->getPayload();
