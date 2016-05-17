@@ -102,7 +102,6 @@ class EbayEnterprise_Eb2cFraud_Model_Observer
                                 $this->_helper->logWarning($logMessage);
                         }
 		}
-
 		return $this;
 	}
 

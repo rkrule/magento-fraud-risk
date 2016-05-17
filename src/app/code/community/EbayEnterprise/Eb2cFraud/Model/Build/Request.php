@@ -428,56 +428,60 @@ class EbayEnterprise_Eb2cFraud_Model_Build_Request
     protected function _buildDeviceInfo(EbayEnterprise_RiskService_Sdk_Device_IInfo $subPayloadDeviceInfo)
     {
 	$sessionId = Mage::getSingleton('core/session')->getEncryptedSessionId();
-	$remoteAddr = Mage::helper('core/http')->getRemoteAddr();
-
-	if( $this->ip_is_private($remoteAddr))
-	{
-		if( array_key_exists('HTTP_X_FORWARDED_FOR', $_SERVER))
-		{
-			$IParray=array_values(array_filter(explode(',',$_SERVER['HTTP_X_FORWARDED_FOR'])));
-			$remoteAddr = $IParray[0];
-
-			if(!$remoteAddr)
-				$remoteAddr = Mage::helper('core/http')->getRemoteAddr();
-		} else {
-			$remoteAddr = Mage::helper('core/http')->getRemoteAddr();
-		}
-	}
 
 	$subPayloadDeviceInfo->setJSCData($this->_httpHelper->getJavaScriptFraudData());
 	$subPayloadDeviceInfo->setSessionID($sessionId);
-	$subPayloadDeviceInfo->setDeviceIP($remoteAddr);
-	$subPayloadDeviceInfo->setDeviceHostname(gethostbyaddr($remoteAddr));
+	$subPayloadDeviceInfo->setDeviceIP($this->getNewRemoteAddr());
+	$subPayloadDeviceInfo->setDeviceHostname(gethostbyaddr($this->getNewRemoteAddr()));
 	$this->_buildHttpHeaders($subPayloadDeviceInfo->getHttpHeaders());
 	$subPayloadDeviceInfo->setUserCookie($this->_httpHelper->getCookiesString());
 
         return $this;
     }
 
+    private function getNewRemoteAddr()
+    {
+	$remoteAddr = Mage::helper('core/http')->getRemoteAddr();
+
+	if( $this->ip_is_private($remoteAddr))
+	{
+		if(isset($_SERVER['HTTP_X_FORWARDED_FOR']))
+        	{
+        		$ip_array=array_values(array_filter(explode(',',$_SERVER['HTTP_X_FORWARDED_FOR'])));
+                	$remoteAddr = $ip_array[0];
+
+                	if(!$remoteAddr)
+                	{
+                		$remoteAddr = Mage::helper('core/http')->getRemoteAddr();
+                	}
+         	} else {
+         		$remoteAddr = Mage::helper('core/http')->getRemoteAddr();
+         	}
+
+	 	return $remoteAddr;
+    	}
+    }
+
     private function ip_is_private($ip)
     {
-        $pri_addrs = array(
-                          '10.0.0.0|10.255.255.255',
-                          '172.16.0.0|172.31.255.255',
-                          '192.168.0.0|192.168.255.255',
-                          '169.254.0.0|169.254.255.255',
-                          '127.0.0.0|127.255.255.255'
-                         );
+        $privateAddresses = [ '10.0.0.0|10.255.255.255', '172.16.0.0|172.31.255.255', '192.168.0.0|192.168.255.255', '169.254.0.0|169.254.255.255', '127.0.0.0|127.255.255.255' ];
 
         $long_ip = ip2long($ip);
-        if($long_ip != -1) {
-
-            foreach($pri_addrs AS $pri_addr)
+        if($long_ip != -1) 
+	{
+            foreach($privateAddresses as $pri_addr)
             {
                 list($start, $end) = explode('|', $pri_addr);
 
-                 // IF IS PRIVATE
-                 if($long_ip >= ip2long($start) && $long_ip <= ip2long($end))
-                 return (TRUE);
+                // IF IS PRIVATE
+                if($long_ip >= ip2long($start) && $long_ip <= ip2long($end))
+		{
+                	return true;
+		}
             }
     	}
 
-	return (FALSE);
+	return false;
     }
 
     /**
