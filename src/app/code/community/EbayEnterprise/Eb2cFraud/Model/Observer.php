@@ -81,6 +81,13 @@ class EbayEnterprise_Eb2cFraud_Model_Observer
 	 */
 	public function handleCheckoutSubmitAllAfter(Varien_Event_Observer $observer)
 	{
+		if( !$this->_config->isEnabled())
+                {
+      	        	Mage::Log("Risk Service Module Has Been Disabled. Please go to System->Configuration->Payments,TDF, Fraud->Fraud->Enabled and toggled to 'YES'");
+      	        	return $this;
+                }
+
+
 		$orders = (array) $observer->getEvent()->getOrders();
 		
 		if( !empty($orders))
@@ -140,22 +147,43 @@ class EbayEnterprise_Eb2cFraud_Model_Observer
 
     	public function updateOrderStatus(Varien_Event_Observer $observer)
     	{
-    	    $event = $observer->getEvent()->getPayload();
+	    if( !$this->_config->isEnabled())
+            {
+                Mage::Log("Risk Service Module Has Been Disabled. Please go to System->Configuration->Payments,TDF, Fraud->Fraud->Enabled and toggled to 'YES'");
+                return $this;
+            }
 
-    	    $orderId = $event->getCustomerOrderId();
-	    $responseCode = $event->getResponseCode();
-	    $reasonCode = $event->getReasonCode();
+            $event = $observer->getEvent()->getPayload();
 
-	    $order = Mage::getModel("sales/order")->loadByIncrementId($orderId);
+            $orderId = $event->getCustomerOrderId();
+            $responseCode = $event->getResponseCode();
+            $reasonCode = $event->getReasonCode();
+            $reasonCodeDesc = $event->getReasonCodeDescription();
+            $comment = "";
 
-	    Mage::Log("RiskAssessmentReply Payload: ". $event->serialize());
+            if($reasonCode)
+            {
+                $comment = "Fraud Reason Code: ". $reasonCode;
 
-	    if( $order->getId() )
-	    {
-		$order->setState($this->_config->getOrderStateForResponseCode($responseCode), $this->_config->getOrderStatusForResponseCode($responseCode), $reasonCode, true);
-		$order->save();
-	    }
+                if($reasonCodeDesc)
+                {
+                        $comment = "\nFraud Reason Code Description: ". $reasonCodeDesc;
+                }
+            }
 
-	    return $this;
-    	}
+            $order = Mage::getModel("sales/order")->loadByIncrementId($orderId);
+
+            if( $this->_config->isDebugMode())
+            {
+                Mage::Log("RiskAssessmentReply Payload: ". $event->serialize());
+            }
+
+            if( $order->getId() )
+            {
+                $order->setState($this->_config->getOrderStateForResponseCode($responseCode), $this->_config->getOrderStatusForResponseCode($responseCode), $comment, true);
+                $order->save();
+            }
+
+            return $this;
+	}
 }
