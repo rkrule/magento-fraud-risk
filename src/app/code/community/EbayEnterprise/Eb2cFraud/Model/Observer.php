@@ -125,6 +125,7 @@ class EbayEnterprise_Eb2cFraud_Model_Observer
 
     	    $orderId = $event->getCustomerOrderId();
 	    $responseCode = $event->getResponseCode();
+	    $reasonCode = $event->getReasonCode();
 
 	    $order = Mage::getModel("sales/order")->loadByIncrementId($orderId);
 
@@ -132,8 +133,7 @@ class EbayEnterprise_Eb2cFraud_Model_Observer
 
 	    if( $order->getId() )
 	    {
-		$order->setState($this->_config->getOrderStateForResponseCode($responseCode), true);
-		$order->setStatus($this->_config->getOrderStatusForResponseCode($responseCode));
+		$order->setState($this->_config->getOrderStateForResponseCode($responseCode), $this->_config->getOrderStatusForResponseCode($responseCode), $reasonCode, true);
 		$order->save();
 	    }
 
