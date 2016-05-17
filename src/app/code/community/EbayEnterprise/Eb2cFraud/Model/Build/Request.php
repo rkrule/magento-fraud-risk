@@ -430,20 +430,6 @@ class EbayEnterprise_Eb2cFraud_Model_Build_Request
 	$sessionId = Mage::getSingleton('core/session')->getEncryptedSessionId();
 	$remoteAddr = Mage::helper('core/http')->getRemoteAddr();
 
-	if( $this->ip_is_private($remoteAddr))
-	{
-		if( array_key_exists('HTTP_X_FORWARDED_FOR', $_SERVER))
-		{
-			$IParray=array_values(array_filter(explode(',',$_SERVER['HTTP_X_FORWARDED_FOR'])));
-			$remoteAddr = $IParray[0];
-
-			if(!$remoteAddr)
-				$remoteAddr = Mage::helper('core/http')->getRemoteAddr();
-		} else {
-			$remoteAddr = Mage::helper('core/http')->getRemoteAddr();
-		}
-	}
-
 	$subPayloadDeviceInfo->setJSCData($this->_httpHelper->getJavaScriptFraudData());
 	$subPayloadDeviceInfo->setSessionID($sessionId);
 	$subPayloadDeviceInfo->setDeviceIP($remoteAddr);
@@ -452,32 +438,6 @@ class EbayEnterprise_Eb2cFraud_Model_Build_Request
 	$subPayloadDeviceInfo->setUserCookie($this->_httpHelper->getCookiesString());
 
         return $this;
-    }
-
-    private function ip_is_private($ip)
-    {
-        $pri_addrs = array(
-                          '10.0.0.0|10.255.255.255',
-                          '172.16.0.0|172.31.255.255',
-                          '192.168.0.0|192.168.255.255',
-                          '169.254.0.0|169.254.255.255',
-                          '127.0.0.0|127.255.255.255'
-                         );
-
-        $long_ip = ip2long($ip);
-        if($long_ip != -1) {
-
-            foreach($pri_addrs AS $pri_addr)
-            {
-                list($start, $end) = explode('|', $pri_addr);
-
-                 // IF IS PRIVATE
-                 if($long_ip >= ip2long($start) && $long_ip <= ip2long($end))
-                 return (TRUE);
-            }
-    	}
-
-	return (FALSE);
     }
 
     /**
@@ -553,8 +513,8 @@ class EbayEnterprise_Eb2cFraud_Model_Build_Request
 	$this->_buildPersonName($subPayloadCustomer->getPersonName(), $this->_order->getBillingAddress()); 
 	$subPayloadCustomer->setEmail($this->_order->getCustomerEmail());
 
-	$this->_buildTelephone($subPayloadCustomer->getTelephone(), $this->_order->getBillingAddress());
-        $this->_buildAddress($subPayloadCustomer->getAddress(), $this->_order->getShippingAddress());
+	$this->_buildTelephone($subPayloadCustomer->getTelephone(), $this->_order->getBillingAddress())
+                ->_buildAddress($subPayloadCustomer->getAddress(), $this->_order->getShippingAddress());
 
 	// MemberLoggedIn
 	$sessionCustomer = Mage::getSingleton("customer/session");
@@ -832,10 +792,31 @@ class EbayEnterprise_Eb2cFraud_Model_Build_Request
      */
     protected function _buildHttpHeaders(EbayEnterprise_RiskService_Sdk_Http_IHeaders $subPayloadHttpHeaders)
     {
-	foreach ($this->_httpHelper->getHeaderData() as $name => $message ) {
-		$subPayloadHttpHeader = $subPayloadHttpHeaders->getEmptyHttpHeader();
-		$this->_buildHttpHeader($subPayloadHttpHeader, $name, $message);
-		$subPayloadHttpHeaders->offsetSet($subPayloadHttpHeader);
+	$httpHeaderZend = array(
+		array( 'name' => 'host', 'message' => $this->_httpHelper->getHttpHost()),
+		array( 'name' => 'origin', 'message' => $this->_httpHelper->getHttpOrigin()),
+		array( 'name' => 'x-prototype-version', 'message' => $this->_httpHelper->getHttpXPrototypeVersion()),
+		array( 'name' => 'x-requested-with', 'message' => $this->_httpHelper->getHttpXRequestedWith()),
+		array( 'name' => 'user-agent', 'message' => $this->_httpHelper->getHttpUserAgent()),
+		array( 'name' => 'accept', 'messsage' => $this->_httpHelper->getHttpAccept()),
+		array( 'name' => 'accept-language', 'message' => $this->_httpHelper->getHttpAcceptLanguage()),
+		array( 'name' => 'accept-encoding', 'message' => $this->_httpHelper->getHttpAcceptEncoding()),
+		array( 'name' => 'cookie', 'message' => $this->_httpHelper->getHttpCookie()),
+		array( 'name' => 'x-forwarded-proto', 'message' => $this->_httpHelper->getHttpXForwardedProto()),
+		array( 'name' => 'x-forwarded-for', 'message' => $this->_httpHelper->getHttpXForwardedFor()),
+		array( 'name' => 'content-type', 'message' => $this->_httpHelper->getHttpContentType())
+	);
+
+	foreach ($httpHeaderZend as $headerProperty) {
+		if( array_key_exists('message', $headerProperty) )
+		{
+			if( $headerProperty['message'] )
+			{
+				$subPayloadHttpHeader = $subPayloadHttpHeaders->getEmptyHttpHeader();
+				$this->_buildHttpHeader($subPayloadHttpHeader, $headerProperty['name'], $headerProperty['message']);
+				$subPayloadHttpHeaders->offsetSet($subPayloadHttpHeader);
+			}
+		}
 	}
 
         return $this;
