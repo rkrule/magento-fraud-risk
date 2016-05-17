@@ -151,6 +151,16 @@ class EbayEnterprise_Eb2cFraud_Helper_Http extends Mage_Core_Helper_Http
         return $this->_getHttpCleanValue('HTTP_CONNECTION', $clean);
     }
 
+    public function getHttpReferrer($clean = true )
+    {
+        return $this->_getHttpCleanValue('HTTP_REFERRER', $clean);
+    }
+
+    public function getHttpAcceptCharset($clean = true)
+    {
+        return $this->_getHttpCleanValue('HTTP_ACCEPT_CHARSET', $clean);
+    }
+
     /**
      * Retrieve the remote client's host name
      *
