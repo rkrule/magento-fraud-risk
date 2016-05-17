@@ -81,14 +81,28 @@ class EbayEnterprise_Eb2cFraud_Model_Observer
 	 */
 	public function handleCheckoutSubmitAllAfter(Varien_Event_Observer $observer)
 	{
-		$order = $observer->getEvent()->getOrder();
-
-		if (!empty($order)) {
-			$this->_riskOrder->processRiskOrder($order, $observer);
+		$orders = (array) $observer->getEvent()->getOrders();
+		
+		if( !empty($orders))
+		{
+			foreach ($orders as $index => $order) {
+				if ($this->_isValidOrder($order)) {
+					$this->_riskOrder->processRiskOrder($order, $observer);
+				} else {
+					$logMessage = sprintf('[%s] No sales/order instances was found.', __CLASS__);
+                        		$this->_helper->logWarning($logMessage);
+				}
+			}
 		} else {
-			$logMessage = sprintf('[%s] No sales/order instances was found.', __CLASS__);
-			$this->_helper->logWarning($logMessage);
+			$order = $observer->getEvent()->getOrder();
+		 	if ($this->_isValidOrder($order)) {
+                        	$this->_riskOrder->processRiskOrder($order, $observer);
+                        } else {
+                                $logMessage = sprintf('[%s] No sales/order instances was found.', __CLASS__);
+                                $this->_helper->logWarning($logMessage);
+                        }
 		}
+
 		return $this;
 	}
 
@@ -112,7 +126,6 @@ class EbayEnterprise_Eb2cFraud_Model_Observer
 
     	    $orderId = $event->getCustomerOrderId();
 	    $responseCode = $event->getResponseCode();
-	    $reasonCode = $event->getReasonCode();
 
 	    $order = Mage::getModel("sales/order")->loadByIncrementId($orderId);
 
@@ -120,7 +133,8 @@ class EbayEnterprise_Eb2cFraud_Model_Observer
 
 	    if( $order->getId() )
 	    {
-		$order->setState($this->_config->getOrderStateForResponseCode($responseCode), $this->_config->getOrderStatusForResponseCode($responseCode), $reasonCode, true);
+		$order->setState($this->_config->getOrderStateForResponseCode($responseCode), true);
+		$order->setStatus($this->_config->getOrderStatusForResponseCode($responseCode));
 		$order->save();
 	    }
 
