@@ -102,7 +102,6 @@ class EbayEnterprise_Eb2cFraud_Model_Observer
                                 $this->_helper->logWarning($logMessage);
                         }
 		}
-
 		return $this;
 	}
 
@@ -120,19 +119,40 @@ class EbayEnterprise_Eb2cFraud_Model_Observer
 		Mage::getSingleton('core/session')->setPrevItemQuoteRemoval($previous);
 	}
 
+	 /**
+          * Log Auth Attempts in a Session, Reset when successful
+          * @param   none
+          * @return  self
+          */
+        public function countAuthAttempts()
+        {
+                $previous = Mage::getSingleton('core/session')->getCCAttempts();
+
+                if(!$previous)
+                {
+                        $previous = 1;
+                } else {
+                        $previous++;
+                }
+
+                Mage::getSingleton('core/session')->setCCAttempts($previous);
+        }
+
     	public function updateOrderStatus(Varien_Event_Observer $observer)
     	{
     	    $event = $observer->getEvent()->getPayload();
 
     	    $orderId = $event->getCustomerOrderId();
 	    $responseCode = $event->getResponseCode();
+	    $reasonCode = $event->getReasonCode();
 
 	    $order = Mage::getModel("sales/order")->loadByIncrementId($orderId);
 
+	    Mage::Log("RiskAssessmentReply Payload: ". $event->serialize());
+
 	    if( $order->getId() )
 	    {
-		$order->setState($this->_config->getOrderStateForResponseCode($responseCode), true);
-		$order->setStatus($this->_config->getOrderStatusForResponseCode($responseCode));
+		$order->setState($this->_config->getOrderStateForResponseCode($responseCode), $this->_config->getOrderStatusForResponseCode($responseCode), $reasonCode, true);
 		$order->save();
 	    }
 

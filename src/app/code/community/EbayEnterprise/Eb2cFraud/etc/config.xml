@@ -102,6 +102,14 @@ http://opensource.org/licenses/osl-3.0.php
 				</eb2cfraud_update_order>
 			</observers>
 		</ebayenterprise_amqp_message_risk_assessment_reply>
+		<ebayenterprise_creditcard_auth_request_send_before>
+                        <observers>
+                                <eb2cfraud_count_reject>
+                                        <class>eb2cfraud/observer</class>
+                                        <method>countAuthAttempts</method>
+                                </eb2cfraud_count_reject>
+                        </observers>
+                </ebayenterprise_creditcard_auth_request_send_before>
 	</events>
     </global>
     <frontend>
