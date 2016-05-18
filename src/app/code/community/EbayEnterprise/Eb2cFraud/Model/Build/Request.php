@@ -584,9 +584,9 @@ class EbayEnterprise_Eb2cFraud_Model_Build_Request
         Mage_Customer_Model_Address_Abstract $orderAddress
     )
     {
-        $subPayloadPersonName->setLastName($orderAddress->getFirstname())
+        $subPayloadPersonName->setLastName($orderAddress->getLastname())
             ->setMiddleName($orderAddress->getMiddlename())
-            ->setFirstName($orderAddress->getLastname());
+            ->setFirstName($orderAddress->getFirstname());
         return $this;
     }
 
