@@ -159,20 +159,7 @@ class EbayEnterprise_Eb2cFraud_Model_Risk_Order
         ))->build();
 
 	$apiConfig = $this->_setupApiConfig($payload, $this->_getNewEmptyResponse());
-
-	if( $this->_config->isDebugMode())
-        {
-		$logMessage = 'Sending fraud assessment request.';
-        	$this->_logger->debug($logMessage, $this->_context->getMetaData(__CLASS__, ['rom_request_body' => $this->_helper->cleanAuthXml($payload->serialize())]));
-	}
-
         $response = $this->_sendRequest($this->_getApi($apiConfig));
-
-	if( $this->_config->isDebugMode())
-        {
-		$logMessage = 'Received fraud assessment request response / ack.';
-        	$this->_logger->debug($logMessage, $this->_context->getMetaData(__CLASS__, ['rom_request_body' => $this->_helper->cleanAuthXml($response->serialize())]));
-	}
 
 	// Set order state / status below, then use order history collection
 	$order->setState("payment_review", "risk_processing", 'Order has been submitted for Fraud Review.', false);
