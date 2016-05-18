@@ -113,11 +113,16 @@ class EbayEnterprise_Eb2cFraud_Model_Risk_Order
          * @param  EbayEnterprise_RiskService_Sdk_IApi
          * @return EbayEnterprise_RiskService_Sdk_IPayload | null
          */
-        protected function _sendRequest(EbayEnterprise_RiskService_Sdk_IApi $api)
+        protected function _sendRequest(EbayEnterprise_RiskService_Sdk_IApi $api, Mage_Sales_Model_Order $order )
         {
                 $response = null;
                 try {
                         $api->send();
+
+			// Set order state / status below, then use order history collection
+        		$order->setState("pending", "risk_submitted", 'Order has been submitted for Fraud Review.', false);
+        		$order->save();
+
                         $response = $api->getResponseBody();
                 } catch (Exception $e) {
                         $logMessage = sprintf('[%s] The following error has occurred while sending request: %s', __CLASS__, $e->getMessage());
@@ -159,10 +164,10 @@ class EbayEnterprise_Eb2cFraud_Model_Risk_Order
         ))->build();
 
 	$apiConfig = $this->_setupApiConfig($payload, $this->_getNewEmptyResponse());
-        $response = $this->_sendRequest($this->_getApi($apiConfig));
+        $response = $this->_sendRequest($this->_getApi($apiConfig), $order);
 
 	// Set order state / status below, then use order history collection
-	$order->setState("payment_review", "risk_processing", 'Order has been submitted for Fraud Review.', false);
+	$order->setState("pending", "risk_processing", 'Order is now processing in the Fraud System.', false);
 	$order->save();
 	}
 }

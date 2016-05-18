@@ -153,12 +153,12 @@ class EbayEnterprise_Eb2cFraud_Helper_Http extends Mage_Core_Helper_Http
 
     public function getHttpReferrer($clean = true )
     {
-        return $this->_getHttpCleanValue('HTTP_REFERRER', $clean);
+	return $this->_getHttpCleanValue('HTTP_REFERRER', $clean);
     }
 
     public function getHttpAcceptCharset($clean = true)
     {
-        return $this->_getHttpCleanValue('HTTP_ACCEPT_CHARSET', $clean);
+	return $this->_getHttpCleanValue('HTTP_ACCEPT_CHARSET', $clean);
     }
 
     /**

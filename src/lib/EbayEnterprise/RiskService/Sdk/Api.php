@@ -228,7 +228,7 @@ class EbayEnterprise_RiskService_Sdk_Api
 		return $this->_lastRequestsResponse->success;
 	}
 
-	 /**
+	/**
          * Scrub the auth request XML message of any sensitive data - CVV, CC number.
          * @param  string $xml
          * @return string
