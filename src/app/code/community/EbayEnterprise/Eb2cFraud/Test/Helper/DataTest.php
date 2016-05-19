@@ -9,11 +9,11 @@
  * It is also available through the world-wide-web at this URL:
  * http://opensource.org/licenses/osl-3.0.php
  *
- * @copyright   Copyright (c) 2013-2014 eBay Enterprise, Inc. (http://www.ebayenterprise.com/)
+ * @copyright   Copyright (c) 2013-2014 eBay Enterprise, Inc. (http://www.radial.com/)
  * @license     http://opensource.org/licenses/osl-3.0.php  Open Software License (OSL 3.0)
  */
 
-class EbayEnterprise_Eb2cFraud_Test_Helper_DataTest extends EbayEnterprise_Eb2cCore_Test_Base
+class Radial_Eb2cFraud_Test_Helper_DataTest extends Radial_Eb2cCore_Test_Base
 {
     /** @var Mage_Customer_Model_Session stub */
     protected $_customerSessionStub;
@@ -37,12 +37,12 @@ class EbayEnterprise_Eb2cFraud_Test_Helper_DataTest extends EbayEnterprise_Eb2cC
             ->setMethods(['isAdmin'])
             ->getMock();
 
-        $this->_coreHelperStub = $this->getHelperMock('eb2ccore/data', ['getCurrentStore']);
+        $this->_coreHelperStub = $this->getHelperMock('radial_core/data', ['getCurrentStore']);
         $this->_coreHelperStub->expects($this->any())
             ->method('getCurrentStore')
             ->will($this->returnValue($this->_storeStub));
         $this->_orderStub = $this->getModelMock('sales/order', ['getId']);
-        $this->_payload = Mage::helper('eb2ccore')
+        $this->_payload = Mage::helper('radial_core')
             ->getSdkApi('orders', 'create')
             ->getRequestBody();
     }
@@ -98,7 +98,7 @@ class EbayEnterprise_Eb2cFraud_Test_Helper_DataTest extends EbayEnterprise_Eb2cC
         if ($isLoggedIn) {
             $this->assertSame(
                 '2014-01-01 09:05:01',
-                $lastLogin->format(EbayEnterprise_Eb2cFraud_Helper_Data::MAGE_DATETIME_FORMAT)
+                $lastLogin->format(Radial_Eb2cFraud_Helper_Data::MAGE_DATETIME_FORMAT)
             );
         } else {
             $this->assertNull($result['last_login']);
@@ -148,8 +148,8 @@ class EbayEnterprise_Eb2cFraud_Test_Helper_DataTest extends EbayEnterprise_Eb2cC
     public function provideOrderSourceData()
     {
         return [
-            [true, 'sessionsource', EbayEnterprise_Eb2cFraud_Helper_Data::BACKEND_ORDER_SOURCE],
-            [false, null, EbayEnterprise_Eb2cFraud_Helper_Data::FRONTEND_ORDER_SOURCE],
+            [true, 'sessionsource', Radial_Eb2cFraud_Helper_Data::BACKEND_ORDER_SOURCE],
+            [false, null, Radial_Eb2cFraud_Helper_Data::FRONTEND_ORDER_SOURCE],
             [false, 'sessionsource', 'sessionsource'],
         ];
     }

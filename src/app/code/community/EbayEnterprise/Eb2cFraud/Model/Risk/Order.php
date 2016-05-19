@@ -8,10 +8,10 @@
  * Magento Extensions End User License Agreement
  * that is bundled with this package in the file LICENSE.md.
  * It is also available through the world-wide-web at this URL:
- * http://www.ebayenterprise.com/files/pdf/Magento_Connect_Extensions_EULA_050714.pdf
+ * http://www.radial.com/files/pdf/Magento_Connect_Extensions_EULA_050714.pdf
  *
- * @copyright   Copyright (c) 2015 eBay Enterprise, Inc. (http://www.ebayenterprise.com/)
- * @license     http://www.ebayenterprise.com/files/pdf/Magento_Connect_Extensions_EULA_050714.pdf  eBay Enterprise Magento Extensions End User License Agreement
+ * @copyright   Copyright (c) 2015 eBay Enterprise, Inc. (http://www.radial.com/)
+ * @license     http://www.radial.com/files/pdf/Magento_Connect_Extensions_EULA_050714.pdf  eBay Enterprise Magento Extensions End User License Agreement
  *
  */
 
@@ -49,8 +49,8 @@ class EbayEnterprise_Eb2cFraud_Model_Risk_Order
 		        $this->_nullCoalesce($initParams, 'request', $this->_getNewSdkInstance('EbayEnterprise_RiskService_Sdk_Request')),
 			$this->_nullCoalesce($initParams, 'config', Mage::helper('eb2cfraud/config')),
 			$this->_nullCoalesce($initParams, 'request', $this->_getNewSdkInstance('EbayEnterprise_RiskService_Sdk_Response')),
-			$this->_nullCoalesce($initParams, 'logger', Mage::helper('ebayenterprise_magelog')),
-			$this->_nullCoalesce($initParams, 'context', Mage::helper('ebayenterprise_magelog/context'))
+			$this->_nullCoalesce($initParams, 'logger', Mage::helper('radial_magelog')),
+			$this->_nullCoalesce($initParams, 'context', Mage::helper('radial_magelog/context'))
 		);
 	}
 

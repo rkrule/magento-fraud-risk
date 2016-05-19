@@ -9,7 +9,7 @@ that is bundled with this package in the file LICENSE.md.
 It is also available through the world-wide-web at this URL:
 http://opensource.org/licenses/osl-3.0.php
 
-@copyright   Copyright (c) 2013-2014 eBay Enterprise, Inc. (http://www.ebayenterprise.com/)
+@copyright   Copyright (c) 2013-2014 eBay Enterprise, Inc. (http://www.radial.com/)
 @license     http://opensource.org/licenses/osl-3.0.php  Open Software License (OSL 3.0)
 -->
 <config>
@@ -94,22 +94,22 @@ http://opensource.org/licenses/osl-3.0.php
                     	    </eb2cfraud_add_cartcount>
                 	</observers>
             	</sales_quote_remove_item>
-	        <ebayenterprise_amqp_message_risk_assessment_reply>
+	        <radial_amqp_message_risk_assessment_reply>
 			<observers>
 				<eb2cfraud_update_order>
 					<class>eb2cfraud/observer</class>
 					<method>updateOrderStatus</method>
 				</eb2cfraud_update_order>
 			</observers>
-		</ebayenterprise_amqp_message_risk_assessment_reply>
-		<ebayenterprise_creditcard_auth_request_send_before>
+		</radial_amqp_message_risk_assessment_reply>
+		<radial_creditcard_auth_request_send_before>
                         <observers>
                                 <eb2cfraud_count_reject>
                                         <class>eb2cfraud/observer</class>
                                         <method>countAuthAttempts</method>
                                 </eb2cfraud_count_reject>
                         </observers>
-                </ebayenterprise_creditcard_auth_request_send_before>
+                </radial_creditcard_auth_request_send_before>
 		<sales_order_save_after>
 			<observers>
 				<eb2cfraud_orderconfirmrequest>

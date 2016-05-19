@@ -9,12 +9,12 @@ that is bundled with this package in the file LICENSE.md.
 It is also available through the world-wide-web at this URL:
 http://opensource.org/licenses/osl-3.0.php
 
-@copyright   Copyright (c) 2013-2014 eBay Enterprise, Inc. (http://www.ebayenterprise.com/)
+@copyright   Copyright (c) 2013-2014 eBay Enterprise, Inc. (http://www.radial.com/)
 @license     http://opensource.org/licenses/osl-3.0.php  Open Software License (OSL 3.0)
 -->
 <config>
     <sections>
-        <eb2ccore>
+        <radial_core>
             <groups>
                 <fraud translate="label">
                     <label>Fraud</label>
@@ -55,6 +55,6 @@ http://opensource.org/licenses/osl-3.0.php
                     </fields>
                 </fraud>
             </groups>
-        </eb2ccore>
+        </radial_core>
     </sections>
 </config>

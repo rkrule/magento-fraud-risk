@@ -9,7 +9,7 @@
  * It is also available through the world-wide-web at this URL:
  * http://opensource.org/licenses/osl-3.0.php
  *
- * @copyright   Copyright (c) 2013-2014 eBay Enterprise, Inc. (http://www.ebayenterprise.com/)
+ * @copyright   Copyright (c) 2013-2014 eBay Enterprise, Inc. (http://www.radial.com/)
  * @license     http://opensource.org/licenses/osl-3.0.php  Open Software License (OSL 3.0)
  */
 
@@ -26,7 +26,7 @@ class EbayEnterprise_Eb2cFraud_Model_Adminhtml_System_Config_Backend_Jsinstalled
      */
     public function _afterLoad()
     {
-        $filePattern  = Mage::getBaseDir() . '/js/ebayenterprise_eb2cfraud/*.js';
+        $filePattern  = Mage::getBaseDir() . '/js/radial_eb2cfraud/*.js';
         $jsFiles = glob($filePattern);
         if (!$jsFiles) {
             $publicDisplay = 'Not installed; fraud information will not be collected';
