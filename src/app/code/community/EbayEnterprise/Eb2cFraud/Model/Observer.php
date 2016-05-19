@@ -201,18 +201,21 @@ class EbayEnterprise_Eb2cFraud_Model_Observer extends EbayEnterprise_Eb2cFraud_M
 
 	public function processOrderConfirmationRequestCancel(Varien_Event_Observer $observer)
 	{
-		$order = $observer->getPayment()->getOrder();
-		$request = $this->_getNewEmptyRequest();
+		$order = $observer->getOrder();
 
-	        $payload = Mage::getModel('eb2cfraud/build_OCRequest', array(
-        	    'request' => $request,
-        	    'order' => $order,
-		    'command' => "cancel",
-        	))->build();
-
-		if( $this->_config->isDebugMode())
+		if($order->getState() == Mage_Sales_Model_Order::STATE_CANCELED || $order->getState() == Mage_Sales_Model_Order::STATE_CLOSED || $order->getState() == Mage_Sales_Model_Order::STATE_COMPLETE )
 		{
-			Mage::Log("OrderConfirmationRequest Payload - CANCEL: ". $payload->serialize());
+			$request = $this->_getNewEmptyRequest();
+
+	        	$payload = Mage::getModel('eb2cfraud/build_OCRequest', array(
+        	    		'request' => $request,
+        	    		'order' => $order,
+        		))->build();
+
+			if( $this->_config->isDebugMode())
+			{
+				Mage::Log("OrderConfirmationRequest Payload: ". $payload->serialize());
+			}
 		}
 	}
 }

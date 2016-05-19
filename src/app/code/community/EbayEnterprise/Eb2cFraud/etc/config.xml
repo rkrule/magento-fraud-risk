@@ -15,7 +15,7 @@ http://opensource.org/licenses/osl-3.0.php
 <config>
     <modules>
         <EbayEnterprise_Eb2cFraud>
-            <version>0.9.2</version>
+            <version>0.9.3</version>
         </EbayEnterprise_Eb2cFraud>
     </modules>
     <global>
@@ -110,14 +110,14 @@ http://opensource.org/licenses/osl-3.0.php
                                 </eb2cfraud_count_reject>
                         </observers>
                 </ebayenterprise_creditcard_auth_request_send_before>
-		<sales_order_payment_cancel>
+		<sales_order_save_after>
 			<observers>
 				<eb2cfraud_orderconfirmrequest>
 					<class>eb2cfraud/observer</class>
-					<method>processOrderConfirmationRequestCancel</method>
+					<method>processOrderConfirmationRequest</method>
 				</eb2cfraud_orderconfirmrequest>
 			</observers>
-		</sales_order_payment_cancel>
+		</sales_order_save_after>
 	</events>
     </global>
     <frontend>
@@ -223,6 +223,104 @@ http://opensource.org/licenses/osl-3.0.php
 			<Suspend>holded</Suspend>
 			<Reject_Pending>holded</Reject_Pending>
 		</response_codes_states>
+		<order_status_codes_to_fraud>
+			<new>IN_PROCESS</new>
+			<pending_payment>IN_PROCESS</pending_payment>
+			<processing>IN_PROCESS</processing>
+			<complete>SHIPPED</complete>
+			<closed>COMPLETE</closed>
+			<canceled>CANCELLED</canceled>
+			<holded>IN_PROCESS</holded>
+			<payment_review>IN_PROCESS</payment_review>
+		</order_status_codes_to_fraud>
+		<order_status_to_confirmation_codes>
+			<new>OTHER</new>
+			<pending_payment>OTHER</pending_payment>
+			<processing>OTHER</processing>
+			<complete>SHIPMENT</complete>
+			<closed>RETURN PROCESSED</closed>
+			<canceled>CANCEL</canceled>
+			<holded>OTHER</holded>
+			<payment_review>IN_PROCESS</payment_review>
+		</order_status_to_confirmation_codes>
+		<item_status_codes_to_fraud>
+			<Ordered>PENDING</Ordered>
+			<Shipped>SHIPPED</Shipped>
+			<Invoiced>PENDING</Invoiced>
+			<Backordered>PENDING</Backordered>
+			<Returned>RETURNED</Returned>
+			<Refunded>RETURNED</Refunded>
+			<Canceled>CANCELLED</Canceled>
+			<Partial>PENDING</Partial>
+			<Mixed>PENDING</Mixed>
+		</item_status_codes_to_fraud>
+		<ship_vendor_to_fraud>
+			<freeshipping>OTHER</freeshipping>
+			<flatrate>OTHER</flatrate>
+			<tablerate>OTHER</tablerate>
+			<fedex>FEDEX</fedex>
+			<ups>UPS</ups>
+			<usps>USPS</usps>
+			<dhlint>DHL</dhlint>
+			<dhl>DHL</dhl>
+		</ship_vendor_to_fraud>
+		<ship_method_to_fraud>
+			<flatrate_flatrate>STANDARD</flatrate_flatrate>
+			<freeshipping_freeshipping>FREE</freeshipping_freeshipping>
+			<tablerate_bestway>STANDARD</tablerate_bestway>
+			<fedex_EUROPE_FIRST_INTERNATIONAL_PRIORITY>EXPRESS</fedex_EUROPE_FIRST_INTERNATIONAL_PRIORITY>
+			<fedex_FEDEX_1_DAY_FREIGHT>1DAY</fedex_FEDEX_1_DAY_FREIGHT>
+			<fedex_FEDEX_2_DAY_FREIGHT>2DAY</fedex_FEDEX_2_DAY_FREIGHT>
+			<fedex_FEDEX_2_DAY>2DAY</fedex_FEDEX_2_DAY>
+			<fedex_FEDEX_3_DAY_FREIGHT>3DAY</fedex_FEDEX_3_DAY_FREIGHT>
+			<fedex_FEDEX_EXPRESS_SAVER>EXPRESS</fedex_FEDEX_EXPRESS_SAVER>
+			<fedex_FEDEX_GROUND>STANDARD</fedex_FEDEX_GROUND>
+			<fedex_FIRST_OVERNIGHT>1DAY</fedex_FIRST_OVERNIGHT>
+			<fedex_GROUND_HOME_DELIVERY>STANDARD</fedex_GROUND_HOME_DELIVERY>
+			<fedex_INTERNATIONAL_ECONOMY>STANDARD</fedex_INTERNATIONAL_ECONOMY>
+			<fedex_INTERNATIONAL_ECONOMY_FREIGHT>STANDARD</fedex_INTERNATIONAL_ECONOMY_FREIGHT>
+			<fedex_INTERNATIONAL_FIRST>EXPRESS</fedex_INTERNATIONAL_FIRST>
+			<fedex_INTERNATIONAL_PRIORITY>EXPRESS</fedex_INTERNATIONAL_PRIORITY>
+			<fedex_PRIORITY_OVERNIGHT>1DAY</fedex_PRIORITY_OVERNIGHT>
+			<fedex_STANDARD_OVERNIGHT>1DAY</fedex_STANDARD_OVERNIGHT>
+			<ups_1DM>1DAY</ups_1DM>
+			<ups_1DML>1DAY</ups_1DML>
+			<ups_1DA>1DAY</ups_1DA>
+			<ups_1DAL>1DAY</ups_1DAL>
+			<ups_1DAPI>1DAY</ups_1DAPI>
+			<ups_1DP>1DAY</ups_1DP>
+			<ups_1DPL>1DAY</ups_1DPL>
+			<ups_2DM>2DAY</ups_2DM>
+			<ups_2DML>2DAY</ups_2DML>
+			<ups_2DA>2DAY</ups_2DA>
+			<ups_2DAL>2DAY</ups_2DAL>
+			<ups_3DS>3DAY</ups_3DS>
+			<ups_GND>STANDARD</ups_GND>
+			<ups_GNDCOM>STANDARD</ups_GNDCOM>
+			<ups_GNDRES>STANDARD</ups_GNDRES>
+			<ups_STD>STANDARD</ups_STD>
+			<ups_XPR>EXPRESS</ups_XPR>
+			<ups_WXS>EXPRESS</ups_WXS>
+			<ups_XPRL>EXPRESS</ups_XPRL>
+			<ups_XDM>EXPRESS</ups_XDM>
+			<ups_XDML>EXPRESS</ups_XDML>
+			<ups_XPD>EXPRESS</ups_XPD>
+			<usps_0_FCLE>STANDARD</usps_0_FCLE>
+			<usps_0_FCL>STANDARD</usps_0_FCL>
+			<usps_0_FCP>SANDARD</usps_0_FCP>
+			<usps_1>STANDARD</usps_1>
+			<usps_2>EXPRESS</usps_2>
+			<usps_3>EXPRESS</usps_3>
+			<usps_4>STANDARD</usps_4>
+			<usps_6>STANDARD</usps_6>
+			<usps_7>STANDARD</usps_7>
+			<usps_23>SATURDAY</usps_23>
+			<usps_25>SATURDAY</usps_25>
+			<usps_INT_2>STANDARD</usps_INT_2>
+			<usps_INT_6>EXPRESS</usps_INT_6>
+			<usps_INT_7>EXPRESS</usps_INT_7>
+			<usps_INT_14>EXPRESS</usps_INT_14>
+		</ship_method_to_fraud>
             </risk_service>
         </eb2cfraud>
     </default>
