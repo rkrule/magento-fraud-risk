@@ -584,9 +584,9 @@ class EbayEnterprise_Eb2cFraud_Model_Build_Request
         Mage_Customer_Model_Address_Abstract $orderAddress
     )
     {
-        $subPayloadPersonName->setLastName($orderAddress->getFirstname())
+        $subPayloadPersonName->setLastName($orderAddress->getLastname())
             ->setMiddleName($orderAddress->getMiddlename())
-            ->setFirstName($orderAddress->getLastname());
+            ->setFirstName($orderAddress->getFirstname());
         return $this;
     }
 
@@ -847,7 +847,7 @@ class EbayEnterprise_Eb2cFraud_Model_Build_Request
                 array( 'name' => 'accept', 'messsage' => $this->_httpHelper->getHttpAccept()),
                 array( 'name' => 'accept-language', 'message' => $this->_httpHelper->getHttpAcceptLanguage()),
                 array( 'name' => 'accept-encoding', 'message' => $this->_httpHelper->getHttpAcceptEncoding()),
-                array( 'name' => 'cookie', 'message' => $this->_httpHelper->getHttpCookie()),
+                array( 'name' => 'cookie', 'message' => $this->_httpHelper->getCookiesString()),
                 array( 'name' => 'x-forwarded-proto', 'message' => $this->_httpHelper->getHttpXForwardedProto()),
                 array( 'name' => 'x-forwarded-for', 'message' => $this->_httpHelper->getHttpXForwardedFor()),
                 array( 'name' => 'content-type', 'message' => $this->_httpHelper->getHttpContentType()),

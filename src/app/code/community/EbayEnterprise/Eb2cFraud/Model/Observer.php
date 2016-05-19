@@ -13,7 +13,7 @@
  * @license     http://opensource.org/licenses/osl-3.0.php  Open Software License (OSL 3.0)
  */
 
-class EbayEnterprise_Eb2cFraud_Model_Observer
+class EbayEnterprise_Eb2cFraud_Model_Observer extends EbayEnterprise_Eb2cFraud_Model_Abstract
 {
 	/** @var EbayEnterprise_Eb2cFraud_Helper_Data */
 	protected $_helper;
@@ -185,5 +185,34 @@ class EbayEnterprise_Eb2cFraud_Model_Observer
             }
 
             return $this;
+	}
+
+	/**
+     	* Get new empty request payload
+     	*
+     	* @return EbayEnterprise_RiskService_Sdk_IPayload
+     	*/
+    	protected function _getNewEmptyRequest()
+    	{
+        	return $this->_getNewSdkInstance('EbayEnterprise_RiskService_Sdk_OrderConfirmationRequest');
+    	}
+
+	/* Thrown if the entire order is canceled */
+
+	public function processOrderConfirmationRequestCancel(Varien_Event_Observer $observer)
+	{
+		$order = $observer->getPayment()->getOrder();
+		$request = $this->_getNewEmptyRequest();
+
+	        $payload = Mage::getModel('eb2cfraud/build_OCRequest', array(
+        	    'request' => $request,
+        	    'order' => $order,
+		    'command' => "cancel",
+        	))->build();
+
+		if( $this->_config->isDebugMode())
+		{
+			Mage::Log("OrderConfirmationRequest Payload - CANCEL: ". $payload->serialize());
+		}
 	}
 }

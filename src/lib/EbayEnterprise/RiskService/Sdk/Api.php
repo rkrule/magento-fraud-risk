@@ -99,7 +99,7 @@ class EbayEnterprise_RiskService_Sdk_Api
 			$this->getResponseBody()->deserialize($responseData);
 		}
 		if ($this->_helperConfig->isDebugMode()) {
-			$logMessage = sprintf('[%s] Response Body: %s', __CLASS__, $responseData);
+			$logMessage = sprintf('[%s] Response Body: %s', __CLASS__, $this->cleanAuthXml($responseData));
 			Mage::log($logMessage, Zend_Log::DEBUG);
 		}
 		return $this;
@@ -185,7 +185,7 @@ class EbayEnterprise_RiskService_Sdk_Api
 	{
 		$requestXml = $this->getRequestBody()->serialize();
 		if ($this->_helperConfig->isDebugMode()) {
-			$logMessage = sprintf('[%s] Request Body: %s', __CLASS__, $requestXml);
+			$logMessage = sprintf('[%s] Request Body: %s', __CLASS__, $this->cleanAuthXml($requestXml));
 			Mage::log($logMessage, Zend_Log::DEBUG);
 		}
 	
@@ -227,4 +227,16 @@ class EbayEnterprise_RiskService_Sdk_Api
 		);
 		return $this->_lastRequestsResponse->success;
 	}
+
+	/**
+         * Scrub the auth request XML message of any sensitive data - CVV, CC number.
+         * @param  string $xml
+         * @return string
+         */
+        public function cleanAuthXml($xml)
+        {
+             $xml = preg_replace('#(\<(?:Encrypted)?CardSecurityCode\>).*(\</(?:Encrypted)?CardSecurityCode\>)#', '$1***$2', $xml);
+             $xml = preg_replace('#(\<(?:Encrypted)?PaymentAccountUniqueId.*?\>).*(\</(?:Encrypted)?PaymentAccountUniqueId\>)#', '$1***$2', $xml);
+             return $xml;
+        }
 }
