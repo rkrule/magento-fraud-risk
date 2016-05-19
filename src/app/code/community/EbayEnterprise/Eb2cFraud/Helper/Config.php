@@ -20,13 +20,13 @@
  */
 class EbayEnterprise_Eb2cFraud_Helper_Config
 {
-	const ENABLED = 'eb2ccore/fraud/enabledmod';
-	const STORE_ID = 'eb2ccore/general/store_id';
-	const API_HOSTNAME = 'eb2ccore/api/hostname';
-	const API_KEY = 'eb2ccore/api/key';
-	const API_TIMEOUT = 'eb2ccore/api/timeout';
-	const DEBUG = 'eb2ccore/fraud/debug';
-	const LANGUAGE_CODE = 'eb2ccore/general/language_code';
+	const ENABLED = 'radial_core/fraud/enabledmod';
+	const STORE_ID = 'radial_core/general/store_id';
+	const API_HOSTNAME = 'radial_core/api/hostname';
+	const API_KEY = 'radial_core/api/key';
+	const API_TIMEOUT = 'radial_core/api/timeout';
+	const DEBUG = 'radial_core/fraud/debug';
+	const LANGUAGE_CODE = 'radial_core/general/language_code';
         const CARD_TYPE_MAP = 'eb2cfraud/risk_service/card_type_map';
 	const CARD_NAME_MAP = 'eb2cfraud/risk_service/card_name_map';
         const SHIPPING_METHOD_MAP = 'eb2cfraud/risk_service/shipping_method_map';

@@ -94,14 +94,14 @@ http://opensource.org/licenses/osl-3.0.php
                     	    </eb2cfraud_add_cartcount>
                 	</observers>
             	</sales_quote_remove_item>
-	        <ebayenterprise_amqp_message_risk_assessment_reply>
+	        <radial_amqp_message_risk_assessment_reply>
 			<observers>
 				<eb2cfraud_update_order>
 					<class>eb2cfraud/observer</class>
 					<method>updateOrderStatus</method>
 				</eb2cfraud_update_order>
 			</observers>
-		</ebayenterprise_amqp_message_risk_assessment_reply>
+		</radial_amqp_message_risk_assessment_reply>
 		<ebayenterprise_creditcard_auth_request_send_before>
                         <observers>
                                 <eb2cfraud_count_reject>

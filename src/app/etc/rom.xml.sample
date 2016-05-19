@@ -44,15 +44,15 @@ http://opensource.org/licenses/osl-3.0.php
 
             Suggested Schedule: As often as possible
             -->
-            <ebayenterprise_amqp_runner_process_queues>
+            <radial_amqp_runner_process_queues>
                 <schedule>
                     <cron_expr>*/5 * * * *</cron_expr>
                 </schedule>
-            </ebayenterprise_amqp_runner_process_queues>
+            </radial_amqp_runner_process_queues>
         </jobs>
     </crontab>
     <default>
-        <eb2ccore>
+        <radial_core>
             <!--
             Shipping Codes: Map Magento shipping methods to ROM shipping codes. Node names must match Magento shipping
             methods. Values must match ROM shipping codes specific to your client implementation, which eBay Enterpise
@@ -61,7 +61,7 @@ http://opensource.org/licenses/osl-3.0.php
             <shipmap>
                 <flatrate_flatrate>ANY_STD</flatrate_flatrate>
             </shipmap>
-        </eb2ccore>
+        </radial_core>
         <ebayenterprise_inventory>
             <details>
                 <!-- Template to use to display the estimated delivery date. -->
@@ -78,7 +78,7 @@ http://opensource.org/licenses/osl-3.0.php
         Message Queue: Configuration to fetch messages from the ROM message queue. Unless otherwise noted, the provided
         sample values should suffice for most uses.
         -->
-        <ebayenterprise_amqp>
+        <radial_amqp>
             <general>
                 <!--
                 Number of Messages to Process: Specify the number of messages to fetch at one time from a single queue.
@@ -132,7 +132,7 @@ http://opensource.org/licenses/osl-3.0.php
                 <nowait>0</nowait>
                 <binding_nowait>0</binding_nowait>
             </queue>
-        </ebayenterprise_amqp>
+        </radial_amqp>
         <ebayenterprise_creditcard>
             <!--
             Credit Card Tenders: Map Magento credit card types to ROM credit card tender types. Node names must match

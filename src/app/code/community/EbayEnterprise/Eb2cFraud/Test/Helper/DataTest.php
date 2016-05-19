@@ -13,7 +13,7 @@
  * @license     http://opensource.org/licenses/osl-3.0.php  Open Software License (OSL 3.0)
  */
 
-class EbayEnterprise_Eb2cFraud_Test_Helper_DataTest extends EbayEnterprise_Eb2cCore_Test_Base
+class EbayEnterprise_Eb2cFraud_Test_Helper_DataTest extends Radial_Core_Test_Base
 {
     /** @var Mage_Customer_Model_Session stub */
     protected $_customerSessionStub;
@@ -37,12 +37,12 @@ class EbayEnterprise_Eb2cFraud_Test_Helper_DataTest extends EbayEnterprise_Eb2cC
             ->setMethods(['isAdmin'])
             ->getMock();
 
-        $this->_coreHelperStub = $this->getHelperMock('eb2ccore/data', ['getCurrentStore']);
+        $this->_coreHelperStub = $this->getHelperMock('radial_core/data', ['getCurrentStore']);
         $this->_coreHelperStub->expects($this->any())
             ->method('getCurrentStore')
             ->will($this->returnValue($this->_storeStub));
         $this->_orderStub = $this->getModelMock('sales/order', ['getId']);
-        $this->_payload = Mage::helper('eb2ccore')
+        $this->_payload = Mage::helper('radial_core')
             ->getSdkApi('orders', 'create')
             ->getRequestBody();
     }

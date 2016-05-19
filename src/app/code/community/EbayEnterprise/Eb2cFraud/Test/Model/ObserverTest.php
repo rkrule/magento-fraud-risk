@@ -13,7 +13,7 @@
  * @license     http://opensource.org/licenses/osl-3.0.php  Open Software License (OSL 3.0)
  */
 
-class EbayEnterprise_Eb2cFraud_Test_Model_ObserverTest extends EbayEnterprise_Eb2cCore_Test_Base
+class EbayEnterprise_Eb2cFraud_Test_Model_ObserverTest extends Radial_Core_Test_Base
 {
     /**
      * Validate expected event configuration.

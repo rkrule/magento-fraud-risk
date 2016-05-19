@@ -14,7 +14,7 @@ http://opensource.org/licenses/osl-3.0.php
 -->
 <config>
     <sections>
-        <eb2ccore>
+        <radial_core>
             <groups>
                 <fraud translate="label">
                     <label>Fraud</label>
@@ -55,6 +55,6 @@ http://opensource.org/licenses/osl-3.0.php
                     </fields>
                 </fraud>
             </groups>
-        </eb2ccore>
+        </radial_core>
     </sections>
 </config>
