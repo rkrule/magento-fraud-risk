@@ -49,8 +49,8 @@ class EbayEnterprise_Eb2cFraud_Model_Risk_Order
 		        $this->_nullCoalesce($initParams, 'request', $this->_getNewSdkInstance('EbayEnterprise_RiskService_Sdk_Request')),
 			$this->_nullCoalesce($initParams, 'config', Mage::helper('eb2cfraud/config')),
 			$this->_nullCoalesce($initParams, 'request', $this->_getNewSdkInstance('EbayEnterprise_RiskService_Sdk_Response')),
-			$this->_nullCoalesce($initParams, 'logger', Mage::helper('radial_magelog')),
-			$this->_nullCoalesce($initParams, 'context', Mage::helper('radial_magelog/context'))
+			$this->_nullCoalesce($initParams, 'logger', Mage::helper('ebayenterprise_magelog')),
+			$this->_nullCoalesce($initParams, 'context', Mage::helper('ebayenterprise_magelog/context'))
 		);
 	}
 
