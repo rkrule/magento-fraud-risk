@@ -13,7 +13,7 @@
  * @license     http://opensource.org/licenses/osl-3.0.php  Open Software License (OSL 3.0)
  */
 
-class Radial_Eb2cFraud_Test_Helper_HttpTest extends Radial_Eb2cCore_Test_Base
+class Radial_Eb2cFraud_Test_Helper_HttpTest extends Radial_Core_Test_Base
 {
     protected $_helper;
     protected $_jsModuleName;
