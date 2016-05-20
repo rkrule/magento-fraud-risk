@@ -199,7 +199,7 @@ class EbayEnterprise_Eb2cFraud_Model_Observer extends EbayEnterprise_Eb2cFraud_M
 
 	/* Thrown if the entire order is canceled */
 
-	public function processOrderConfirmationRequestCancel(Varien_Event_Observer $observer)
+	public function processOrderConfirmationRequest(Varien_Event_Observer $observer)
 	{
 		$order = $observer->getOrder();
 
