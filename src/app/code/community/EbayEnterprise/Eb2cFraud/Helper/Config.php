@@ -8,10 +8,10 @@
  * Magento Extensions End User License Agreement
  * that is bundled with this package in the file LICENSE.md.
  * It is also available through the world-wide-web at this URL:
- * http://www.ebayenterprise.com/files/pdf/Magento_Connect_Extensions_EULA_050714.pdf
+ * http://www.radial.com/files/pdf/Magento_Connect_Extensions_EULA_050714.pdf
  *
- * @copyright   Copyright (c) 2015 eBay Enterprise, Inc. (http://www.ebayenterprise.com/)
- * @license     http://www.ebayenterprise.com/files/pdf/Magento_Connect_Extensions_EULA_050714.pdf  eBay Enterprise Magento Extensions End User License Agreement
+ * @copyright   Copyright (c) 2015 eBay Enterprise, Inc. (http://www.radial.com/)
+ * @license     http://www.radial.com/files/pdf/Magento_Connect_Extensions_EULA_050714.pdf  eBay Enterprise Magento Extensions End User License Agreement
  *
  */
 
@@ -33,6 +33,9 @@ class EbayEnterprise_Eb2cFraud_Helper_Config
         const PAYMENT_ADAPTER_MAP = 'eb2cfraud/risk_service/payment_adapter_map';
 	const FRAUD_RESPONSE_CODE_MAP = 'eb2cfraud/risk_service/response_codes';
 	const FRAUD_RESPONSE_CODE_STATES_MAP = 'eb2cfraud/risk_service/response_codes_states';
+	const ORDER_STATUS_MAP = 'eb2cfraud/risk_service/order_status_codes_to_fraud';
+	const ITEM_STATUS_MAP = 'eb2cfraud/risk_service/item_status_codes_to_fraud';
+	const ORDER_STATUS_CONFIRMATION_MAP = 'eb2cfraud/risk_service/order_status_to_confirmation_codes';
 	const UOM = 'eb2cfraud/risk_service/uom';
 
 	/**
@@ -180,6 +183,28 @@ class EbayEnterprise_Eb2cFraud_Helper_Config
     }
 
     /**
+     * retrieve the order status to fraud order status map settings from store config
+     *
+     * @param  mixed
+     * @return string
+     */
+    public function getOrderStatusToFraudMap($store=null)
+    {
+	return Mage::getStoreConfig(static::ORDER_STATUS_MAP, $store);
+    }
+
+    /**
+     * retrieve the item status to fraud item status map settings from store config
+     *
+     * @param  mixed
+     * @return string
+     */
+    public function getItemStatusToFraudMap($store=null)
+    {
+        return Mage::getStoreConfig(static::ITEM_STATUS_MAP, $store);
+    }
+
+    /**
      * retrieve the unit of measure for the store
      *
      * @param  mixed
@@ -203,6 +228,16 @@ class EbayEnterprise_Eb2cFraud_Helper_Config
         }
         throw Mage::exception('EbayEnterprise_Eb2cFraud', self::UNKNOWN_CARD_TYPE);
     }
+
+   /**
+    * Get Order State to OCR Confirmation Code Maps
+    * @param  string $orderState
+    * @return string
+    */
+   public function getOrderStateToConfirmationCodeMap($store=null)
+   {
+	return Mage::getStoreConfig(static::ORDER_STATUS_CONFIRMATION_MAP, $store);
+   }
 
     /**
      * Get the Name for the Magento CC Type.
@@ -246,5 +281,49 @@ class EbayEnterprise_Eb2cFraud_Helper_Config
 
         throw Mage::exception('EbayEnterprise_Eb2cFraud', "Unknown Fraud Response Code");
     }
-}
 
+   /**
+    * Get Order State for Fraud OCR.
+    * @param  string  $orderState
+    * @return string
+    */
+   public function getOrderStateForFraudOCR($orderState)
+   {
+	$codes = $this->getOrderStatusToFraudMap();
+	if (isset($codes[$orderState])) {
+		return $codes[$orderState];
+	}
+
+	throw Mage::exception('EbayEnterprise_Eb2cFraud', "Invalid Magento Order State!");
+   }
+
+   /**
+    * Get Item State for Fraud OCR.
+    * @param  string  $itemState
+    * @return string
+    */
+   public function getItemStateForFraudOCR($itemState)
+   {
+        $codes = $this->getItemStatusToFraudMap();
+        if (isset($codes[$itemState])) {
+                return $codes[$itemState];
+        }
+   
+        throw Mage::exception('EbayEnterprise_Eb2cFraud', "Invalid Magento Item State!");
+   }
+
+   /**
+    * Get Order State to Confirmation Code for Fraud OCR.
+    * @param  string  $itemState
+    * @return string
+    */
+   public function getOrderStateForConfirmationFraudOCR($orderState)
+   {
+        $codes = $this->getOrderStateToConfirmationCodeMap();
+        if (isset($codes[$orderState])) {
+                return $codes[$orderState];
+        }
+
+        throw Mage::exception('EbayEnterprise_Eb2cFraud', "Invalid Magento Order State!");
+   }
+}

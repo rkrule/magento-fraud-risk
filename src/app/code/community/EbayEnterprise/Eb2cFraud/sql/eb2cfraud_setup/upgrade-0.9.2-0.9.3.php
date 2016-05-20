@@ -18,10 +18,11 @@ $status->setStatus('risk_suspend')->delete();
 $status->setStatus('risk_rejectpending')->delete();
 $status->setStatus('risk_submitted')->delete();
 
+
 //Add a new status
 $status->setStatus('risk_accept')
        ->setLabel('Fraud Accepted')
-       ->assignState(Mage_Sales_Model_Order::STATE_PROCESSING)
+       ->assignState(Mage_Sales_Model_Order::STATE_PROCESSING) 
        ->save();
 
 //Add a new status

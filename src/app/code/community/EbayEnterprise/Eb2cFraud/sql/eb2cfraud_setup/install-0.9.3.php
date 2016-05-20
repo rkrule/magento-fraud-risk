@@ -49,67 +49,59 @@ foreach ($entities as $entity) {
     }
 }
 
-// Required tables
-$statusTable = $installer->getTable('sales/order_status');
-$statusStateTable = $installer->getTable('sales/order_status_state');
- 
-// Insert statuses
-$installer->getConnection()->insertArray(
-    $statusTable,
-    array(
-        'status',
-        'label'
-    ),
-    array(
-        array('status' => 'risk_processing', 'label' => 'Order Under Review for Fraud Detection'),
-        array('status' => 'risk_accept', 'label' => 'Fraud Accepted'),
-        array('status' => 'risk_cancel', 'label' => 'Fraud Canceled'),
-        array('status' => 'risk_ignore', 'label' => 'Fraud Ignore'),
-	array('status' => 'risk_suspend', 'label' => 'Fraud Suspend'),
-	array('status' => 'risk_rejectpending', 'label' => 'Fraud Reject Pending')
-    )
-);
- 
-// Insert states and mapping of statuses to states
-$installer->getConnection()->insertArray(
-    $statusStateTable,
-    array(
-        'status',
-        'state',
-        'is_default'
-    ),
-    array(
-        array(
-            'status' => 'risk_processing',
-            'state' => 'payment_review',
-            'is_default' => 1
-        ),
-        array(
-            'status' => 'risk_accept',
-            'state' => 'processing',
-            'is_default' => 0
-        ),
-        array(
-            'status' => 'risk_cancel',
-            'state' => 'canceled',
-            'is_default' => 0
-        ),
-        array(
-            'status' => 'risk_ignore',
-            'state' => 'holded',
-            'is_default' => 0
-        ),
-	array(
-            'status' => 'risk_suspend',
-            'state' => 'holded',
-            'is_default' => 0
-        ),
-	array(
-            'status' => 'risk_rejectpending',
-            'state' => 'holded',
-            'is_default' => 0
-        )
-    )
-);
+// Get status model
+$status = Mage::getModel('sales/order_status');
+
+// Delete some statuses
+$status->setStatus('risk_accept')->delete();
+$status->setStatus('risk_processing')->delete();
+$status->setStatus('risk_accept')->delete();
+$status->setStatus('risk_cancel')->delete();
+$status->setStatus('risk_ignore')->delete();
+$status->setStatus('risk_suspend')->delete();
+$status->setStatus('risk_rejectpending')->delete();
+$status->setStatus('risk_submitted')->delete();
+
+//Add a new status
+$status->setStatus('risk_accept')
+       ->setLabel('Fraud Accepted')
+       ->assignState(Mage_Sales_Model_Order::STATE_PROCESSING)
+       ->save();
+
+//Add a new status
+$status->setStatus('risk_submitted')
+       ->setLabel('Order Submitted to Fraud System')
+       ->assignState('pending')
+       ->save();
+
+//Add a new status
+$status->setStatus('risk_processing')
+       ->setLabel('Order Under Review for Fraud Detection')
+       ->assignState('pending')
+       ->save();
+
+//Add a new status
+$status->setStatus('risk_cancel')
+       ->setLabel('Fraud Cancelled')
+       ->assignState(Mage_Sales_Model_Order::STATE_CANCELED)
+       ->save();
+
+//Add a new status
+$status->setStatus('risk_ignore')
+       ->setLabel('Fraud Ignore')
+       ->assignState(Mage_Sales_Model_Order::STATE_PROCESSING)
+       ->save();
+
+//Add a new status
+$status->setStatus('risk_suspend')
+       ->setLabel('Fraud Suspend')
+       ->assignState(Mage_Sales_Model_Order::STATE_PROCESSING)
+       ->save();
+
+//Add a new status
+$status->setStatus('risk_rejectpending')
+       ->setLabel('Fraud Reject Pending')
+       ->assignState(Mage_Sales_Model_Order::STATE_PROCESSING)
+       ->save();
 
 $installer->endSetup();

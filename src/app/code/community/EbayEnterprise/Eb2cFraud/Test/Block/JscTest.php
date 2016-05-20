@@ -9,11 +9,11 @@
  * It is also available through the world-wide-web at this URL:
  * http://opensource.org/licenses/osl-3.0.php
  *
- * @copyright   Copyright (c) 2013-2014 eBay Enterprise, Inc. (http://www.ebayenterprise.com/)
+ * @copyright   Copyright (c) 2013-2014 eBay Enterprise, Inc. (http://www.radial.com/)
  * @license     http://opensource.org/licenses/osl-3.0.php  Open Software License (OSL 3.0)
  */
 
-class EbayEnterprise_Eb2cFraud_Test_Block_JscTest extends EcomDev_PHPUnit_Test_Case
+class Radial_Eb2cFraud_Test_Block_JscTest extends EcomDev_PHPUnit_Test_Case
 {
     /**
      * Constructor should populate the block instance with "magic" data about the
@@ -35,7 +35,7 @@ class EbayEnterprise_Eb2cFraud_Test_Block_JscTest extends EcomDev_PHPUnit_Test_C
             'formfield' => 'jsc_formfield',
             'function' => "jsc_function",
         ));
-        $block = new EbayEnterprise_Eb2cFraud_Block_Jsc(array('collectors' => $collectors));
+        $block = new Radial_Eb2cFraud_Block_Jsc(array('collectors' => $collectors));
         $this->assertSame(
             $jscUrl . DS . 'jsc_filename.js',
             $block->getCollectorUrl()
@@ -51,7 +51,7 @@ class EbayEnterprise_Eb2cFraud_Test_Block_JscTest extends EcomDev_PHPUnit_Test_C
         $this->assertSame(
             // name of this field comes from a const on the helper used to retrieve
             // the data from the request POST data
-            // @see EbayEnterprise_Eb2cFraud_Helper_Data::JSC_FIELD_NAME
+            // @see Radial_Eb2cFraud_Helper_Data::JSC_FIELD_NAME
             '<input type="hidden" name="eb2cszyvl" id="eb2cszyvl" value="jsc_formfield" />',
             $block->getMappingField()
         );

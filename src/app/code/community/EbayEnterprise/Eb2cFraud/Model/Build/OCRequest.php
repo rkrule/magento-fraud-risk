@@ -8,10 +8,10 @@
  * Magento Extensions End User License Agreement
  * that is bundled with this package in the file LICENSE.md.
  * It is also available through the world-wide-web at this URL:
- * http://www.ebayenterprise.com/files/pdf/Magento_Connect_Extensions_EULA_050714.pdf
+ * http://www.radial.com/files/pdf/Magento_Connect_Extensions_EULA_050714.pdf
  *
- * @copyright   Copyright (c) 2015 eBay Enterprise, Inc. (http://www.ebayenterprise.com/)
- * @license     http://www.ebayenterprise.com/files/pdf/Magento_Connect_Extensions_EULA_050714.pdf  eBay Enterprise Magento Extensions End User License Agreement
+ * @copyright   Copyright (c) 2015 eBay Enterprise, Inc. (http://www.radial.com/)
+ * @license     http://www.radial.com/files/pdf/Magento_Connect_Extensions_EULA_050714.pdf  eBay Enterprise Magento Extensions End User License Agreement
  *
  */
 
@@ -35,8 +35,6 @@ class EbayEnterprise_Eb2cFraud_Model_Build_OCRequest
     protected $_config;
     /** @var Mage_Catalog_Model_Product */
     protected $_product;
-    /** @var string */
-    protected $_command;
 
     /**
      * @param array $initParams Must have this key:
@@ -46,11 +44,10 @@ class EbayEnterprise_Eb2cFraud_Model_Build_OCRequest
      *                          - 'helper' => EbayEnterprise_Eb2cFraud_Helper_Data
      *                          - 'product' => Mage_Catalog_Model_Product
      *				- 'config'  => EbayEnterprise_Eb2cFraud_Helper_config
-     *				- 'command' => string
      */
     public function __construct(array $initParams=array())
     {
-        list($this->_request, $this->_order, $this->_quote, $this->_helper, $this->_httpHelper, $this->_product, $this->_config, $this->_service, $this->_command) = $this->_checkTypes(
+        list($this->_request, $this->_order, $this->_quote, $this->_helper, $this->_httpHelper, $this->_product, $this->_config, $this->_service) = $this->_checkTypes(
             $this->_nullCoalesce($initParams, 'request', $this->_getNewSdkInstance('EbayEnterprise_RiskService_Sdk_OrderConfirmationRequest')),
             $this->_nullCoalesce($initParams, 'order', $initParams['order']),
             $this->_nullCoalesce($initParams, 'quote', Mage::getModel('sales/quote')),
@@ -58,8 +55,7 @@ class EbayEnterprise_Eb2cFraud_Model_Build_OCRequest
             $this->_nullCoalesce($initParams, 'http_helper', Mage::helper('eb2cfraud/http')),
             $this->_nullCoalesce($initParams, 'product', Mage::getModel('catalog/product')),
 	    $this->_nullCoalesce($initParams, 'config', Mage::helper('eb2cfraud/config')),
-	    $this->_nullCoalesce($initParams, 'service', Mage::getModel('eb2cfraud/risk_service')),
-	    $this->_nullCoalesce($initParams, 'command', $initParams['command'])
+	    $this->_nullCoalesce($initParams, 'service', Mage::getModel('eb2cfraud/risk_service'))
         );
     }
 
@@ -84,10 +80,9 @@ class EbayEnterprise_Eb2cFraud_Model_Build_OCRequest
         EbayEnterprise_Eb2cFraud_Helper_Http $httpHelper,
         Mage_Catalog_Model_Product $product,
 	EbayEnterprise_Eb2cFraud_Helper_Config $config,
-	EbayEnterprise_Eb2cFraud_Model_Risk_Service $service,
-	$command
+	EbayEnterprise_Eb2cFraud_Model_Risk_Service $service
     ) {
-        return array($request, $order, $quote, $helper, $httpHelper, $product, $config, $service, $command);
+        return array($request, $order, $quote, $helper, $httpHelper, $product, $config, $service);
     }
 
     public function build()
@@ -117,11 +112,8 @@ class EbayEnterprise_Eb2cFraud_Model_Build_OCRequest
 	$statusDate =  date("Y-m-d\TH:i:s.000\Z", Mage::getModel('core/date')->timestamp(time()));
 	$subPayloadOrder->setStatusDate($statusDate);
 
-	if( strcmp($this->_command, "cancel") === 0)
-	{
-		$subPayloadOrder->setConfirmationType("CANCEL");
-		$subPayloadOrder->setOrderStatus("CANCELLED");
-	}
+	$subPayloadOrder->setConfirmationType($this->_config->getOrderStateForConfirmationFraudOCR($this->_order->getState()));
+	$subPayloadOrder->setOrderStatus($this->_config->getOrderStateForFraudOCR($this->_order->getState()));
 
 	$this->_buildLineDetails($subPayloadOrder->getLineDetails());
 
@@ -155,10 +147,7 @@ class EbayEnterprise_Eb2cFraud_Model_Build_OCRequest
 	$subPayloadLineDetail->setSKU($orderItem->getSku())
 			->setQuantity((int) $orderItem->getQtyOrdered());
 
-	if( strcmp($this->_command, "cancel") === 0)
-        {
-		$subPayloadLineDetail->setItemStatus("CANCELLED");
-	}
+	$subPayloadLineDetail->setItemStatus($this->_config->getItemStateForFraudOCR($orderItem->getStatus()));
 
         return $this;
     }

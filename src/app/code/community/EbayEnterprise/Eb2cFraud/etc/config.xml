@@ -9,13 +9,13 @@ that is bundled with this package in the file LICENSE.md.
 It is also available through the world-wide-web at this URL:
 http://opensource.org/licenses/osl-3.0.php
 
-@copyright   Copyright (c) 2013-2014 eBay Enterprise, Inc. (http://www.ebayenterprise.com/)
+@copyright   Copyright (c) 2013-2014 eBay Enterprise, Inc. (http://www.radial.com/)
 @license     http://opensource.org/licenses/osl-3.0.php  Open Software License (OSL 3.0)
 -->
 <config>
     <modules>
         <EbayEnterprise_Eb2cFraud>
-            <version>0.9.2</version>
+            <version>0.9.3</version>
         </EbayEnterprise_Eb2cFraud>
     </modules>
     <global>
@@ -102,22 +102,22 @@ http://opensource.org/licenses/osl-3.0.php
 				</eb2cfraud_update_order>
 			</observers>
 		</radial_amqp_message_risk_assessment_reply>
-		<ebayenterprise_creditcard_auth_request_send_before>
+		<radial_creditcard_auth_request_send_before>
                         <observers>
                                 <eb2cfraud_count_reject>
                                         <class>eb2cfraud/observer</class>
                                         <method>countAuthAttempts</method>
                                 </eb2cfraud_count_reject>
                         </observers>
-                </ebayenterprise_creditcard_auth_request_send_before>
-		<sales_order_payment_cancel>
+                </radial_creditcard_auth_request_send_before>
+		<sales_order_save_after>
 			<observers>
 				<eb2cfraud_orderconfirmrequest>
 					<class>eb2cfraud/observer</class>
-					<method>processOrderConfirmationRequestCancel</method>
+					<method>processOrderConfirmationRequest</method>
 				</eb2cfraud_orderconfirmrequest>
 			</observers>
-		</sales_order_payment_cancel>
+		</sales_order_save_after>
 	</events>
     </global>
     <frontend>
@@ -153,8 +153,9 @@ http://opensource.org/licenses/osl-3.0.php
                     <paypaluk_express>PY</paypaluk_express>
                     <paypal_standard>PY</paypal_standard>
                     <paypal_direct>PY</paypal_direct>
-                    <paypal_express_bml>BL</paypal_express_bml>
-                    <free>OTHER</free>
+		    <radial_paypal_express>PY</radial_paypal_express>
+		    <radial_paypal_standard>PY</radial_paypal_standard>
+		    <radial_paypal_direct>PY</radial_paypal_direct>
                     <giftcard>GC</giftcard>
                     <checkmo>OTHER</checkmo>
                     <ogone>OTHER</ogone>
@@ -177,11 +178,14 @@ http://opensource.org/licenses/osl-3.0.php
                     <payflow_link>eb2cfraud/payment_adapter_default</payflow_link>
                     <hosted_pro>eb2cfraud/payment_adapter_default</hosted_pro>
                     <paypal_express>eb2cfraud/payment_adapter_paypal_express</paypal_express>
+		    <radial_paypal_express>eb2cfraud/payment_adapter_paypal_express</radial_paypal_express>
                     <verisign>eb2cfraud/payment_adapter_default</verisign>
                     <paypaluk_direct>eb2cfraud/payment_adapter_default</paypaluk_direct>
                     <paypaluk_express>eb2cfraud/payment_adapter_default</paypaluk_express>
                     <paypal_standard>eb2cfraud/payment_adapter_default</paypal_standard>
+		    <radial_paypal_standard>eb2cfraud/payment_adapter_paypal_express</radial_paypal_standard>
                     <paypal_direct>eb2cfraud/payment_adapter_default</paypal_direct>
+		    <radial_paypal_direct>eb2cfraud/payment_adapter_paypal_express</radial_paypal_direct>
                     <paypal_express_bml>eb2cfraud/payment_adapter_default</paypal_express_bml>
                     <pbridge>eb2cfraud/payment_adapter_pbridge</pbridge>
                     <pbridge_authorizenet>eb2cfraud/payment_adapter_pbridge</pbridge_authorizenet>
@@ -223,6 +227,47 @@ http://opensource.org/licenses/osl-3.0.php
 			<Suspend>holded</Suspend>
 			<Reject_Pending>holded</Reject_Pending>
 		</response_codes_states>
+		<order_status_codes_to_fraud>
+			<new>IN_PROCESS</new>
+			<pending_payment>IN_PROCESS</pending_payment>
+			<processing>IN_PROCESS</processing>
+			<complete>SHIPPED</complete>
+			<closed>COMPLETE</closed>
+			<canceled>CANCELLED</canceled>
+			<holded>IN_PROCESS</holded>
+			<payment_review>IN_PROCESS</payment_review>
+		</order_status_codes_to_fraud>
+		<order_status_to_confirmation_codes>
+			<new>OTHER</new>
+			<pending_payment>OTHER</pending_payment>
+			<processing>OTHER</processing>
+			<complete>SHIPMENT</complete>
+			<closed>RETURN PROCESSED</closed>
+			<canceled>CANCEL</canceled>
+			<holded>OTHER</holded>
+			<payment_review>IN_PROCESS</payment_review>
+		</order_status_to_confirmation_codes>
+		<item_status_codes_to_fraud>
+			<Ordered>PENDING</Ordered>
+			<Shipped>SHIPPED</Shipped>
+			<Invoiced>PENDING</Invoiced>
+			<Backordered>PENDING</Backordered>
+			<Returned>RETURNED</Returned>
+			<Refunded>RETURNED</Refunded>
+			<Canceled>CANCELLED</Canceled>
+			<Partial>PENDING</Partial>
+			<Mixed>PENDING</Mixed>
+		</item_status_codes_to_fraud>
+		<ship_vendor_to_fraud>
+			<freeshipping>OTHER</freeshipping>
+			<flatrate>OTHER</flatrate>
+			<tablerate>OTHER</tablerate>
+			<fedex>FEDEX</fedex>
+			<ups>UPS</ups>
+			<usps>USPS</usps>
+			<dhlint>DHL</dhlint>
+			<dhl>DHL</dhl>
+		</ship_vendor_to_fraud>
             </risk_service>
         </eb2cfraud>
     </default>

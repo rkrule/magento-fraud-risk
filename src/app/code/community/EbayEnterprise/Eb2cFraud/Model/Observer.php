@@ -9,7 +9,7 @@
  * It is also available through the world-wide-web at this URL:
  * http://opensource.org/licenses/osl-3.0.php
  *
- * @copyright   Copyright (c) 2013-2014 eBay Enterprise, Inc. (http://www.ebayenterprise.com/)
+ * @copyright   Copyright (c) 2013-2014 eBay Enterprise, Inc. (http://www.radial.com/)
  * @license     http://opensource.org/licenses/osl-3.0.php  Open Software License (OSL 3.0)
  */
 
@@ -199,20 +199,23 @@ class EbayEnterprise_Eb2cFraud_Model_Observer extends EbayEnterprise_Eb2cFraud_M
 
 	/* Thrown if the entire order is canceled */
 
-	public function processOrderConfirmationRequestCancel(Varien_Event_Observer $observer)
+	public function processOrderConfirmationRequest(Varien_Event_Observer $observer)
 	{
-		$order = $observer->getPayment()->getOrder();
-		$request = $this->_getNewEmptyRequest();
+		$order = $observer->getOrder();
 
-	        $payload = Mage::getModel('eb2cfraud/build_OCRequest', array(
-        	    'request' => $request,
-        	    'order' => $order,
-		    'command' => "cancel",
-        	))->build();
-
-		if( $this->_config->isDebugMode())
+		if($order->getState() == Mage_Sales_Model_Order::STATE_CANCELED || $order->getState() == Mage_Sales_Model_Order::STATE_CLOSED || $order->getState() == Mage_Sales_Model_Order::STATE_COMPLETE )
 		{
-			Mage::Log("OrderConfirmationRequest Payload - CANCEL: ". $payload->serialize());
+			$request = $this->_getNewEmptyRequest();
+
+	        	$payload = Mage::getModel('eb2cfraud/build_OCRequest', array(
+        	    		'request' => $request,
+        	    		'order' => $order,
+        		))->build();
+
+			if( $this->_config->isDebugMode())
+			{
+				Mage::Log("OrderConfirmationRequest Payload: ". $payload->serialize());
+			}
 		}
 	}
 }

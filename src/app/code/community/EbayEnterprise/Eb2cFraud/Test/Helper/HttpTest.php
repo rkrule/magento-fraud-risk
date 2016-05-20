@@ -9,11 +9,11 @@
  * It is also available through the world-wide-web at this URL:
  * http://opensource.org/licenses/osl-3.0.php
  *
- * @copyright   Copyright (c) 2013-2014 eBay Enterprise, Inc. (http://www.ebayenterprise.com/)
+ * @copyright   Copyright (c) 2013-2014 eBay Enterprise, Inc. (http://www.radial.com/)
  * @license     http://opensource.org/licenses/osl-3.0.php  Open Software License (OSL 3.0)
  */
 
-class EbayEnterprise_Eb2cFraud_Test_Helper_HttpTest extends Radial_Core_Test_Base
+class Radial_Eb2cFraud_Test_Helper_HttpTest extends Radial_Core_Test_Base
 {
     protected $_helper;
     protected $_jsModuleName;
@@ -28,7 +28,7 @@ class EbayEnterprise_Eb2cFraud_Test_Helper_HttpTest extends Radial_Core_Test_Bas
     public function setUp()
     {
         parent::setUp();
-        $this->_jsModuleName = EbayEnterprise_Eb2cFraud_Helper_Http::JSC_JS_PATH;
+        $this->_jsModuleName = Radial_Eb2cFraud_Helper_Http::JSC_JS_PATH;
 
         $this->_requestStub = $this->getMock('Mage_Core_Controller_Request_Http', ['getServer', 'getCookie', 'getPost']);
         $this->_requestStub->expects($this->any())

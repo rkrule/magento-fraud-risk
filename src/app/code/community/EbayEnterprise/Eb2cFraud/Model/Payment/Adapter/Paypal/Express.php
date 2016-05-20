@@ -8,10 +8,10 @@
  * Magento Extensions End User License Agreement
  * that is bundled with this package in the file LICENSE.md.
  * It is also available through the world-wide-web at this URL:
- * http://www.ebayenterprise.com/files/pdf/Magento_Connect_Extensions_EULA_050714.pdf
+ * http://www.radial.com/files/pdf/Magento_Connect_Extensions_EULA_050714.pdf
  *
- * @copyright   Copyright (c) 2015 eBay Enterprise, Inc. (http://www.ebayenterprise.com/)
- * @license     http://www.ebayenterprise.com/files/pdf/Magento_Connect_Extensions_EULA_050714.pdf  eBay Enterprise Magento Extensions End User License Agreement
+ * @copyright   Copyright (c) 2015 eBay Enterprise, Inc. (http://www.radial.com/)
+ * @license     http://www.radial.com/files/pdf/Magento_Connect_Extensions_EULA_050714.pdf  eBay Enterprise Magento Extensions End User License Agreement
  *
  */
 
@@ -21,12 +21,13 @@ class EbayEnterprise_Eb2cFraud_Model_Payment_Adapter_Paypal_Express
 	protected function _initialize()
 	{
 		$payment = $this->_order->getPayment();
-		$this->setExtractCardHolderName(null)
+		$owner = $this->_order->getBillingAddress()->getName();
+		$this->setExtractCardHolderName($owner)
 			->setExtractPaymentAccountUniqueId($this->_getExtractPaymentAccountUniqueId($payment))
 			->setExtractIsToken(static::IS_NOT_TOKEN)
 			->setExtractPaymentAccountBin(null)
 			->setExtractExpireDate(null)
-			->setExtractCardType($this->_helper->getPaymentMethodValueFromMap($payment->getMethod()))
+			->setExtractCardType("PAYPAL")
 			->setExtractTransactionResponses($this->_getPaypalTransactions($payment));
 		return $this;
 	}
@@ -45,8 +46,7 @@ class EbayEnterprise_Eb2cFraud_Model_Payment_Adapter_Paypal_Express
 	 */
 	protected function _getPaypalInfo(Mage_Payment_Model_Info $payment)
 	{
-		return $this->_getInfoInstance()
-			->getPaymentInfo($payment);
+		return $payment->getAdditionalInformation();
 	}
 
 	/**
@@ -56,7 +56,7 @@ class EbayEnterprise_Eb2cFraud_Model_Payment_Adapter_Paypal_Express
 	protected function _getExtractPaymentAccountUniqueId(Mage_Payment_Model_Info $payment)
 	{
 		$info = $this->_getPaypalInfo($payment);
-		return isset($info['paypal_payer_id']) ? $info['paypal_payer_id']['value'] : null;
+		return isset($info['paypal_express_checkout_payer_id']) ? $info['paypal_express_checkout_payer_id'] : null;
 	}
 
 	/**
@@ -67,8 +67,7 @@ class EbayEnterprise_Eb2cFraud_Model_Payment_Adapter_Paypal_Express
 	{
 		$info = $this->_getPaypalInfo($payment);
 		return array(
-			array('type' => 'PayPalPayer', 'response' => strtolower($info['paypal_payer_status']['value'])),
-			array('type' => 'PayPalAddress', 'response' => strtolower($info['paypal_address_status']['value'])),
+			array('type' => 'PayPalAddress', 'response' => strtolower($info['paypal_express_checkout_address_status'])),
 		);
 	}
 }

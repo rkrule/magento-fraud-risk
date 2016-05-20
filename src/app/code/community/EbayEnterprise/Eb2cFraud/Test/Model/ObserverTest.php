@@ -9,11 +9,11 @@
  * It is also available through the world-wide-web at this URL:
  * http://opensource.org/licenses/osl-3.0.php
  *
- * @copyright   Copyright (c) 2013-2014 eBay Enterprise, Inc. (http://www.ebayenterprise.com/)
+ * @copyright   Copyright (c) 2013-2014 eBay Enterprise, Inc. (http://www.radial.com/)
  * @license     http://opensource.org/licenses/osl-3.0.php  Open Software License (OSL 3.0)
  */
 
-class EbayEnterprise_Eb2cFraud_Test_Model_ObserverTest extends Radial_Core_Test_Base
+class Radial_Eb2cFraud_Test_Model_ObserverTest extends Radial_Core_Test_Base
 {
     /**
      * Validate expected event configuration.
