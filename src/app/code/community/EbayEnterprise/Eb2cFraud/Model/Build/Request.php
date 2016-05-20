@@ -684,18 +684,23 @@ class EbayEnterprise_Eb2cFraud_Model_Build_Request
         $itemcount= count($items);
 
         $paymentAdapterType = $this->_getPaymentAdapter()->getAdapter();
-        $this->_buildPaymentCard($subPayloadPayment->getPaymentCard(), $paymentAdapterType)
-	    ->_buildAuthorization($subPayloadPayment->getAuthorization())
-            ->_buildPersonName($subPayloadPayment->getPersonName(), $orderBillingAddress)
+        $this->_buildPaymentCard($subPayloadPayment->getPaymentCard(), $paymentAdapterType);
+
+	if( $orderPayment->getCcLast4())
+	{
+		$this->_buildAuthorization($subPayloadPayment->getAuthorization());
+	}            
+
+	$this->_buildPersonName($subPayloadPayment->getPersonName(), $orderBillingAddress)
             ->_buildTelephone($subPayloadPayment->getTelephone(), $orderBillingAddress)
             ->_buildAddress($subPayloadPayment->getAddress(), $orderBillingAddress)
             ->_buildTransactionResponses($subPayloadPayment->getTransactionResponses(), $paymentAdapterType);
 
-	    $subPayloadPayment->setEmail($this->_order->getCustomerEmail())
+	$subPayloadPayment->setEmail($this->_order->getCustomerEmail())
             ->setPaymentTransactionDate($this->_helper->getNewDateTime($this->_getPaymentTransactionDate()))
             ->setCurrencyCode($this->_order->getBaseCurrencyCode())
             ->setAmount($orderPayment->getAmountAuthorized())
-            ->setPaymentTransactionTypeCode($this->_config->getTenderTypeForCcType($orderPayment->getCcType()))
+            ->setPaymentTransactionTypeCode($this->_config->getTenderTypeForCcType($orderPayment->getCcType() ? $orderPayment->getCcType() : $orderPayment->getMethod()))
             ->setPaymentTransactionID($orderPayment->getId())
             ->setItemListRPH($itemcount);
         

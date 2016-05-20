@@ -153,8 +153,9 @@ http://opensource.org/licenses/osl-3.0.php
                     <paypaluk_express>PY</paypaluk_express>
                     <paypal_standard>PY</paypal_standard>
                     <paypal_direct>PY</paypal_direct>
-                    <paypal_express_bml>BL</paypal_express_bml>
-                    <free>OTHER</free>
+		    <radial_paypal_express>PY</radial_paypal_express>
+		    <radial_paypal_standard>PY</radial_paypal_standard>
+		    <radial_paypal_direct>PY</radial_paypal_direct>
                     <giftcard>GC</giftcard>
                     <checkmo>OTHER</checkmo>
                     <ogone>OTHER</ogone>
@@ -177,11 +178,14 @@ http://opensource.org/licenses/osl-3.0.php
                     <payflow_link>eb2cfraud/payment_adapter_default</payflow_link>
                     <hosted_pro>eb2cfraud/payment_adapter_default</hosted_pro>
                     <paypal_express>eb2cfraud/payment_adapter_paypal_express</paypal_express>
+		    <radial_paypal_express>eb2cfraud/payment_adapter_paypal_express</radial_paypal_express>
                     <verisign>eb2cfraud/payment_adapter_default</verisign>
                     <paypaluk_direct>eb2cfraud/payment_adapter_default</paypaluk_direct>
                     <paypaluk_express>eb2cfraud/payment_adapter_default</paypaluk_express>
                     <paypal_standard>eb2cfraud/payment_adapter_default</paypal_standard>
+		    <radial_paypal_standard>eb2cfraud/payment_adapter_paypal_express</radial_paypal_standard>
                     <paypal_direct>eb2cfraud/payment_adapter_default</paypal_direct>
+		    <radial_paypal_direct>eb2cfraud/payment_adapter_paypal_express</radial_paypal_direct>
                     <paypal_express_bml>eb2cfraud/payment_adapter_default</paypal_express_bml>
                     <pbridge>eb2cfraud/payment_adapter_pbridge</pbridge>
                     <pbridge_authorizenet>eb2cfraud/payment_adapter_pbridge</pbridge_authorizenet>
