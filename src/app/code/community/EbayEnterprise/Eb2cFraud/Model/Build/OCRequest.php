@@ -149,6 +149,27 @@ class EbayEnterprise_Eb2cFraud_Model_Build_OCRequest
 
 	$subPayloadLineDetail->setItemStatus($this->_config->getItemStateForFraudOCR($orderItem->getStatus()));
 
+	$shipment_collection = Mage::getResourceModel('sales/order_shipment_collection')
+            ->setOrderFilter($this->_order)
+            ->load();
+
+	foreach($shipment_collection as $shipment){
+	    foreach ($shipment->getAllItems() as $product){
+            	if( strcmp($product->getSku(),$orderItem->getSku()) === 0)
+		{
+			//This product is on this shipment, so record, NOTE Magento does not assign items tracking numbers but shipments, shipments may have multiple tracking numbers
+			foreach($shipment->getAllTracks() as $tracking_number){
+		                $track_num = $tracking_number->getNumber();
+
+				$subPayloadLineDetail->setTrackingNumber(substr($track_num,0,63));
+				$subPayloadLineDetail->setShippingVendorCode($this->_config->getShipVendorForShipCarrier($tracking_number->getCarrierCode()));
+				$subPayloadLineDetail->setDeliveryMethod($this->_order->getShippingDescription());
+				$subPayloadLineDetail->setShipActualDate(date("Y-m-d\TH:i:s.000\Z", strtotime($tracking_number->getCreatedAt())));
+            		}
+		}
+	    }
+	}
+
         return $this;
     }
 }

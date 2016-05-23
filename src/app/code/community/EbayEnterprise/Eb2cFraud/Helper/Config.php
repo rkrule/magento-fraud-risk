@@ -36,6 +36,7 @@ class EbayEnterprise_Eb2cFraud_Helper_Config
 	const ORDER_STATUS_MAP = 'eb2cfraud/risk_service/order_status_codes_to_fraud';
 	const ITEM_STATUS_MAP = 'eb2cfraud/risk_service/item_status_codes_to_fraud';
 	const ORDER_STATUS_CONFIRMATION_MAP = 'eb2cfraud/risk_service/order_status_to_confirmation_codes';
+	const SHIP_VENDOR_MAP = 'eb2cfraud/risk_service/ship_vendor_to_fraud';
 	const UOM = 'eb2cfraud/risk_service/uom';
 
 	/**
@@ -147,6 +148,17 @@ class EbayEnterprise_Eb2cFraud_Helper_Config
     public function getShippingMethodMap($store=null)
     {
         return Mage::getStoreConfig(static::SHIPPING_METHOD_MAP, $store);
+    }
+
+    /**
+     * retrieve the shipping vendor map settings from store config
+     *
+     * @param  mixed
+     * @return string
+     */
+    public function getShipVendorMap($store=null)
+    {
+        return Mage::getStoreConfig(static::SHIP_VENDOR_MAP, $store);
     }
 
     /**
@@ -325,5 +337,20 @@ class EbayEnterprise_Eb2cFraud_Helper_Config
         }
 
         throw Mage::exception('EbayEnterprise_Eb2cFraud', "Invalid Magento Order State!");
+   }
+
+   /**
+    * Map Ship Carrier to Ship Vendor for Order Confirmation Request
+    * @param  string  $shipCarrier
+    * @return string
+    */
+   public function getShipVendorForShipCarrier($shipCarrier)
+   {
+	$codes = $this->getShipVendorMap();
+        if (isset($codes[$shipCarrier])) {
+                return $codes[$shipCarrier];
+        } else {
+		return "OTHER";
+        }
    }
 }
