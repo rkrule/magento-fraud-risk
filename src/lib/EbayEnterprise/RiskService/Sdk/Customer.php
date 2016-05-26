@@ -37,12 +37,10 @@ class EbayEnterprise_RiskService_Sdk_Customer
         $this->setAddress($this->_buildPayloadForModel(static::ADDRESS_MODEL));
         $this->_extractionPaths = array(
             'setCurrencyCode' => 'string(x:CurrencyCode)',
+	    'setMemberLoggedIn' => 'string(x:MemberLoggedIn)',
         );
         $this->_optionalExtractionPaths = array (
             'setEmail' => 'string(x:PromoCode)',
-        );
-        $this->_booleanExtractionPaths = array (
-            'setMemberLoggedIn' => 'string(x:MemberLoggedIn)',
         );
     	$this->_subpayloadExtractionPaths = array(
 	    'setPersonName' => 'x:PersonName',

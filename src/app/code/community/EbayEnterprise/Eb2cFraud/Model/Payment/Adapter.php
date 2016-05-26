@@ -37,8 +37,8 @@ class EbayEnterprise_Eb2cFraud_Model_Payment_Adapter
 	{
 		list($this->_order, $this->_helper, $this->_config) = $this->_checkTypes(
 			$this->_nullCoalesce($initParams, 'order', $initParams['order']),
-			$this->_nullCoalesce($initParams, 'helper', Mage::helper('eb2cfraud')),
-			$this->_nullCoalesce($initParams, 'config', Mage::helper('eb2cfraud/config'))
+			$this->_nullCoalesce($initParams, 'helper', Mage::helper('ebayenterprise_eb2cfraud')),
+			$this->_nullCoalesce($initParams, 'config', Mage::helper('ebayenterprise_eb2cfraud/config'))
 		);
 		$this->_adapter = $this->_getPaymentAdapter($this->_getAdapters());
 	}

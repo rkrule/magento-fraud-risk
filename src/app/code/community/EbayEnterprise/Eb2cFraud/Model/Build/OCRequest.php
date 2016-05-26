@@ -51,11 +51,11 @@ class EbayEnterprise_Eb2cFraud_Model_Build_OCRequest
             $this->_nullCoalesce($initParams, 'request', $this->_getNewSdkInstance('EbayEnterprise_RiskService_Sdk_OrderConfirmationRequest')),
             $this->_nullCoalesce($initParams, 'order', $initParams['order']),
             $this->_nullCoalesce($initParams, 'quote', Mage::getModel('sales/quote')),
-            $this->_nullCoalesce($initParams, 'helper', Mage::helper('eb2cfraud')),
-            $this->_nullCoalesce($initParams, 'http_helper', Mage::helper('eb2cfraud/http')),
+            $this->_nullCoalesce($initParams, 'helper', Mage::helper('ebayenterprise_eb2cfraud')),
+            $this->_nullCoalesce($initParams, 'http_helper', Mage::helper('ebayenterprise_eb2cfraud/http')),
             $this->_nullCoalesce($initParams, 'product', Mage::getModel('catalog/product')),
-	    $this->_nullCoalesce($initParams, 'config', Mage::helper('eb2cfraud/config')),
-	    $this->_nullCoalesce($initParams, 'service', Mage::getModel('eb2cfraud/risk_service'))
+	    $this->_nullCoalesce($initParams, 'config', Mage::helper('ebayenterprise_eb2cfraud/config')),
+	    $this->_nullCoalesce($initParams, 'service', Mage::getModel('ebayenterprise_eb2cfraud/risk_service'))
         );
     }
 
@@ -109,11 +109,35 @@ class EbayEnterprise_Eb2cFraud_Model_Build_OCRequest
         $subPayloadOrder->setOrderId($this->_order->getIncrementId());
 	$subPayloadOrder->setStoreId($this->_config->getStoreId());
 	
-	$statusDate =  date("Y-m-d\TH:i:s.000\Z", Mage::getModel('core/date')->timestamp(time()));
+	$statusDate =  date("Y-m-d\TH:i:s.000", Mage::getModel('core/date')->timestamp(time()));
 	$subPayloadOrder->setStatusDate($statusDate);
 
 	$subPayloadOrder->setConfirmationType($this->_config->getOrderStateForConfirmationFraudOCR($this->_order->getState()));
-	$subPayloadOrder->setOrderStatus($this->_config->getOrderStateForFraudOCR($this->_order->getState()));
+	
+	$array_ignore = [ "completed", "canceled", "closed" ];
+
+	if( !in_array( $this->_order->getState(), $array_ignore))
+	{
+		$subPayloadOrder->setOrderStatus($this->_config->getOrderStateForFraudOCR($this->_order->getState()));
+	} else {
+		$allshipped = 0;
+
+		foreach($this->_order->getAllItems() as $item)
+		{
+			if( $item->getStatus() !=  Mage_Sales_Model_Order_Item::STATUS_SHIPPED )
+			{
+				$allshipped = 1;
+				break;
+			}
+		}
+
+		if( !$allshipped )
+		{
+			$subPayloadOrder->setOrderStatus("SHIPPED");
+		} else {
+			$subPayloadOrder->setOrderStatus("IN_PROCESS");
+		}
+	}
 
 	$this->_buildLineDetails($subPayloadOrder->getLineDetails());
 
@@ -127,10 +151,41 @@ class EbayEnterprise_Eb2cFraud_Model_Build_OCRequest
     protected function _buildLineDetails(EbayEnterprise_RiskService_Sdk_Line_IDetails $subPayloadLineDetails)
     {
         foreach ($this->_order->getAllItems() as $orderItem) {
-            $subPayloadLineDetail = $subPayloadLineDetails->getEmptyLineDetail();
-            $this->_buildLineDetail($subPayloadLineDetail, $orderItem);
-            $subPayloadLineDetails->offsetSet($subPayloadLineDetail);
-        }
+	    $quaduple = array();
+
+	    foreach($this->_order->getShipmentsCollection() as $shipment){
+            	foreach ($shipment->getAllItems() as $product){
+               	    if( strcmp($product->getSku(),$orderItem->getSku()) === 0)
+            	    {
+                        //This product is on this shipment, so record, NOTE Magento does not assign items tracking numbers but shipments, shipments may have multiple tracking numbers
+                        foreach($shipment->getAllTracks() as $tracking_number){
+                                $track_num = $tracking_number->getNumber();
+                                $carrier_code = $tracking_number->getCarrierCode();
+                                $delivery_method = $this->_order->getShippingMethod();
+                                $shipacount = date("Y-m-d\TH:i:s.000", strtotime($tracking_number->getCreatedAt()));
+
+				$quaduple[] = array( 'tracking_number' => $track_num, 'carrier_code' => $carrier_code, 'delivery_method' => $delivery_method, 'shipacount' => $shipacount);
+			}
+		     }
+		}
+	    }
+
+	    foreach( $quaduple as $quad )
+	    {
+	    	$subPayloadLineDetail = $subPayloadLineDetails->getEmptyLineDetail();
+            	$this->_buildLineDetail($subPayloadLineDetail, $orderItem, $quad);
+            	$subPayloadLineDetails->offsetSet($subPayloadLineDetail);
+            }
+
+	    if( empty($quaduple))
+	    {
+		$quaduple = array( 'tracking_number' => null, 'carrier_code' => null, 'delivery_method' => null, 'shipacount' => null);
+
+		$subPayloadLineDetail = $subPayloadLineDetails->getEmptyLineDetail();
+                $this->_buildLineDetail($subPayloadLineDetail, $orderItem, $quaduple);
+                $subPayloadLineDetails->offsetSet($subPayloadLineDetail);
+	    }
+	}
         return $this;
     }
 
@@ -141,13 +196,23 @@ class EbayEnterprise_Eb2cFraud_Model_Build_OCRequest
      */
     protected function _buildLineDetail(
         EbayEnterprise_RiskService_Sdk_Line_IDetail $subPayloadLineDetail,
-        Mage_Core_Model_Abstract $orderItem
+        Mage_Core_Model_Abstract $orderItem, $quad
     )
     {
 	$subPayloadLineDetail->setSKU($orderItem->getSku())
 			->setQuantity((int) $orderItem->getQtyOrdered());
 
 	$subPayloadLineDetail->setItemStatus($this->_config->getItemStateForFraudOCR($orderItem->getStatus()));
+	$subPayloadLineDetail->setTrackingNumber($quad['tracking_number']);
+
+	if( $quad['carrier_code'])
+	{
+		$subPayloadLineDetail->setShippingVendorCode($this->_config->getShipVendorForShipCarrier($quad['carrier_code']));
+	}
+
+	$subPayloadLineDetail->setDeliveryMethod($quad['delivery_method']);
+	$subPayloadLineDetail->setShipScheduledDate($quad['shipacount']);
+	$subPayloadLineDetail->setShipActualDate($quad['shipacount']);
 
         return $this;
     }

@@ -55,7 +55,7 @@ class Radial_Eb2cFraud_Test_Helper_HttpTest extends Radial_Core_Test_Base
      */
     public function testGetJscUrl()
     {
-        $url = Mage::helper('eb2cfraud/http')->getJscUrl();
+        $url = Mage::helper('ebayenterprise_eb2cfraud/http')->getJscUrl();
         $this->assertStringEndsWith($this->_jsModuleName, $url);
     }
 
@@ -64,7 +64,7 @@ class Radial_Eb2cFraud_Test_Helper_HttpTest extends Radial_Core_Test_Base
      */
     public function testGetJavaScriptFraudData()
     {
-        $helper = Mage::helper('eb2cfraud/http');
+        $helper = Mage::helper('ebayenterprise_eb2cfraud/http');
         EcomDev_Utils_Reflection::setRestrictedPropertyValues($helper, [
             '_request' => $this->_requestStub,
         ]);
@@ -88,7 +88,7 @@ class Radial_Eb2cFraud_Test_Helper_HttpTest extends Radial_Core_Test_Base
      */
     public function testGetCookiesString(array $arr, $expected)
     {
-        $helper = Mage::helper('eb2cfraud/http');
+        $helper = Mage::helper('ebayenterprise_eb2cfraud/http');
         EcomDev_Utils_Reflection::setRestrictedPropertyValues($helper, [
             '_request' => $this->_requestStub,
             '_cookie' => $this->_cookieStub,

@@ -23,6 +23,6 @@ class EbayEnterprise_Eb2cFraud_Model_Risk_Service
 {
 	protected function _construct()
 	{
-		$this->_init('eb2cfraud/risk_service');
+		$this->_init('ebayenterprise_eb2cfraud/risk_service');
 	}
 }

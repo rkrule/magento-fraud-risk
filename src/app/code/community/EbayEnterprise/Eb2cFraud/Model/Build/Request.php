@@ -55,11 +55,11 @@ class EbayEnterprise_Eb2cFraud_Model_Build_Request
             $this->_nullCoalesce($initParams, 'request', $this->_getNewSdkInstance('EbayEnterprise_RiskService_Sdk_Request')),
             $this->_nullCoalesce($initParams, 'order', $initParams['order']),
             $this->_nullCoalesce($initParams, 'quote', Mage::getModel('sales/quote')),
-            $this->_nullCoalesce($initParams, 'helper', Mage::helper('eb2cfraud')),
-            $this->_nullCoalesce($initParams, 'http_helper', Mage::helper('eb2cfraud/http')),
+            $this->_nullCoalesce($initParams, 'helper', Mage::helper('ebayenterprise_eb2cfraud')),
+            $this->_nullCoalesce($initParams, 'http_helper', Mage::helper('ebayenterprise_eb2cfraud/http')),
             $this->_nullCoalesce($initParams, 'product', Mage::getModel('catalog/product')),
-	    $this->_nullCoalesce($initParams, 'config', Mage::helper('eb2cfraud/config')),
-	    $this->_nullCoalesce($initParams, 'service', Mage::getModel('eb2cfraud/risk_service'))
+	    $this->_nullCoalesce($initParams, 'config', Mage::helper('ebayenterprise_eb2cfraud/config')),
+	    $this->_nullCoalesce($initParams, 'service', Mage::getModel('ebayenterprise_eb2cfraud/risk_service'))
         );
     }
 
@@ -495,16 +495,16 @@ class EbayEnterprise_Eb2cFraud_Model_Build_Request
 	$createdAt = $this->_order->getPayment()->getCreatedAt();
 
 	// SERVER INFO - TYPE
-	$subPayloadServerInfo->setTime(date("Y-m-d\TH:i:s.000\Z", strtotime($this->_getPaymentTransactionDate())));
+	$subPayloadServerInfo->setTime($this->_helper->getNewDateTime($this->_getPaymentTransactionDate()));
 
 	$storeTimeZone = Mage::getStoreConfig('general/locale/timezone');
 	$offset = (timezone_offset_get(new DateTimeZone($storeTimeZone), new DateTime()) / 60) / 60;
 
-	$subPayloadServerInfo->setTZOffset($offset);
+	$subPayloadServerInfo->setTZOffset(floatval($offset));
 
 	if( strtotime($this->_order->getCreatedAtStoreDate()) != time() )
 	{
-		$subPayloadServerInfo->setTZOffsetRaw($offset);
+		$subPayloadServerInfo->setTZOffsetRaw(floatval($offset));
 	}
 
 	date_default_timezone_set($storeTimeZone);
@@ -663,7 +663,7 @@ class EbayEnterprise_Eb2cFraud_Model_Build_Request
      */
     protected function _getPaymentAdapter()
     {
-        return Mage::getModel('eb2cfraud/payment_adapter', array(
+        return Mage::getModel('ebayenterprise_eb2cfraud/payment_adapter', array(
             'order' => $this->_order
         ));
     }
@@ -796,7 +796,7 @@ class EbayEnterprise_Eb2cFraud_Model_Build_Request
 	$lastVisitorInt = strtotime($lastVisit);
 	$nowtime = time();
 	$diff = $nowtime - $lastVisitorInt;
-	$minutes = date('i', $diff);
+	$minutes = date('i.s', $diff);
 
 	$subPayloadShoppingSession->setTimeOnSite($minutes);
 

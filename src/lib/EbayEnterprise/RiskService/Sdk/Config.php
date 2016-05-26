@@ -35,6 +35,8 @@ class EbayEnterprise_RiskService_Sdk_Config
 	protected $_request;
 	/** @var EbayEnterprise_RiskService_Sdk_IPayload */
 	protected $_response;
+	/** @var EbayEnterprise_RiskService_Sdk_IPayload *.
+	protected $_OCresponse;
 	/** @var EbayEnterprise_RiskService_Sdk_IPayload */
 	protected $_error;
 
@@ -46,6 +48,7 @@ class EbayEnterprise_RiskService_Sdk_Config
 	 *                          - 'request' => EbayEnterprise_RiskService_Sdk_IPayload
 	 *                          - 'response' => EbayEnterprise_RiskService_Sdk_IPayload
 	 *                          - 'error' => EbayEnterprise_RiskService_Sdk_IPayload
+	 *			    - 'ocresponse' => EbayEnterprise_RiskService_Sdk_IPayload
 	 */
 	public function __construct(array $initParams=array())
 	{
@@ -55,14 +58,16 @@ class EbayEnterprise_RiskService_Sdk_Config
 			$this->_storeId,
 			$this->_request,
 			$this->_response,
-			$this->_error
+			$this->_error,
+			$this->_OCresponse
 		) = $this->_checkTypes(
 			$this->_nullCoalesce($initParams, 'api_key', null),
 			$this->_nullCoalesce($initParams, 'host', null),
 			$this->_nullCoalesce($initParams, 'store_id', null),
 			$this->_nullCoalesce($initParams, 'request', $this->_getNewInstance('EbayEnterprise_RiskService_Sdk_Request')),
 			$this->_nullCoalesce($initParams, 'response', $this->_getNewInstance('EbayEnterprise_RiskService_Sdk_Response')),
-			$this->_nullCoalesce($initParams, 'error', $this->_getNewInstance('EbayEnterprise_RiskService_Sdk_Error'))
+			$this->_nullCoalesce($initParams, 'error', $this->_getNewInstance('EbayEnterprise_RiskService_Sdk_Error')),
+			$this->_nullCoalesce($initParams, 'ocresponse', $this->_getNewInstance('EbayEnterprise_RiskService_Sdk_OCResponse'))
 		);
 	}
 
@@ -87,6 +92,7 @@ class EbayEnterprise_RiskService_Sdk_Config
 	 * @param  EbayEnterprise_RiskService_Sdk_IPayload
 	 * @param  EbayEnterprise_RiskService_Sdk_IPayload
 	 * @param  EbayEnterprise_RiskService_Sdk_IPayload
+	 * @param  EbayEnterprise_RiskService_Sdk_IPayload
 	 * @return array
 	 */
 	protected function _checkTypes(
@@ -95,9 +101,10 @@ class EbayEnterprise_RiskService_Sdk_Config
 		$storeId,
 		EbayEnterprise_RiskService_Sdk_IPayload $request,
 		EbayEnterprise_RiskService_Sdk_IPayload $response,
-		EbayEnterprise_RiskService_Sdk_IPayload $error
+		EbayEnterprise_RiskService_Sdk_IPayload $error,
+		EbayEnterprise_RiskService_Sdk_IPayload $ocresponse
 	) {
-		return array($apiKey, $host, $storeId, $request, $response, $error);
+		return array($apiKey, $host, $storeId, $request, $response, $error, $ocresponse);
 	}
 
 	/**
@@ -186,6 +193,23 @@ class EbayEnterprise_RiskService_Sdk_Config
 		$this->_response = $response;
 		return $this;
 	}
+
+	/**
+         * @see EbayEnterprise_RiskService_Sdk_IConfig::getOCResponse()
+         */
+        public function getOCResponse()
+        {
+                return $this->_OCresponse;
+        }
+
+        /**
+         * @see EbayEnterprise_RiskService_Sdk_IConfig::setOCResponse()
+         */
+        public function setOCResponse(EbayEnterprise_RiskService_Sdk_IPayload $response)
+        {
+                $this->_OCresponse = $response;
+                return $this;
+        }
 
 	/**
 	 * @see EbayEnterprise_RiskService_Sdk_IConfig::getError()

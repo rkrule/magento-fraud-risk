@@ -59,7 +59,7 @@ class EbayEnterprise_RiskService_Sdk_Payment
 			'setEmail' => 'string(x:Email)',
 			'setPaymentTransactionTypeCode' => 'string(x:PaymentTransactionTypeCode)',
 			'setTenderClass' => 'string(x:TenderClass)',
-			'setAmount' => 'x:Amount',
+			'setAmount' => 'number(x:Amount)',
 		);
 		$this->_optionalExtractionPaths = array(
 			'setCurrencyCode' => 'x:Amount/@currencyCode',

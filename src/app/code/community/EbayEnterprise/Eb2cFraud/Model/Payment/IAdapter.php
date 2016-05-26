@@ -17,7 +17,7 @@
 
 interface EbayEnterprise_Eb2cFraud_Model_Payment_IAdapter
 {
-	const DEFAULT_ADAPTER = 'eb2cfraud/payment_adapter_default';
+	const DEFAULT_ADAPTER = 'ebayenterprise_eb2cfraud/payment_adapter_default';
 	const GIFT_CARD_PAYMENT_METHOD = 'giftcard';
 
 	/**

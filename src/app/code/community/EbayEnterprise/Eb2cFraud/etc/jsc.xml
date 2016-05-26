@@ -14,7 +14,7 @@ http://opensource.org/licenses/osl-3.0.php
 -->
 <config>
     <default>
-        <eb2cfraud>
+        <ebayenterprise_eb2cfraud>
             <!--
                 <collectors> contains a JSON string of possible collectors.
                 I tried doing it with configxml, but
@@ -78,6 +78,6 @@ http://opensource.org/licenses/osl-3.0.php
                     "formfield": "v1",
                     "filename": "scripts.js"
                 }]]]></collectors>
-        </eb2cfraud>
+        </ebayenterprise_eb2cfraud>
     </default>
 </config>

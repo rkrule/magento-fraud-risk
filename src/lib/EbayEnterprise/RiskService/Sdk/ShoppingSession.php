@@ -30,11 +30,9 @@ class EbayEnterprise_RiskService_Sdk_ShoppingSession
     {
         parent::__construct($initParams);
         $this->_extractionPaths = array(
-            'setTimeOnSite' => 'x:TimeOnSite',
-        );
-        $this->_booleanExtractionPaths = array (
-            'setReturnCustomer' => 'x:ReturnCustomer',
-            'setItemsRemoved'     => 'x:ItemsRemoved',
+            'setTimeOnSite' => 'number(x:TimeOnSite)',
+	    'setReturnCustomer' => 'boolean(x:ReturnCustomer)',
+	    'setItemsRemoved'     => 'boolean(x:ItemsRemoved)',
         );
     }
 

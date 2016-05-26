@@ -41,7 +41,7 @@ class EbayEnterprise_RiskService_Sdk_Api
 	public function __construct(EbayEnterprise_RiskService_Sdk_Config $config)
 	{
 		$this->_config = $config;
-		$this->_helperConfig = Mage::helper('eb2cfraud/config');
+		$this->_helperConfig = Mage::helper('ebayenterprise_eb2cfraud/config');
 		Requests::register_autoloader();
 	}
 
@@ -79,6 +79,7 @@ class EbayEnterprise_RiskService_Sdk_Api
 			// when the request cannot even be attempted.
 			throw Mage::exception('EbayEnterprise_RiskService_Sdk_Exception_Network_Error', $e->getMessage());
 		}
+
 		$this->_deserializeResponse($this->_lastRequestsResponse->body);
 		return $this;
 	}
@@ -95,8 +96,8 @@ class EbayEnterprise_RiskService_Sdk_Api
 		try {
 			$this->getResponseBody()->deserialize($responseData);
 		} catch (EbayEnterprise_RiskService_Sdk_Exception_Invalid_Payload_Exception $e) {
-			$this->_setErrorResponseBody();
-			$this->getResponseBody()->deserialize($responseData);
+			$logMessage = sprintf('[%s] Error Payload Response Body: %s', __CLASS__, $this->cleanAuthXml($responseData));
+                        Mage::log($logMessage, Zend_Log::WARN);
 		}
 		if ($this->_helperConfig->isDebugMode()) {
 			$logMessage = sprintf('[%s] Response Body: %s', __CLASS__, $this->cleanAuthXml($responseData));
@@ -135,7 +136,13 @@ class EbayEnterprise_RiskService_Sdk_Api
 		// If a payload doesn't exist for the response, the operation cannot
 		// be supported.
 		try {
-			$this->_replyPayload = $this->_config->getResponse();
+			$xml = simplexml_load_string($this->_lastRequestsResponse->body);
+                	if( strcmp($xml->getName(), "RiskOrderConfirmationReply") === 0)
+                	{
+				$this->_replyPayload = $this->_config->getOCResponse();
+			} else {
+				$this->_replyPayload = $this->_config->getResponse();
+			}
 		} catch (EbayEnterprise_RiskService_Sdk_Exception_Unsupported_Payload_Exception $e) {
 			throw Mage::exception('EbayEnterprise_RiskService_Sdk_Exception_Unsupported_Operation', '');
 		}
@@ -188,9 +195,18 @@ class EbayEnterprise_RiskService_Sdk_Api
 			$logMessage = sprintf('[%s] Request Body: %s', __CLASS__, $this->cleanAuthXml($requestXml));
 			Mage::log($logMessage, Zend_Log::DEBUG);
 		}
-	
-		//Note this is a really crude way of doing this, but since this SDK is only for Risk Assess right now... IDC
-		$hostname = "https://". $this->_config->getEndpoint() . "/v1.0/stores/". $this->_config->getStoreId() . "/risk/fraud/assess.xml";
+
+		$xml = simplexml_load_string($requestXml);
+		if( strcmp($xml->getName(), "RiskAssessmentRequest") === 0)
+		{
+			//Note this is a really crude way of doing this, but since this SDK is only for Risk Assess right now... IDC
+			$hostname = "https://". $this->_config->getEndpoint() . "/v1.0/stores/". $this->_config->getStoreId() . "/risk/fraud/assess.xml";
+		} elseif ( strcmp($xml->getName(), "RiskOrderConfirmationRequest") === 0 ) {
+			//Note this is a really crude way of doing this, but since this SDK is only for Risk Assess right now... IDC
+                        $hostname = "https://". $this->_config->getEndpoint() . "/v1.0/stores/". $this->_config->getStoreId() . "/risk/fraud/orderConfirmation.xml";
+		} else {
+			throw Mage::exception('EbayEnterprise_RiskService_Sdk_Exception_Network_Error', "Unsupported Payload - ". $xml->getName());
+		}
 
 		$this->_lastRequestsResponse = Requests::post(
 			$hostname,

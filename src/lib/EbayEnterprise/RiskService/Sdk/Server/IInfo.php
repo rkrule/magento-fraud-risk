@@ -30,7 +30,7 @@ interface EbayEnterprise_RiskService_Sdk_Server_IInfo extends EbayEnterprise_Ris
 	 * @param  DateTime
 	 * @return self
 	 */
-	public function setTime($time);
+	public function setTime(DateTime $time);
 
     /**
      * xsd restrictions - in hours

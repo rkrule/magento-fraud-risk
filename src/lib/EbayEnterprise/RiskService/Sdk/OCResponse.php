@@ -69,10 +69,10 @@ class EbayEnterprise_RiskService_Sdk_OCResponse
 			'setOrderId' => 'x:OrderId',
 			'setStoreId' => 'x:StoreId',
 			'setOrderConfirmationAcknowledgement' => 'x:OrderConfirmationAcknowledgement',
-		)
+		);
 		$this->_optionalExtractionPaths = array(
 			'setCreateTimestamp' => 'x:CreateTimestamp',
-		)
+		);
 	}
 
 	/**
@@ -107,6 +107,6 @@ class EbayEnterprise_RiskService_Sdk_OCResponse
 		return $this->_serializeNode('OrderId', $this->getOrderId())
 			. $this->_serializeNode('StoreId', $this->getStoreId())
 			. $this->_serializeOptionalValue('CreateTimestamp', $this->getCreateTimestamp())
-			. $this->_serializeNode('OrderConfirmationAcknowledgement', $this->getOrderConfirmationAcknowledgement());'
+			. $this->_serializeNode('OrderConfirmationAcknowledgement', $this->getOrderConfirmationAcknowledgement());
 	}
 }

@@ -29,7 +29,7 @@ class EbayEnterprise_Eb2cFraud_Helper_Data extends Mage_Core_Helper_Abstract
 
 	public function __construct()
 	{
-		$this->_config = Mage::helper('eb2cfraud/config');
+		$this->_config = Mage::helper('ebayenterprise_eb2cfraud/config');
 	}
 
 	/**
@@ -55,7 +55,7 @@ class EbayEnterprise_Eb2cFraud_Helper_Data extends Mage_Core_Helper_Abstract
 	 */
 	public function getEb2cFraudCollection()
 	{
-		return Mage::getResourceModel('eb2cfraud/risk_service_collection')
+		return Mage::getResourceModel('ebayenterprise_eb2cfraud/risk_service_collection')
 			->addFieldToFilter('is_request_sent', 0);
 	}
 
@@ -68,7 +68,7 @@ class EbayEnterprise_Eb2cFraud_Helper_Data extends Mage_Core_Helper_Abstract
 	 */
 	public function getFeedbackOrderCollection()
 	{
-		return Mage::getResourceModel('eb2cfraud/risk_service_collection')
+		return Mage::getResourceModel('ebayenterprise_eb2cfraud/risk_service_collection')
 			->addFieldToFilter('is_request_sent', 1)
 			->addFieldToFilter('is_feedback_sent', 0)
 			->addFieldToFilter('feedback_sent_attempt_count', array(
@@ -116,7 +116,7 @@ class EbayEnterprise_Eb2cFraud_Helper_Data extends Mage_Core_Helper_Abstract
 	 */
 	public function getEb2cFraud(Mage_Sales_Model_Order $order)
 	{
-		return Mage::getModel('eb2cfraud/risk_service')
+		return Mage::getModel('ebayenterprise_eb2cfraud/risk_service')
 			->load($order->getIncrementId(), 'order_increment_id');
 	}
 

@@ -30,8 +30,8 @@ class EbayEnterprise_RiskService_Sdk_Authorization
 		$this->_optionalExtractionPaths = array(
 			'setCode' =>	 'x:Code',
 		);
-        	$this->_booleanExtractionPaths = array (
-            		'setDecline' => 'x:Decline',
+        	$this->_extractionPaths = array (
+            		'setDecline' => 'boolean(x:Decline)',
         	);
 	}
 
