@@ -150,7 +150,7 @@ class EbayEnterprise_Eb2cFraud_Model_Risk_Order
 				if( strcmp( $xml->getName(), "RiskAssessmentRequest") === 0)
 				{
 					$eventName = 'risk_assessment_request';
-				} elseif (  strcmp( $xml->getName(), "OrderConfirmationRequest") === 0) {
+				} elseif (  strcmp( $xml->getName(), "RiskOrderConfirmationRequest") === 0) {
 					$eventName = 'order_confirmation_request';
 				} else {
 					$eventName = 'not_supported';
