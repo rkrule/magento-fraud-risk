@@ -204,8 +204,14 @@ class EbayEnterprise_Eb2cFraud_Model_Build_OCRequest
 
 	$subPayloadLineDetail->setItemStatus($this->_config->getItemStateForFraudOCR($orderItem->getStatus()));
 	$subPayloadLineDetail->setTrackingNumber($quad['tracking_number']);
-	$subPayloadLineDetail->setShippingVendorCode($this->_config->getShipVendorForShipCarrier($quad['carrier_code']));
+
+	if( $quad['carrier_code'])
+	{
+		$subPayloadLineDetail->setShippingVendorCode($this->_config->getShipVendorForShipCarrier($quad['carrier_code']));
+	}
+
 	$subPayloadLineDetail->setDeliveryMethod($quad['delivery_method']);
+	$subPayloadLineDetail->setShipScheduledDate($quad['shipacount']);
 	$subPayloadLineDetail->setShipActualDate($quad['shipacount']);
 
         return $this;
