@@ -17,7 +17,7 @@ class EbayEnterprise_Eb2cFraud_Helper_Http extends Mage_Core_Helper_Http
 {
     const COOKIES_DELIMITER = ';';
     // Relative path where scripts are stored
-    const JSC_JS_PATH = 'radial_ebayenterprise_eb2cfraud';
+    const JSC_JS_PATH = 'radial_eb2cfraud';
     // Form field name that will contain the name of the randomly selected JSC
     // form field. Used to find the generated JSC data in the POST data
     const JSC_FIELD_NAME = 'eb2cszyvl';

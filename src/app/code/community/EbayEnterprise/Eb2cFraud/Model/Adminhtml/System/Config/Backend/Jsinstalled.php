@@ -26,7 +26,7 @@ class EbayEnterprise_Eb2cFraud_Model_Adminhtml_System_Config_Backend_Jsinstalled
      */
     public function _afterLoad()
     {
-        $filePattern  = Mage::getBaseDir() . '/js/radial_ebayenterprise_eb2cfraud/*.js';
+        $filePattern  = Mage::getBaseDir() . '/js/radial_eb2cfraud/*.js';
         $jsFiles = glob($filePattern);
         if (!$jsFiles) {
             $publicDisplay = 'Not installed; fraud information will not be collected';

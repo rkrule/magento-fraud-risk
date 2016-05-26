@@ -289,7 +289,7 @@ http://opensource.org/licenses/osl-3.0.php
     <crontab>
 	    <jobs>
 	        <ebayenterprise_eb2cfraud_retry_sendevent>
-	            <schedule><cron_expr>*/20 * * * *</cron_expr></schedule>
+	            <schedule><cron_expr>* * * * *</cron_expr></schedule>
 	            <run><model>ebayenterprise_eb2cfraud/risk_order::sendEvent</model></run>
 	        </ebayenterprise_eb2cfraud_retry_sendevent>
 	    </jobs>
