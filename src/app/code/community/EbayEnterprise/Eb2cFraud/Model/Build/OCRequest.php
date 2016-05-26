@@ -151,6 +151,8 @@ class EbayEnterprise_Eb2cFraud_Model_Build_OCRequest
     protected function _buildLineDetails(EbayEnterprise_RiskService_Sdk_Line_IDetails $subPayloadLineDetails)
     {
         foreach ($this->_order->getAllItems() as $orderItem) {
+	    $quaduple = array();
+
 	    foreach($this->_order->getShipmentsCollection() as $shipment){
             	foreach ($shipment->getAllItems() as $product){
                	    if( strcmp($product->getSku(),$orderItem->getSku()) === 0)
@@ -174,6 +176,15 @@ class EbayEnterprise_Eb2cFraud_Model_Build_OCRequest
             	$this->_buildLineDetail($subPayloadLineDetail, $orderItem, $quad);
             	$subPayloadLineDetails->offsetSet($subPayloadLineDetail);
             }
+
+	    if( empty($quaduple))
+	    {
+		$quaduple = array( 'tracking_number' => null, 'carrier_code' => null, 'delivery_method' => null, 'shipacount' => null);
+
+		$subPayloadLineDetail = $subPayloadLineDetails->getEmptyLineDetail();
+                $this->_buildLineDetail($subPayloadLineDetail, $orderItem, $quaduple);
+                $subPayloadLineDetails->offsetSet($subPayloadLineDetail);
+	    }
 	}
         return $this;
     }

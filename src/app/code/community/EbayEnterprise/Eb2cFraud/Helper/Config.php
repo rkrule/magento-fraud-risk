@@ -304,6 +304,8 @@ class EbayEnterprise_Eb2cFraud_Helper_Config
 	$codes = $this->getOrderStatusToFraudMap();
 	if (isset($codes[$orderState])) {
 		return $codes[$orderState];
+	} else {
+		return "IN_PROCESS";
 	}
 
 	throw Mage::exception('EbayEnterprise_Eb2cFraud', "Invalid Magento Order State!");
@@ -334,7 +336,9 @@ class EbayEnterprise_Eb2cFraud_Helper_Config
         $codes = $this->getOrderStateToConfirmationCodeMap();
         if (isset($codes[$orderState])) {
                 return $codes[$orderState];
-        }
+        } else {
+		return "OTHER";	
+	}
 
         throw Mage::exception('EbayEnterprise_Eb2cFraud', "Invalid Magento Order State!");
    }
