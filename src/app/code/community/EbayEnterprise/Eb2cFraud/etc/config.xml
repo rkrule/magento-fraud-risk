@@ -241,8 +241,8 @@ http://opensource.org/licenses/osl-3.0.php
 			<pending>IN_PROCESS</pending>
 			<pending_payment>IN_PROCESS</pending_payment>
 			<processing>IN_PROCESS</processing>
-			<complete>COMPLETE</complete>
-			<closed>COMPLETE</closed>
+			<complete>COMPLETED</complete>
+			<closed>COMPLETED</closed>
 			<canceled>CANCELLED</canceled>
 			<holded>IN_PROCESS</holded>
 			<payment_review>IN_PROCESS</payment_review>
