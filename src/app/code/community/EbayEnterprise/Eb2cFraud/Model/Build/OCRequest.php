@@ -151,10 +151,30 @@ class EbayEnterprise_Eb2cFraud_Model_Build_OCRequest
     protected function _buildLineDetails(EbayEnterprise_RiskService_Sdk_Line_IDetails $subPayloadLineDetails)
     {
         foreach ($this->_order->getAllItems() as $orderItem) {
-            $subPayloadLineDetail = $subPayloadLineDetails->getEmptyLineDetail();
-            $this->_buildLineDetail($subPayloadLineDetail, $orderItem);
-            $subPayloadLineDetails->offsetSet($subPayloadLineDetail);
-        }
+	    foreach($this->_order->getShipmentsCollection() as $shipment){
+            	foreach ($shipment->getAllItems() as $product){
+               	    if( strcmp($product->getSku(),$orderItem->getSku()) === 0)
+            	    {
+                        //This product is on this shipment, so record, NOTE Magento does not assign items tracking numbers but shipments, shipments may have multiple tracking numbers
+                        foreach($shipment->getAllTracks() as $tracking_number){
+                                $track_num = $tracking_number->getNumber();
+                                $carrier_code = $tracking_number->getCarrierCode();
+                                $delivery_method = $this->_order->getShippingMethod();
+                                $shipacount = date("Y-m-d\TH:i:s.000", strtotime($tracking_number->getCreatedAt()));
+
+				$quaduple[] = array( 'tracking_number' => $track_num, 'carrier_code' => $carrier_code, 'delivery_method' => $delivery_method, 'shipacount' => $shipacount);
+			}
+		     }
+		}
+	    }
+
+	    foreach( $quaduple as $quad )
+	    {
+	    	$subPayloadLineDetail = $subPayloadLineDetails->getEmptyLineDetail();
+            	$this->_buildLineDetail($subPayloadLineDetail, $orderItem, $quad);
+            	$subPayloadLineDetails->offsetSet($subPayloadLineDetail);
+            }
+	}
         return $this;
     }
 
@@ -165,34 +185,17 @@ class EbayEnterprise_Eb2cFraud_Model_Build_OCRequest
      */
     protected function _buildLineDetail(
         EbayEnterprise_RiskService_Sdk_Line_IDetail $subPayloadLineDetail,
-        Mage_Core_Model_Abstract $orderItem
+        Mage_Core_Model_Abstract $orderItem, $quad
     )
     {
 	$subPayloadLineDetail->setSKU($orderItem->getSku())
 			->setQuantity((int) $orderItem->getQtyOrdered());
 
 	$subPayloadLineDetail->setItemStatus($this->_config->getItemStateForFraudOCR($orderItem->getStatus()));
-
-	$shipment_collection = Mage::getResourceModel('sales/order_shipment_collection')
-            ->setOrderFilter($this->_order)
-            ->load();
-
-	foreach($shipment_collection as $shipment){
-	    foreach ($shipment->getAllItems() as $product){
-            	if( strcmp($product->getSku(),$orderItem->getSku()) === 0)
-		{
-			//This product is on this shipment, so record, NOTE Magento does not assign items tracking numbers but shipments, shipments may have multiple tracking numbers
-			foreach($shipment->getAllTracks() as $tracking_number){
-		                $track_num = $tracking_number->getNumber();
-
-				$subPayloadLineDetail->setTrackingNumber(substr($track_num,0,63));
-				$subPayloadLineDetail->setShippingVendorCode($this->_config->getShipVendorForShipCarrier($tracking_number->getCarrierCode()));
-				$subPayloadLineDetail->setDeliveryMethod($this->_order->getShippingMethod());
-				$subPayloadLineDetail->setShipActualDate(date("Y-m-d\TH:i:s.000", strtotime($tracking_number->getCreatedAt())));
-            		}
-		}
-	    }
-	}
+	$subPayloadLineDetail->setTrackingNumber($quad['tracking_number']);
+	$subPayloadLineDetail->setShippingVendorCode($this->_config->getShipVendorForShipCarrier($quad['carrier_code']));
+	$subPayloadLineDetail->setDeliveryMethod($quad['delivery_method']);
+	$subPayloadLineDetail->setShipActualDate($quad['shipacount']);
 
         return $this;
     }
