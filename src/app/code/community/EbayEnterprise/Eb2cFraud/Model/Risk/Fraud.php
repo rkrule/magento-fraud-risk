@@ -32,7 +32,7 @@ class EbayEnterprise_RiskService_Model_Risk_Fraud
 	{
 		list($this->_order, $this->_helper) = $this->_checkTypes(
 			$this->_nullCoalesce($initParams, 'order', $initParams['order']),
-			$this->_nullCoalesce($initParams, 'helper', Mage::helper('eb2cfraud'))
+			$this->_nullCoalesce($initParams, 'helper', Mage::helper('ebayenterprise_eb2cfraud'))
 		);
 	}
 
@@ -71,7 +71,7 @@ class EbayEnterprise_RiskService_Model_Risk_Fraud
 	 */
 	protected function _getNewRiskServiceByOrderId($orderIncrementId)
 	{
-		return Mage::getModel('eb2cfraud/risk_service')
+		return Mage::getModel('ebayenterprise_eb2cfraud/risk_service')
 			->load($orderIncrementId, 'order_increment_id');
 	}
 

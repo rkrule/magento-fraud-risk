@@ -47,7 +47,7 @@ http://opensource.org/licenses/osl-3.0.php
                             <label>Fraud Files Installed?</label>
                             <sort_order>1</sort_order>
                             <frontend_type>label</frontend_type>
-                            <backend_model>eb2cfraud/adminhtml_system_config_backend_jsinstalled</backend_model>
+                            <backend_model>ebayenterprise_eb2cfraud/adminhtml_system_config_backend_jsinstalled</backend_model>
                             <show_in_default>1</show_in_default>
                             <show_in_website>0</show_in_website>
                             <show_in_store>0</show_in_store>

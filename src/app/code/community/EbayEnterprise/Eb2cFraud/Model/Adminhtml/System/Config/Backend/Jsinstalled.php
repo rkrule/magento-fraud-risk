@@ -20,13 +20,13 @@
 class EbayEnterprise_Eb2cFraud_Model_Adminhtml_System_Config_Backend_Jsinstalled extends Mage_Core_Model_Config_Data
 {
     /**
-     * Load display variable with 'Yes' or 'No' regarding javascript file presence in eb2cfraud location
+     * Load display variable with 'Yes' or 'No' regarding javascript file presence in ebayenterprise_eb2cfraud location
      * @return self
      * @codeCoverageIgnore Magento promises to display the value; glob promises to deliver an array of matching files.
      */
     public function _afterLoad()
     {
-        $filePattern  = Mage::getBaseDir() . '/js/radial_eb2cfraud/*.js';
+        $filePattern  = Mage::getBaseDir() . '/js/radial_ebayenterprise_eb2cfraud/*.js';
         $jsFiles = glob($filePattern);
         if (!$jsFiles) {
             $publicDisplay = 'Not installed; fraud information will not be collected';

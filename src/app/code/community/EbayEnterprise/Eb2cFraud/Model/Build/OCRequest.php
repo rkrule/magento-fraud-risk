@@ -51,11 +51,11 @@ class EbayEnterprise_Eb2cFraud_Model_Build_OCRequest
             $this->_nullCoalesce($initParams, 'request', $this->_getNewSdkInstance('EbayEnterprise_RiskService_Sdk_OrderConfirmationRequest')),
             $this->_nullCoalesce($initParams, 'order', $initParams['order']),
             $this->_nullCoalesce($initParams, 'quote', Mage::getModel('sales/quote')),
-            $this->_nullCoalesce($initParams, 'helper', Mage::helper('eb2cfraud')),
-            $this->_nullCoalesce($initParams, 'http_helper', Mage::helper('eb2cfraud/http')),
+            $this->_nullCoalesce($initParams, 'helper', Mage::helper('ebayenterprise_eb2cfraud')),
+            $this->_nullCoalesce($initParams, 'http_helper', Mage::helper('ebayenterprise_eb2cfraud/http')),
             $this->_nullCoalesce($initParams, 'product', Mage::getModel('catalog/product')),
-	    $this->_nullCoalesce($initParams, 'config', Mage::helper('eb2cfraud/config')),
-	    $this->_nullCoalesce($initParams, 'service', Mage::getModel('eb2cfraud/risk_service'))
+	    $this->_nullCoalesce($initParams, 'config', Mage::helper('ebayenterprise_eb2cfraud/config')),
+	    $this->_nullCoalesce($initParams, 'service', Mage::getModel('ebayenterprise_eb2cfraud/risk_service'))
         );
     }
 
@@ -109,11 +109,35 @@ class EbayEnterprise_Eb2cFraud_Model_Build_OCRequest
         $subPayloadOrder->setOrderId($this->_order->getIncrementId());
 	$subPayloadOrder->setStoreId($this->_config->getStoreId());
 	
-	$statusDate =  date("Y-m-d\TH:i:s.000\Z", Mage::getModel('core/date')->timestamp(time()));
+	$statusDate =  date("Y-m-d\TH:i:s.000", Mage::getModel('core/date')->timestamp(time()));
 	$subPayloadOrder->setStatusDate($statusDate);
 
 	$subPayloadOrder->setConfirmationType($this->_config->getOrderStateForConfirmationFraudOCR($this->_order->getState()));
-	$subPayloadOrder->setOrderStatus($this->_config->getOrderStateForFraudOCR($this->_order->getState()));
+	
+	$array_ignore = [ "completed", "canceled", "closed" ];
+
+	if( !in_array( $this->_order->getState(), $array_ignore))
+	{
+		$subPayloadOrder->setOrderStatus($this->_config->getOrderStateForFraudOCR($this->_order->getState()));
+	} else {
+		$allshipped = 0;
+
+		foreach($this->_order->getAllItems() as $item)
+		{
+			if( $item->getStatus() !=  Mage_Sales_Model_Order_Item::STATUS_SHIPPED )
+			{
+				$allshipped = 1;
+				break;
+			}
+		}
+
+		if( !$allshipped )
+		{
+			$subPayloadOrder->setOrderStatus("SHIPPED");
+		} else {
+			$subPayloadOrder->setOrderStatus("IN_PROCESS");
+		}
+	}
 
 	$this->_buildLineDetails($subPayloadOrder->getLineDetails());
 
@@ -163,8 +187,8 @@ class EbayEnterprise_Eb2cFraud_Model_Build_OCRequest
 
 				$subPayloadLineDetail->setTrackingNumber(substr($track_num,0,63));
 				$subPayloadLineDetail->setShippingVendorCode($this->_config->getShipVendorForShipCarrier($tracking_number->getCarrierCode()));
-				$subPayloadLineDetail->setDeliveryMethod($this->_order->getShippingDescription());
-				$subPayloadLineDetail->setShipActualDate(date("Y-m-d\TH:i:s.000\Z", strtotime($tracking_number->getCreatedAt())));
+				$subPayloadLineDetail->setDeliveryMethod($this->_order->getShippingMethod());
+				$subPayloadLineDetail->setShipActualDate(date("Y-m-d\TH:i:s.000", strtotime($tracking_number->getCreatedAt())));
             		}
 		}
 	    }

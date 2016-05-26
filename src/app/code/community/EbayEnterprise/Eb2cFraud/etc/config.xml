@@ -15,15 +15,24 @@ http://opensource.org/licenses/osl-3.0.php
 <config>
     <modules>
         <EbayEnterprise_Eb2cFraud>
-            <version>0.9.3</version>
+            <version>0.9.5</version>
         </EbayEnterprise_Eb2cFraud>
     </modules>
     <global>
         <models>
-            <eb2cfraud>
+	    <ebayenterprise_eb2cfraud>
                 <class>EbayEnterprise_Eb2cFraud_Model</class>
-            </eb2cfraud>
-        </models>
+                <resourceModel>ebayenterprise_eb2cfraud_resource</resourceModel>
+            </ebayenterprise_eb2cfraud>
+            <ebayenterprise_eb2cfraud_resource>
+                <class>EbayEnterprise_Eb2cFraud_Model_Resource</class>
+                <entities>
+                    <retryqueue>
+                        <table>retryqueue</table>
+                    </retryqueue>
+                </entities>
+            </ebayenterprise_eb2cfraud_resource>
+	</models>
         <fieldsets>
             <sales_convert_quote>
                 <eb2c_fraud_javascript_data>
@@ -59,28 +68,28 @@ http://opensource.org/licenses/osl-3.0.php
             </sales_convert_quote>
         </fieldsets>
         <resources>
-            <eb2cfraud_setup>
+            <ebayenterprise_eb2cfraud_setup>
                 <setup>
                     <module>EbayEnterprise_Eb2cFraud</module>
-                    <class>Mage_Sales_Model_Resource_Setup</class>
+		    <class>Mage_Sales_Model_Resource_Setup</class>
                 </setup>
-            </eb2cfraud_setup>
+            </ebayenterprise_eb2cfraud_setup>
         </resources>
         <helpers>
-            <eb2cfraud>
+            <ebayenterprise_eb2cfraud>
                 <class>EbayEnterprise_Eb2cFraud_Helper</class>
-            </eb2cfraud>
+            </ebayenterprise_eb2cfraud>
         </helpers>
         <blocks>
-            <eb2cfraud>
+            <ebayenterprise_eb2cfraud>
                 <class>EbayEnterprise_Eb2cFraud_Block</class>
-            </eb2cfraud>
+            </ebayenterprise_eb2cfraud>
         </blocks>
         <events>
 		<checkout_submit_all_after>
 			<observers>
 				<handle_multi_shipping_orders_risk_fraud>
-					<class>eb2cfraud/observer</class>
+					<class>ebayenterprise_eb2cfraud/observer</class>
 					<method>handleCheckoutSubmitAllAfter</method>
 					<type>singleton</type>
 				</handle_multi_shipping_orders_risk_fraud>
@@ -88,34 +97,34 @@ http://opensource.org/licenses/osl-3.0.php
 		</checkout_submit_all_after>
 		<sales_quote_remove_item>
                 	<observers>
-                	    <eb2cfraud_add_cartcount>
-                	    	<class>eb2cfraud/observer</class>
+                	    <ebayenterprise_eb2cfraud_add_cartcount>
+                	    	<class>ebayenterprise_eb2cfraud/observer</class>
                 	    	<method>addRemovedCartCount</method>
-                    	    </eb2cfraud_add_cartcount>
+                    	    </ebayenterprise_eb2cfraud_add_cartcount>
                 	</observers>
             	</sales_quote_remove_item>
 	        <radial_amqp_message_risk_assessment_reply>
 			<observers>
-				<eb2cfraud_update_order>
-					<class>eb2cfraud/observer</class>
+				<ebayenterprise_eb2cfraud_update_order>
+					<class>ebayenterprise_eb2cfraud/observer</class>
 					<method>updateOrderStatus</method>
-				</eb2cfraud_update_order>
+				</ebayenterprise_eb2cfraud_update_order>
 			</observers>
 		</radial_amqp_message_risk_assessment_reply>
 		<radial_creditcard_auth_request_send_before>
                         <observers>
-                                <eb2cfraud_count_reject>
-                                        <class>eb2cfraud/observer</class>
+                                <ebayenterprise_eb2cfraud_count_reject>
+                                        <class>ebayenterprise_eb2cfraud/observer</class>
                                         <method>countAuthAttempts</method>
-                                </eb2cfraud_count_reject>
+                                </ebayenterprise_eb2cfraud_count_reject>
                         </observers>
                 </radial_creditcard_auth_request_send_before>
 		<sales_order_save_after>
 			<observers>
-				<eb2cfraud_orderconfirmrequest>
-					<class>eb2cfraud/observer</class>
+				<ebayenterprise_eb2cfraud_orderconfirmrequest>
+					<class>ebayenterprise_eb2cfraud/risk_order</class>
 					<method>processOrderConfirmationRequest</method>
-				</eb2cfraud_orderconfirmrequest>
+				</ebayenterprise_eb2cfraud_orderconfirmrequest>
 			</observers>
 		</sales_order_save_after>
 	</events>
@@ -123,14 +132,14 @@ http://opensource.org/licenses/osl-3.0.php
     <frontend>
         <layout>
             <updates>
-                <eb2cfraud>
-                    <file>eb2cfraud.xml</file>
-                </eb2cfraud>
+                <ebayenterprise_eb2cfraud>
+                    <file>ebayenterprise_eb2cfraud.xml</file>
+                </ebayenterprise_eb2cfraud>
             </updates>
         </layout>
     </frontend>
     <default>
-        <eb2cfraud>
+        <ebayenterprise_eb2cfraud>
             <risk_service>
 		<!-- Can be: pound, ounce, kilogram, gram, unknown https://gitlab.gspt.net/Cheetah/retailordermanagement-sdk/blob/master/src/eBayEnterprise/RetailOrderManagement/Schemas/checkout/1.0/Risk-Service-Datatypes-1.0.xsd for UnitOfWeightType -->
 		<uom>pound</uom>
@@ -170,44 +179,44 @@ http://opensource.org/licenses/osl-3.0.php
 			<JCB>JCB</JCB>
 		</card_name_map>
                 <payment_adapter_map>
-                    <authorizenet>eb2cfraud/payment_adapter_authorizenet</authorizenet>
-                    <giftcard>eb2cfraud/payment_adapter_giftcard</giftcard>
-                    <checkmo>eb2cfraud/payment_adapter_checkmo</checkmo>
-                    <ccsave>eb2cfraud/payment_adapter_default</ccsave>
-                    <payflow_advanced>eb2cfraud/payment_adapter_default</payflow_advanced>
-                    <payflow_link>eb2cfraud/payment_adapter_default</payflow_link>
-                    <hosted_pro>eb2cfraud/payment_adapter_default</hosted_pro>
-                    <paypal_express>eb2cfraud/payment_adapter_paypal_express</paypal_express>
-		    <radial_paypal_express>eb2cfraud/payment_adapter_paypal_express</radial_paypal_express>
-                    <verisign>eb2cfraud/payment_adapter_default</verisign>
-                    <paypaluk_direct>eb2cfraud/payment_adapter_default</paypaluk_direct>
-                    <paypaluk_express>eb2cfraud/payment_adapter_default</paypaluk_express>
-                    <paypal_standard>eb2cfraud/payment_adapter_default</paypal_standard>
-		    <radial_paypal_standard>eb2cfraud/payment_adapter_paypal_express</radial_paypal_standard>
-                    <paypal_direct>eb2cfraud/payment_adapter_default</paypal_direct>
-		    <radial_paypal_direct>eb2cfraud/payment_adapter_paypal_express</radial_paypal_direct>
-                    <paypal_express_bml>eb2cfraud/payment_adapter_default</paypal_express_bml>
-                    <pbridge>eb2cfraud/payment_adapter_pbridge</pbridge>
-                    <pbridge_authorizenet>eb2cfraud/payment_adapter_pbridge</pbridge_authorizenet>
-                    <pbridge_ogone_direct>eb2cfraud/payment_adapter_pbridge</pbridge_ogone_direct>
-                    <pbridge_paypal_direct>eb2cfraud/payment_adapter_pbridge</pbridge_paypal_direct>
-                    <pbridge_paypaluk_direct>eb2cfraud/payment_adapter_pbridge</pbridge_paypaluk_direct>
-                    <pbridge_verisign>eb2cfraud/payment_adapter_pbridge</pbridge_verisign>
-                    <pbridge_ogone_direct>eb2cfraud/payment_adapter_pbridge</pbridge_ogone_direct>
-                    <pbridge_ogone_direct_debit>eb2cfraud/payment_adapter_pbridge</pbridge_ogone_direct_debit>
-                    <pbridge_worldpay_direct>eb2cfraud/payment_adapter_pbridge</pbridge_worldpay_direct>
-                    <pbridge_cybersource_soap>eb2cfraud/payment_adapter_pbridge</pbridge_cybersource_soap>
-                    <pbridge_dibs>eb2cfraud/payment_adapter_pbridge</pbridge_dibs>
-                    <pbridge_braintree_basic>eb2cfraud/payment_adapter_pbridge</pbridge_braintree_basic>
-                    <pbridge_sagepay_direct>eb2cfraud/payment_adapter_pbridge</pbridge_sagepay_direct>
-                    <pbridge_firstdata>eb2cfraud/payment_adapter_pbridge</pbridge_firstdata>
-                    <pbridge_eway_direct>eb2cfraud/payment_adapter_pbridge</pbridge_eway_direct>
-                    <pbridge_payone_gate>eb2cfraud/payment_adapter_pbridge</pbridge_payone_gate>
-                    <pbridge_paybox_direct>eb2cfraud/payment_adapter_pbridge</pbridge_paybox_direct>
-                    <pbridge_psigate_basic>eb2cfraud/payment_adapter_pbridge</pbridge_psigate_basic>
-                    <pbridge_payone_debit>eb2cfraud/payment_adapter_pbridge</pbridge_payone_debit>
-                    <ogone>eb2cfraud/payment_adapter_default</ogone>
-                    <purchaseorder>eb2cfraud/payment_adapter_purchase_order</purchaseorder>
+                    <authorizenet>ebayenterprise_eb2cfraud/payment_adapter_authorizenet</authorizenet>
+                    <giftcard>ebayenterprise_eb2cfraud/payment_adapter_giftcard</giftcard>
+                    <checkmo>ebayenterprise_eb2cfraud/payment_adapter_checkmo</checkmo>
+                    <ccsave>ebayenterprise_eb2cfraud/payment_adapter_default</ccsave>
+                    <payflow_advanced>ebayenterprise_eb2cfraud/payment_adapter_default</payflow_advanced>
+                    <payflow_link>ebayenterprise_eb2cfraud/payment_adapter_default</payflow_link>
+                    <hosted_pro>ebayenterprise_eb2cfraud/payment_adapter_default</hosted_pro>
+                    <paypal_express>ebayenterprise_eb2cfraud/payment_adapter_paypal_express</paypal_express>
+		    <radial_paypal_express>ebayenterprise_eb2cfraud/payment_adapter_paypal_express</radial_paypal_express>
+                    <verisign>ebayenterprise_eb2cfraud/payment_adapter_default</verisign>
+                    <paypaluk_direct>ebayenterprise_eb2cfraud/payment_adapter_default</paypaluk_direct>
+                    <paypaluk_express>ebayenterprise_eb2cfraud/payment_adapter_default</paypaluk_express>
+                    <paypal_standard>ebayenterprise_eb2cfraud/payment_adapter_default</paypal_standard>
+		    <radial_paypal_standard>ebayenterprise_eb2cfraud/payment_adapter_paypal_express</radial_paypal_standard>
+                    <paypal_direct>ebayenterprise_eb2cfraud/payment_adapter_default</paypal_direct>
+		    <radial_paypal_direct>ebayenterprise_eb2cfraud/payment_adapter_paypal_express</radial_paypal_direct>
+                    <paypal_express_bml>ebayenterprise_eb2cfraud/payment_adapter_default</paypal_express_bml>
+                    <pbridge>ebayenterprise_eb2cfraud/payment_adapter_pbridge</pbridge>
+                    <pbridge_authorizenet>ebayenterprise_eb2cfraud/payment_adapter_pbridge</pbridge_authorizenet>
+                    <pbridge_ogone_direct>ebayenterprise_eb2cfraud/payment_adapter_pbridge</pbridge_ogone_direct>
+                    <pbridge_paypal_direct>ebayenterprise_eb2cfraud/payment_adapter_pbridge</pbridge_paypal_direct>
+                    <pbridge_paypaluk_direct>ebayenterprise_eb2cfraud/payment_adapter_pbridge</pbridge_paypaluk_direct>
+                    <pbridge_verisign>ebayenterprise_eb2cfraud/payment_adapter_pbridge</pbridge_verisign>
+                    <pbridge_ogone_direct>ebayenterprise_eb2cfraud/payment_adapter_pbridge</pbridge_ogone_direct>
+                    <pbridge_ogone_direct_debit>ebayenterprise_eb2cfraud/payment_adapter_pbridge</pbridge_ogone_direct_debit>
+                    <pbridge_worldpay_direct>ebayenterprise_eb2cfraud/payment_adapter_pbridge</pbridge_worldpay_direct>
+                    <pbridge_cybersource_soap>ebayenterprise_eb2cfraud/payment_adapter_pbridge</pbridge_cybersource_soap>
+                    <pbridge_dibs>ebayenterprise_eb2cfraud/payment_adapter_pbridge</pbridge_dibs>
+                    <pbridge_braintree_basic>ebayenterprise_eb2cfraud/payment_adapter_pbridge</pbridge_braintree_basic>
+                    <pbridge_sagepay_direct>ebayenterprise_eb2cfraud/payment_adapter_pbridge</pbridge_sagepay_direct>
+                    <pbridge_firstdata>ebayenterprise_eb2cfraud/payment_adapter_pbridge</pbridge_firstdata>
+                    <pbridge_eway_direct>ebayenterprise_eb2cfraud/payment_adapter_pbridge</pbridge_eway_direct>
+                    <pbridge_payone_gate>ebayenterprise_eb2cfraud/payment_adapter_pbridge</pbridge_payone_gate>
+                    <pbridge_paybox_direct>ebayenterprise_eb2cfraud/payment_adapter_pbridge</pbridge_paybox_direct>
+                    <pbridge_psigate_basic>ebayenterprise_eb2cfraud/payment_adapter_pbridge</pbridge_psigate_basic>
+                    <pbridge_payone_debit>ebayenterprise_eb2cfraud/payment_adapter_pbridge</pbridge_payone_debit>
+                    <ogone>ebayenterprise_eb2cfraud/payment_adapter_default</ogone>
+                    <purchaseorder>ebayenterprise_eb2cfraud/payment_adapter_purchase_order</purchaseorder>
                 </payment_adapter_map>
 		<response_codes>
 			<Accept>risk_accept</Accept>
@@ -229,9 +238,10 @@ http://opensource.org/licenses/osl-3.0.php
 		</response_codes_states>
 		<order_status_codes_to_fraud>
 			<new>IN_PROCESS</new>
+			<pending>IN_PROCESS</pending>
 			<pending_payment>IN_PROCESS</pending_payment>
 			<processing>IN_PROCESS</processing>
-			<complete>SHIPPED</complete>
+			<complete>COMPLETE</complete>
 			<closed>COMPLETE</closed>
 			<canceled>CANCELLED</canceled>
 			<holded>IN_PROCESS</holded>
@@ -239,6 +249,7 @@ http://opensource.org/licenses/osl-3.0.php
 		</order_status_codes_to_fraud>
 		<order_status_to_confirmation_codes>
 			<new>OTHER</new>
+			<pending>OTHER</pending>
 			<pending_payment>OTHER</pending_payment>
 			<processing>OTHER</processing>
 			<complete>SHIPMENT</complete>
@@ -266,7 +277,7 @@ http://opensource.org/licenses/osl-3.0.php
 			<dhl>DHL</dhl>
 		</ship_vendor_to_fraud>
             </risk_service>
-        </eb2cfraud>
+        </ebayenterprise_eb2cfraud>
     </default>
     <phpunit>
         <suite>
@@ -275,5 +286,13 @@ http://opensource.org/licenses/osl-3.0.php
             </modules>
         </suite>
     </phpunit>
+    <crontab>
+	    <jobs>
+	        <ebayenterprise_eb2cfraud_retry_sendevent>
+	            <schedule><cron_expr>*/20 * * * *</cron_expr></schedule>
+	            <run><model>ebayenterprise_eb2cfraud/risk_order::sendEvent</model></run>
+	        </ebayenterprise_eb2cfraud_retry_sendevent>
+	    </jobs>
+     </crontab>
 </config>
 

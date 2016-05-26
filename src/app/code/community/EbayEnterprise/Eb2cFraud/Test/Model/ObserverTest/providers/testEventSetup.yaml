@@ -1,5 +1,5 @@
 -
     - global
     - radial_order_create_context
-    - eb2cfraud/observer
+    - ebayenterprise_eb2cfraud/observer
     - handleOrderCreateContextEvent

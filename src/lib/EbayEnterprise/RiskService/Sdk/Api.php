@@ -41,7 +41,7 @@ class EbayEnterprise_RiskService_Sdk_Api
 	public function __construct(EbayEnterprise_RiskService_Sdk_Config $config)
 	{
 		$this->_config = $config;
-		$this->_helperConfig = Mage::helper('eb2cfraud/config');
+		$this->_helperConfig = Mage::helper('ebayenterprise_eb2cfraud/config');
 		Requests::register_autoloader();
 	}
 
@@ -188,9 +188,18 @@ class EbayEnterprise_RiskService_Sdk_Api
 			$logMessage = sprintf('[%s] Request Body: %s', __CLASS__, $this->cleanAuthXml($requestXml));
 			Mage::log($logMessage, Zend_Log::DEBUG);
 		}
-	
-		//Note this is a really crude way of doing this, but since this SDK is only for Risk Assess right now... IDC
-		$hostname = "https://". $this->_config->getEndpoint() . "/v1.0/stores/". $this->_config->getStoreId() . "/risk/fraud/assess.xml";
+
+		$xml = simplexml_load_string($requestXml);
+		if( strcmp($xml->getName(), "RiskAssessmentRequest") === 0)
+		{
+			//Note this is a really crude way of doing this, but since this SDK is only for Risk Assess right now... IDC
+			$hostname = "https://". $this->_config->getEndpoint() . "/v1.0/stores/". $this->_config->getStoreId() . "/risk/fraud/assess.xml";
+		} elseif ( strcmp($xml->getName(), "RiskOrderConfirmationRequest") === 0 ) {
+			//Note this is a really crude way of doing this, but since this SDK is only for Risk Assess right now... IDC
+                        $hostname = "https://". $this->_config->getEndpoint() . "/v1.0/stores/". $this->_config->getStoreId() . "/risk/fraud/orderConfirmation.xml";
+		} else {
+			throw Mage::exception('EbayEnterprise_RiskService_Sdk_Exception_Network_Error', "Unsupported Payload - ". $xml->getName());
+		}
 
 		$this->_lastRequestsResponse = Requests::post(
 			$hostname,

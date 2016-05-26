@@ -22,8 +22,8 @@
  */
 class EbayEnterprise_Eb2cFraud_Block_Jsc extends Mage_Core_Block_Template
 {
-    const EB2C_FRAUD_COLLECTOR_PATH = 'default/eb2cfraud/collectors';
-    protected $_template = 'eb2cfraud/jsc.phtml';
+    const EB2C_FRAUD_COLLECTOR_PATH = 'default/ebayenterprise_eb2cfraud/collectors';
+    protected $_template = 'ebayenterprise_eb2cfraud/jsc.phtml';
     /**
      * Upon construction, get a single, random JavaScript collector to add either
      * from an injected set of collectors or via the collectors configured in
@@ -43,7 +43,7 @@ class EbayEnterprise_Eb2cFraud_Block_Jsc extends Mage_Core_Block_Template
         );
         $collector = $collectors[array_rand($collectors)];
         $this->addData([
-            'collector_url' => Mage::helper('eb2cfraud/http')->getJscUrl() . '/' . $collector['filename'],
+            'collector_url' => Mage::helper('ebayenterprise_eb2cfraud/http')->getJscUrl() . '/' . $collector['filename'],
             'call' => sprintf(
                 "%s('%s');",
                 $collector['function'],

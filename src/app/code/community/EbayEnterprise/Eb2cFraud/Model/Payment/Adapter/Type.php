@@ -50,7 +50,7 @@ class EbayEnterprise_Eb2cFraud_Model_Payment_Adapter_Type
 	{
 		list($this->_order, $this->_helper) = $this->_checkTypes(
 			$this->_nullCoalesce($initParams, 'order', $initParams['order']),
-			$this->_nullCoalesce($initParams, 'helper', Mage::helper('eb2cfraud'))
+			$this->_nullCoalesce($initParams, 'helper', Mage::helper('ebayenterprise_eb2cfraud'))
 		);
 		$this->_initialize();
 	}

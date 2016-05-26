@@ -75,7 +75,7 @@ class Radial_Eb2cFraud_Test_Helper_DataTest extends Radial_Core_Test_Base
             ->method('isLoggedIn')
             ->will($this->returnValue($isLoggedIn));
 
-        $helperMock = $this->getHelperMock('eb2cfraud/data', ['_getCustomerSession']);
+        $helperMock = $this->getHelperMock('ebayenterprise_eb2cfraud/data', ['_getCustomerSession']);
         EcomDev_Utils_Reflection::setRestrictedPropertyValues($helperMock, [
             '_customerLog' => $customerLog,
             '_visitorLog' => $visitorLog,
@@ -129,7 +129,7 @@ class Radial_Eb2cFraud_Test_Helper_DataTest extends Radial_Core_Test_Base
             ->method('isLoggedIn')
             ->will($this->returnValue(false));
 
-        $helperMock = $this->getHelperMock('eb2cfraud/data', ['_getCustomerSession']);
+        $helperMock = $this->getHelperMock('ebayenterprise_eb2cfraud/data', ['_getCustomerSession']);
         EcomDev_Utils_Reflection::setRestrictedPropertyValues($helperMock, [
             '_customerLog' => $customerLog,
             '_visitorLog' => $visitorLog,
@@ -190,7 +190,7 @@ class Radial_Eb2cFraud_Test_Helper_DataTest extends Radial_Core_Test_Base
             ->method('isLoggedIn')
             ->will($this->returnValue(false));
 
-        $helperMock = $this->getHelperMock('eb2cfraud/data', ['_getCustomerSession']);
+        $helperMock = $this->getHelperMock('ebayenterprise_eb2cfraud/data', ['_getCustomerSession']);
         EcomDev_Utils_Reflection::setRestrictedPropertyValues($helperMock, [
             '_customerLog' => $customerLog,
             '_visitorLog' => $visitorLog,

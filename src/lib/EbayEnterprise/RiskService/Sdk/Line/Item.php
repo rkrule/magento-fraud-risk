@@ -50,7 +50,7 @@ class EbayEnterprise_RiskService_Sdk_Line_Item
 		$this->_extractionPaths = array(
 			'setLineItemId' => 'string(@LineItemId)',
 			'setShipmentId' => 'string(@ShipmentId)',
-			'setLineTotalAmount' => 'string(x:LineTotalAmount)',
+			'setLineTotalAmount' => 'number(x:LineTotalAmount)',
 			'setQuantity' => 'number(x:Quantity)',
 		);
 		$this->_optionalExtractionPaths = array(

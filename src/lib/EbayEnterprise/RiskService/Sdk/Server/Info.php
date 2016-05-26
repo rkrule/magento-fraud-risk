@@ -32,12 +32,12 @@ class EbayEnterprise_RiskService_Sdk_Server_Info
 	{
 		parent::__construct($initParams);
 		$this->_extractionPaths = array(
-			'setTime' =>	 'x:Time',
-			'setTZOffset' => 'x:TZOffset',
+			'setTZOffset' => 'number(x:TZOffset)',
+			'setDSTActive' => 'boolean(x:DSTActive)',
 		);
-        	$this->_booleanExtractionPaths = array (
-            		'setDSTActive' => 'x:DSTActive',
-        	);
+		$this->_dateTimeExtractionPaths = array(
+                        'setTime' => 'string(x:Time)',
+                );
 		$this->_optionalExtractionPaths = array (
 			'setTZOffsetRaw' => 'x:TZOffsetRaw',
 		);
@@ -54,7 +54,7 @@ class EbayEnterprise_RiskService_Sdk_Server_Info
 	/**
 	 * @see EbayEnterprise_RiskService_Sdk_Server_IInfo::setTime()
 	 */
-	public function setTime($time)
+	public function setTime(DateTime $time)
 	{
 		$this->_time = $time;
 		return $this;
@@ -112,14 +112,6 @@ class EbayEnterprise_RiskService_Sdk_Server_Info
     }
 
 	/**
-	 * @see EbayEnterprise_RiskService_Sdk_Payload::setHttpHeaders()
-	 */
-	protected function _canSerialize()
-	{
-		return (trim($this->getTime()) !== ''|| trim($this->getTZOffset()) !== '' || trim($this->getDSTActive()));
-	}
-
-	/**
 	 * @see EbayEnterprise_RiskService_Sdk_Payload::_getRootNodeName()
 	 */
 	protected function _getRootNodeName()
@@ -140,7 +132,7 @@ class EbayEnterprise_RiskService_Sdk_Server_Info
 	 */
 	protected function _serializeContents()
 	{
-		return $this->_serializeNode('Time', $this->getTime())
+		return $this->_serializeOptionalDateValue('Time', 'c', $this->getTime()) 
 			. $this->_serializeNode('TZOffset', $this->getTZOffset())
 	                . $this->_serializeNode('DSTActive', $this->getDSTActive());
 	}

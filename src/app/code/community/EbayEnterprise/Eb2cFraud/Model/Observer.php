@@ -29,11 +29,11 @@ class EbayEnterprise_Eb2cFraud_Model_Observer extends EbayEnterprise_Eb2cFraud_M
 	 */
 	public function __construct(array $initParams=array())
 	{
-		$this->_riskOrder = Mage::getModel('eb2cfraud/risk_order');
+		$this->_riskOrder = Mage::getModel('ebayenterprise_eb2cfraud/risk_order');
 
 		list($this->_helper, $this->_config) = $this->_checkTypes(
-			$this->_nullCoalesce($initParams, 'helper', Mage::helper('eb2cfraud')),
-			$this->_nullCoalesce($initParams, 'config', Mage::helper('eb2cfraud/config'))
+			$this->_nullCoalesce($initParams, 'helper', Mage::helper('ebayenterprise_eb2cfraud')),
+			$this->_nullCoalesce($initParams, 'config', Mage::helper('ebayenterprise_eb2cfraud/config'))
 		);
 	}
 
@@ -180,42 +180,21 @@ class EbayEnterprise_Eb2cFraud_Model_Observer extends EbayEnterprise_Eb2cFraud_M
 
             if( $order->getId() )
             {
-                $order->setState($this->_config->getOrderStateForResponseCode($responseCode), $this->_config->getOrderStatusForResponseCode($responseCode), $comment, true);
-                $order->save();
-            }
+		$status = $order->getStatus();
+		$state = $order->getState();
+
+		$accept = [ "risk_submitted", "risk_processing", "risk_rejectpending", "risk_suspend", "risk_ignore" ];
+
+		if( in_array( $status, $accept))
+		{
+                	$order->setState($this->_config->getOrderStateForResponseCode($responseCode), $this->_config->getOrderStatusForResponseCode($responseCode), $comment, true);
+                	$order->save();
+            	} else {
+			$order->setState($state, $this->_config->getOrderStatusForResponseCode($responseCode), $comment, true);
+			$order->save();
+		}
+	    }
 
             return $this;
-	}
-
-	/**
-     	* Get new empty request payload
-     	*
-     	* @return EbayEnterprise_RiskService_Sdk_IPayload
-     	*/
-    	protected function _getNewEmptyRequest()
-    	{
-        	return $this->_getNewSdkInstance('EbayEnterprise_RiskService_Sdk_OrderConfirmationRequest');
-    	}
-
-	/* Thrown if the entire order is canceled */
-
-	public function processOrderConfirmationRequest(Varien_Event_Observer $observer)
-	{
-		$order = $observer->getOrder();
-
-		if($order->getState() == Mage_Sales_Model_Order::STATE_CANCELED || $order->getState() == Mage_Sales_Model_Order::STATE_CLOSED || $order->getState() == Mage_Sales_Model_Order::STATE_COMPLETE )
-		{
-			$request = $this->_getNewEmptyRequest();
-
-	        	$payload = Mage::getModel('eb2cfraud/build_OCRequest', array(
-        	    		'request' => $request,
-        	    		'order' => $order,
-        		))->build();
-
-			if( $this->_config->isDebugMode())
-			{
-				Mage::Log("OrderConfirmationRequest Payload: ". $payload->serialize());
-			}
-		}
 	}
 }

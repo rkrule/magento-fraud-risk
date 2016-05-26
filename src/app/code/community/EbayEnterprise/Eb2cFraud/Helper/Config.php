@@ -27,17 +27,17 @@ class EbayEnterprise_Eb2cFraud_Helper_Config
 	const API_TIMEOUT = 'radial_core/api/timeout';
 	const DEBUG = 'radial_core/fraud/debug';
 	const LANGUAGE_CODE = 'radial_core/general/language_code';
-        const CARD_TYPE_MAP = 'eb2cfraud/risk_service/card_type_map';
-	const CARD_NAME_MAP = 'eb2cfraud/risk_service/card_name_map';
-        const SHIPPING_METHOD_MAP = 'eb2cfraud/risk_service/shipping_method_map';
-        const PAYMENT_ADAPTER_MAP = 'eb2cfraud/risk_service/payment_adapter_map';
-	const FRAUD_RESPONSE_CODE_MAP = 'eb2cfraud/risk_service/response_codes';
-	const FRAUD_RESPONSE_CODE_STATES_MAP = 'eb2cfraud/risk_service/response_codes_states';
-	const ORDER_STATUS_MAP = 'eb2cfraud/risk_service/order_status_codes_to_fraud';
-	const ITEM_STATUS_MAP = 'eb2cfraud/risk_service/item_status_codes_to_fraud';
-	const ORDER_STATUS_CONFIRMATION_MAP = 'eb2cfraud/risk_service/order_status_to_confirmation_codes';
-	const SHIP_VENDOR_MAP = 'eb2cfraud/risk_service/ship_vendor_to_fraud';
-	const UOM = 'eb2cfraud/risk_service/uom';
+        const CARD_TYPE_MAP = 'ebayenterprise_eb2cfraud/risk_service/card_type_map';
+	const CARD_NAME_MAP = 'ebayenterprise_eb2cfraud/risk_service/card_name_map';
+        const SHIPPING_METHOD_MAP = 'ebayenterprise_eb2cfraud/risk_service/shipping_method_map';
+        const PAYMENT_ADAPTER_MAP = 'ebayenterprise_eb2cfraud/risk_service/payment_adapter_map';
+	const FRAUD_RESPONSE_CODE_MAP = 'ebayenterprise_eb2cfraud/risk_service/response_codes';
+	const FRAUD_RESPONSE_CODE_STATES_MAP = 'ebayenterprise_eb2cfraud/risk_service/response_codes_states';
+	const ORDER_STATUS_MAP = 'ebayenterprise_eb2cfraud/risk_service/order_status_codes_to_fraud';
+	const ITEM_STATUS_MAP = 'ebayenterprise_eb2cfraud/risk_service/item_status_codes_to_fraud';
+	const ORDER_STATUS_CONFIRMATION_MAP = 'ebayenterprise_eb2cfraud/risk_service/order_status_to_confirmation_codes';
+	const SHIP_VENDOR_MAP = 'ebayenterprise_eb2cfraud/risk_service/ship_vendor_to_fraud';
+	const UOM = 'ebayenterprise_eb2cfraud/risk_service/uom';
 
 	/**
 	 * check if Risk Insight module is enable in the store config
