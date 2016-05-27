@@ -179,7 +179,7 @@ class EbayEnterprise_Eb2cFraud_Model_Build_OCRequest
 
 	    if( empty($quaduple))
 	    {
-		$quaduple = array( 'tracking_number' => null, 'carrier_code' => null, 'delivery_method' => null, 'shipacount' => null);
+		$quaduple = array( 'tracking_number' => 'NONE', 'carrier_code' => 'OTHER', 'delivery_method' => 'NONE', 'shipacount' => date("Y-m-d\TH:i:s.000", strtotime(time())));
 
 		$subPayloadLineDetail = $subPayloadLineDetails->getEmptyLineDetail();
                 $this->_buildLineDetail($subPayloadLineDetail, $orderItem, $quaduple);
@@ -204,12 +204,7 @@ class EbayEnterprise_Eb2cFraud_Model_Build_OCRequest
 
 	$subPayloadLineDetail->setItemStatus($this->_config->getItemStateForFraudOCR($orderItem->getStatus()));
 	$subPayloadLineDetail->setTrackingNumber($quad['tracking_number']);
-
-	if( $quad['carrier_code'])
-	{
-		$subPayloadLineDetail->setShippingVendorCode($this->_config->getShipVendorForShipCarrier($quad['carrier_code']));
-	}
-
+	$subPayloadLineDetail->setShippingVendorCode($this->_config->getShipVendorForShipCarrier($quad['carrier_code']));
 	$subPayloadLineDetail->setDeliveryMethod($quad['delivery_method']);
 	$subPayloadLineDetail->setShipScheduledDate($quad['shipacount']);
 	$subPayloadLineDetail->setShipActualDate($quad['shipacount']);
