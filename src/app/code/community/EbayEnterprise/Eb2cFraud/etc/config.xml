@@ -86,7 +86,7 @@ http://opensource.org/licenses/osl-3.0.php
             </ebayenterprise_eb2cfraud>
         </blocks>
         <events>
-		<checkout_submit_all_after>
+		<sales_order_place_after>
 			<observers>
 				<handle_multi_shipping_orders_risk_fraud>
 					<class>ebayenterprise_eb2cfraud/observer</class>
@@ -94,7 +94,7 @@ http://opensource.org/licenses/osl-3.0.php
 					<type>singleton</type>
 				</handle_multi_shipping_orders_risk_fraud>
 			</observers>
-		</checkout_submit_all_after>
+		</sales_order_place_after>
 		<sales_quote_remove_item>
                 	<observers>
                 	    <ebayenterprise_eb2cfraud_add_cartcount>

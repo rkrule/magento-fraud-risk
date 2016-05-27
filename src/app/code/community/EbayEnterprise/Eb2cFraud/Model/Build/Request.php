@@ -416,6 +416,7 @@ class EbayEnterprise_Eb2cFraud_Model_Build_Request
  
 	$orderBillingAddress = $this->_order->getBillingAddress();
         $orderPayment = $this->_order->getPayment();
+
         if ($orderBillingAddress && $orderPayment) {
             $this->_buildPayment($subPayloadTotalCost->getFormOfPayment(), $orderBillingAddress, $orderPayment);
         }

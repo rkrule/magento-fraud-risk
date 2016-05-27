@@ -192,12 +192,18 @@ class EbayEnterprise_Eb2cFraud_Model_Risk_Order
 	{
         $request = $this->_getNewEmptyRequest();
 
-        $payload = Mage::getModel('ebayenterprise_eb2cfraud/build_request', array(
-            'request' => $request,
-            'order' => $order,
-        ))->build();
+	try
+	{
+        	$payload = Mage::getModel('ebayenterprise_eb2cfraud/build_request', array(
+        	    'request' => $request,
+        	    'order' => $order,
+        	))->build();
 
-	$this->_payloadXml = $payload->serialize();
+		$this->_payloadXml = $payload->serialize();
+	} catch( Exception $e ) {
+                $logMessage = sprintf('[%s] Error Payload RiskAssessmentRequest Body: %s', __CLASS__, print_r($payload, true));
+                Mage::log($logMessage, Zend_Log::WARN);
+        }
 
 	$apiConfig = $this->_setupApiConfig($payload, $this->_getNewEmptyResponse());
         $response = $this->_sendRequest($this->_getApi($apiConfig), $order);
@@ -214,12 +220,18 @@ class EbayEnterprise_Eb2cFraud_Model_Risk_Order
 
                 $request = $this->_getNewOCREmptyRequest();
 
-                $payload = Mage::getModel('ebayenterprise_eb2cfraud/build_OCRequest', array(
-                	'request' => $request,
-                        'order' => $order,
-                ))->build();
-
-		$this->_payloadXml = $payload->serialize();
+		try
+		{
+                	$payload = Mage::getModel('ebayenterprise_eb2cfraud/build_OCRequest', array(
+                		'request' => $request,
+                	        'order' => $order,
+                	))->build();
+			$this->_payloadXml = $payload->serialize();
+		} catch( Exception $e ) {
+			$logMessage = sprintf('[%s] Error Payload OrderConfirmationRequest Body: %s', __CLASS__, print_r($payload, true));
+                        Mage::log($logMessage, Zend_Log::WARN);
+		}	
+	
         	$apiConfig = $this->_setupApiConfig($payload, $this->_getNewEmptyResponse());
         	$response = $this->_sendRequest($this->_getApi($apiConfig), $orderNull);
         }
