@@ -15,7 +15,7 @@ http://opensource.org/licenses/osl-3.0.php
 <config>
     <modules>
         <EbayEnterprise_Eb2cFraud>
-            <version>0.9.5</version>
+            <version>0.9.6</version>
         </EbayEnterprise_Eb2cFraud>
     </modules>
     <global>

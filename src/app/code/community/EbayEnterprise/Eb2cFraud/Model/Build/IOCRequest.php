@@ -17,6 +17,12 @@
 
 interface EbayEnterprise_Eb2cFraud_Model_Build_IOCRequest
 {
+    const RESPONSE_TYPE = 'avs';
+    const DEFAULT_SHIPPING_METHOD ='Unknown';
+    const PHYSICAL_SHIPMENT_TYPE = 'physical';
+    const VIRTUAL_SHIPMENT_TYPE = 'virtual';
+    const VIRTUAL_SHIPPING_METHOD = 'EMAIL';
+
     /**
      * Build the Risk Service request payload.
      *

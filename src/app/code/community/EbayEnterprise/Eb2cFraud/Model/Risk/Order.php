@@ -209,7 +209,7 @@ class EbayEnterprise_Eb2cFraud_Model_Risk_Order
         $response = $this->_sendRequest($this->_getApi($apiConfig), $order);
 
 	// Set order state / status below, then use order history collection
-	$order->setState("pending", "risk_processing", 'Order is now processing in the Fraud System.', false);
+	$order->setState("processing", "risk_processing", 'Order is now processing in the Fraud System.', false);
 	$order->save();
 	}
 
@@ -220,20 +220,23 @@ class EbayEnterprise_Eb2cFraud_Model_Risk_Order
 
                 $request = $this->_getNewOCREmptyRequest();
 
-		try
-		{
-                	$payload = Mage::getModel('ebayenterprise_eb2cfraud/build_OCRequest', array(
-                		'request' => $request,
-                	        'order' => $order,
-                	))->build();
-			$this->_payloadXml = $payload->serialize();
-		} catch( Exception $e ) {
-			$logMessage = sprintf('[%s] Error Payload OrderConfirmationRequest Body: %s', __CLASS__, print_r($payload, true));
-                        Mage::log($logMessage, Zend_Log::WARN);
+		if( $order->getState() != Mage_Sales_Model_Order::STATE_NEW && $order->getState() != 'pending' )
+		{ 
+			try
+			{
+                		$payload = Mage::getModel('ebayenterprise_eb2cfraud/build_OCRequest', array(
+                			'request' => $request,
+                		        'order' => $order,
+                		))->build();
+				$this->_payloadXml = $payload->serialize();
+			} catch( Exception $e ) {
+				$logMessage = sprintf('[%s] Error Payload OrderConfirmationRequest Body: %s', __CLASS__, print_r($payload, true));
+                	        Mage::log($logMessage, Zend_Log::WARN);
+			}	
+
+			$apiConfig = $this->_setupApiConfig($payload, $this->_getNewEmptyResponse());
+                	$response = $this->_sendRequest($this->_getApi($apiConfig), $orderNull);
 		}	
-	
-        	$apiConfig = $this->_setupApiConfig($payload, $this->_getNewEmptyResponse());
-        	$response = $this->_sendRequest($this->_getApi($apiConfig), $orderNull);
         }
 
 
