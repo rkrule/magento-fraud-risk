@@ -46,7 +46,7 @@ class EbayEnterprise_Eb2cFraud_Helper_Data extends Mage_Core_Helper_Abstract
         	        $this->_nullCoalesce('customer_log', $args, Mage::getModel('log/customer')),
         	        $this->_nullCoalesce('visitor_log', $args, Mage::getModel('log/visitor')),
         	        $this->_nullCoalesce('core_helper', $args, Mage::helper('radial_core')),
-			$this->_nullCoalesce('config', $args, Mage::helper('eb2cfraud/config'))
+			$this->_nullCoalesce('config', $args, Mage::helper('ebayenterprise_eb2cfraud/config'))
         	    );
     	}
 
