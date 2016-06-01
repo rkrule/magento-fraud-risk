@@ -21,6 +21,8 @@ class EbayEnterprise_Eb2cFraud_Helper_Data extends Mage_Core_Helper_Abstract
 	const FREE_PAYMENT_METHOD = 'free';
 	const RISK_SERVICE_GIFT_CARD_PAYMENT_METHOD = 'GC';
 	const RISK_SERVICE_DEFAULT_PAYMENT_METHOD = 'OTHER';
+	const BACKEND_ORDER_SOURCE = 'phone';
+        const FRONTEND_ORDER_SOURCE = 'web';
 
 	/** @var EbayEnterprise_Eb2cFraud_Helper_Config */
 	protected $_config;
