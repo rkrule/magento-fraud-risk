@@ -115,7 +115,7 @@ class EbayEnterprise_Eb2cFraud_Model_Build_OCRequest
         $subPayloadOrder->setOrderId($this->_order->getIncrementId());
 	$subPayloadOrder->setStoreId($this->_config->getStoreId());
 	
-	$statusDate =  $this->_helper->getNewDateTime();
+	$statusDate =  new \DateTime(null, new \DateTimeZone("UTC"));
 	$subPayloadOrder->setStatusDate($statusDate);
 
 	$subPayloadOrder->setConfirmationType($this->_config->getOrderStateForConfirmationFraudOCR($this->_order->getState()));
@@ -245,10 +245,19 @@ class EbayEnterprise_Eb2cFraud_Model_Build_OCRequest
 	}
 
 	$subPayloadLineDetail->setTrackingNumber($quad['tracking_number']);
-	$subPayloadLineDetail->setShippingVendorCode($this->_config->getShipVendorForShipCarrier($quad['carrier_code']));
+	
+	if( $quad['carrier_code'] )
+	{
+		$subPayloadLineDetail->setShippingVendorCode($this->_config->getShipVendorForShipCarrier($quad['carrier_code']));
+	}
+
 	$subPayloadLineDetail->setDeliveryMethod($quad['delivery_method']);
-	$subPayloadLineDetail->setShipScheduledDate($quad['shipacount']);
-	$subPayloadLineDetail->setShipActualDate($quad['shipacount']);
+	
+	if( $quad['shipacount'] )
+	{
+		$subPayloadLineDetail->setShipScheduledDate($quad['shipacount']);
+		$subPayloadLineDetail->setShipActualDate($quad['shipacount']);
+	}
 
         return $this;
     }
