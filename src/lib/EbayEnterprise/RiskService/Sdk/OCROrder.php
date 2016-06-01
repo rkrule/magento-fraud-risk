@@ -51,8 +51,8 @@ class EbayEnterprise_RiskService_Sdk_OCROrder
 			'setConfirmationType' => 'string(x:ConfirmationType)',
 		);
 		$this->_optionalExtractionPaths = array(
-			'setOrderStatus' => 'string(x:OrderStatus)',
-			'setOrderStatusReason' => 'string(x:OrderStatusReason)',
+			'setOrderStatus' => 'x:OrderStatus',
+			'setOrderStatusReason' => 'x:OrderStatusReason',
 		);
 		$this->_dateTimeExtractionPaths = array(
                         'setStatusDate' => 'string(x:StatusDate)', 
