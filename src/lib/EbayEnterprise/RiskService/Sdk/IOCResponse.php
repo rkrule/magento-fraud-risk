@@ -32,7 +32,7 @@ interface EbayEnterprise_RiskService_Sdk_IOCResponse extends EbayEnterprise_Risk
          * @param  string
          * @return self
          */
-        public function setCreateTimestamp($createTimestamp);
+        public function setCreateTimestamp(DateTime $createTimestamp);
 
 	/**
          * OrderConfirmationAcknowledgement

@@ -115,7 +115,7 @@ class EbayEnterprise_Eb2cFraud_Model_Build_OCRequest
         $subPayloadOrder->setOrderId($this->_order->getIncrementId());
 	$subPayloadOrder->setStoreId($this->_config->getStoreId());
 	
-	$statusDate =  date("Y-m-d\TH:i:s.000", Mage::getModel('core/date')->timestamp(time()));
+	$statusDate =  $this->_helper->getNewDateTime();
 	$subPayloadOrder->setStatusDate($statusDate);
 
 	$subPayloadOrder->setConfirmationType($this->_config->getOrderStateForConfirmationFraudOCR($this->_order->getState()));
@@ -170,7 +170,7 @@ class EbayEnterprise_Eb2cFraud_Model_Build_OCRequest
                                 $track_num = $tracking_number->getNumber();
                                 $carrier_code = $tracking_number->getCarrierCode();
                                 $delivery_method = $this->_shippingHelper->getMethodSdkId($this->_order->getShippingMethod());
-                                $shipacount = date("Y-m-d\TH:i:s.000", strtotime($tracking_number->getCreatedAt()));
+				$shipacount = $this->_helper->getNewDateTime($tracking_number->getCreatedAt());
 
 				$quaduple[] = array( 'tracking_number' => $track_num, 'carrier_code' => $carrier_code, 'delivery_method' => $delivery_method, 'shipacount' => $shipacount);
 			}
@@ -245,12 +245,7 @@ class EbayEnterprise_Eb2cFraud_Model_Build_OCRequest
 	}
 
 	$subPayloadLineDetail->setTrackingNumber($quad['tracking_number']);
-
-	if( $quad['carrier_code'])
-	{
-		$subPayloadLineDetail->setShippingVendorCode($this->_config->getShipVendorForShipCarrier($quad['carrier_code']));
-	}
-
+	$subPayloadLineDetail->setShippingVendorCode($this->_config->getShipVendorForShipCarrier($quad['carrier_code']));
 	$subPayloadLineDetail->setDeliveryMethod($quad['delivery_method']);
 	$subPayloadLineDetail->setShipScheduledDate($quad['shipacount']);
 	$subPayloadLineDetail->setShipActualDate($quad['shipacount']);

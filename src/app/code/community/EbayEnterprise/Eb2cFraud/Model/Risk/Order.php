@@ -27,6 +27,8 @@ class EbayEnterprise_Eb2cFraud_Model_Risk_Order
 	protected $_httpHelper;
     	/** @var EbayEnterprise_RiskService_Sdk_Request */
     	protected $_request;
+	/** @var EbayEnterprise_RiskService_Sdk_OrderConfirmationRequest */
+	protected $_OCrequest;
 	/** @var EbayEnterprise_RiskService_Sdk_Response */
 	protected $_response;
 	/** @var EbayEnterprise_MageLog_Helper_Data */
@@ -45,14 +47,15 @@ class EbayEnterprise_Eb2cFraud_Model_Risk_Order
 	public function __construct(array $initParams=array())
 	{
 
-		list($this->_helper, $this->_httpHelper, $this->_request, $this->_config, $this->_response, $this->_logger, $this->_context) = $this->_checkTypes(
+		list($this->_helper, $this->_httpHelper, $this->_request, $this->_config, $this->_response, $this->_logger, $this->_context, $this->_OCrequest) = $this->_checkTypes(
 			$this->_nullCoalesce($initParams, 'helper', Mage::helper('ebayenterprise_eb2cfraud')),
 			$this->_nullCoalesce($initParams, 'http_helper', Mage::helper('ebayenterprise_eb2cfraud/http')),
 		        $this->_nullCoalesce($initParams, 'request', $this->_getNewSdkInstance('EbayEnterprise_RiskService_Sdk_Request')),
 			$this->_nullCoalesce($initParams, 'config', Mage::helper('ebayenterprise_eb2cfraud/config')),
 			$this->_nullCoalesce($initParams, 'request', $this->_getNewSdkInstance('EbayEnterprise_RiskService_Sdk_Response')),
 			$this->_nullCoalesce($initParams, 'logger', Mage::helper('ebayenterprise_magelog')),
-			$this->_nullCoalesce($initParams, 'context', Mage::helper('ebayenterprise_magelog/context'))
+			$this->_nullCoalesce($initParams, 'context', Mage::helper('ebayenterprise_magelog/context')),
+			$this->_nullCoalesce($initParams, 'ocrequest', $this->_getNewSdkInstance('EbayEnterprise_RiskService_Sdk_OrderConfirmationRequest'))
 		);
 	}
 
@@ -73,9 +76,10 @@ class EbayEnterprise_Eb2cFraud_Model_Risk_Order
 		EbayEnterprise_Eb2cFraud_Helper_Config $config,
 		EbayEnterprise_RiskService_Sdk_Response $response,
 		EbayEnterprise_MageLog_Helper_Data $logger,
-		EbayEnterprise_MageLog_Helper_Context $context
+		EbayEnterprise_MageLog_Helper_Context $context,
+		EbayEnterprise_RiskService_Sdk_OrderConfirmationRequest $OCrequest
 	) {
-		return array($helper, $httpHelper, $request, $config, $response, $logger, $context);
+		return array($helper, $httpHelper, $request, $config, $response, $logger, $context, $OCrequest);
 	}
 
     /**
@@ -121,6 +125,16 @@ class EbayEnterprise_Eb2cFraud_Model_Risk_Order
                 return $this->_getNewSdkInstance('EbayEnterprise_RiskService_Sdk_OrderConfirmationRequest');
         }
 
+	 /**
+        * Get new empty request payload
+        *
+        * @return EbayEnterprise_RiskService_Sdk_IPayload
+        */
+        protected function _getNewOCREmptyResponse()
+        {
+                return $this->_getNewSdkInstance('EbayEnterprise_RiskService_Sdk_OCResponse');
+        }
+
 	/**
          * @param  EbayEnterprise_RiskService_Sdk_IApi
          * @return EbayEnterprise_RiskService_Sdk_IPayload | null
@@ -146,21 +160,37 @@ class EbayEnterprise_Eb2cFraud_Model_Risk_Order
 
 			//Queue up for retry
 			if (strlen($this->_payloadXml) > 0) {
-				$xml = simplexml_load_string($this->_payloadXml);
-				if( strcmp( $xml->getName(), "RiskAssessmentRequest") === 0)
+				//First check to see if this event was sent before, if it has been sent, add 1 to the delivery status (MAX RETRIES)
+				$foundEvent = Mage::getModel('ebayenterprise_eb2cfraud/retryQueue')->getCollection()->addFieldToFilter('message_content', $this->_payloadXml);
+			
+				if( $foundEvent->getSize() > 0 )
 				{
-					$eventName = 'risk_assessment_request';
-				} elseif (  strcmp( $xml->getName(), "RiskOrderConfirmationRequest") === 0) {
-					$eventName = 'order_confirmation_request';
-				} else {
-					$eventName = 'not_supported';
-				}
+					foreach($foundEvent as $event )
+					{
+						$previousStatus = $event->getDeliveryStatus();
 
-				$object = Mage::getModel('ebayenterprise_eb2cfraud/retryQueue');
-	        		$time = time();
-	        		$data = array('event_name' => $eventName, 'created_at' => $time, 'message_content' => $this->_payloadXml);
-	        		$object->setData($data);
-	        		$object->save();
+						if( $previousStatus < $this->_config->getMaxRetries())
+						{
+							$event->setDeliveryStatus($previousStatus+1);
+						}
+					}
+				} else {
+					$xml = simplexml_load_string($this->_payloadXml);
+					if( strcmp( $xml->getName(), "RiskAssessmentRequest") === 0)
+					{
+						$eventName = 'risk_assessment_request';
+					} elseif (  strcmp( $xml->getName(), "RiskOrderConfirmationRequest") === 0) {
+						$eventName = 'order_confirmation_request';
+					} else {
+						$eventName = 'not_supported';
+					}
+
+					$object = Mage::getModel('ebayenterprise_eb2cfraud/retryQueue');
+	        			$time = time();
+	        			$data = array('event_name' => $eventName, 'created_at' => $time, 'message_content' => $this->_payloadXml);
+	        			$object->setData($data);
+	        			$object->save();
+				}
 			}
                 }
                 return $response;
@@ -200,17 +230,17 @@ class EbayEnterprise_Eb2cFraud_Model_Risk_Order
         	))->build();
 
 		$this->_payloadXml = $payload->serialize();
+
+		$apiConfig = $this->_setupApiConfig($payload, $this->_getNewEmptyResponse());
+        	$response = $this->_sendRequest($this->_getApi($apiConfig), $order);
+
+		// Set order state / status below, then use order history collection
+        	$order->setState("processing", "risk_processing", 'Order is now processing in the Fraud System.', false);
+        	$order->save();
 	} catch( Exception $e ) {
-                $logMessage = sprintf('[%s] Error Payload RiskAssessmentRequest Body: %s', __CLASS__, print_r($payload, true));
+                $logMessage = sprintf('[%s] Error Payload RiskAssessmentRequest Body: %s', __CLASS__, $e->getMessage());
                 Mage::log($logMessage, Zend_Log::WARN);
         }
-
-	$apiConfig = $this->_setupApiConfig($payload, $this->_getNewEmptyResponse());
-        $response = $this->_sendRequest($this->_getApi($apiConfig), $order);
-
-	// Set order state / status below, then use order history collection
-	$order->setState("processing", "risk_processing", 'Order is now processing in the Fraud System.', false);
-	$order->save();
 	}
 
         public function processOrderConfirmationRequest(Varien_Event_Observer $observer)
@@ -229,13 +259,13 @@ class EbayEnterprise_Eb2cFraud_Model_Risk_Order
                 		        'order' => $order,
                 		))->build();
 				$this->_payloadXml = $payload->serialize();
+
+				$apiConfig = $this->_setupApiConfig($payload, $this->_getNewOCREmptyResponse());
+                        	$response = $this->_sendRequest($this->_getApi($apiConfig), $orderNull);
 			} catch( Exception $e ) {
-				$logMessage = sprintf('[%s] Error Payload OrderConfirmationRequest Body: %s', __CLASS__, print_r($payload, true));
+				$logMessage = sprintf('[%s] Error Payload OrderConfirmationRequest Body: %s', __CLASS__, $e->getMessage());
                 	        Mage::log($logMessage, Zend_Log::WARN);
 			}	
-
-			$apiConfig = $this->_setupApiConfig($payload, $this->_getNewEmptyResponse());
-                	$response = $this->_sendRequest($this->_getApi($apiConfig), $orderNull);
 		}	
         }
 
@@ -249,9 +279,16 @@ class EbayEnterprise_Eb2cFraud_Model_Risk_Order
 
         foreach( $objectCollection as $object )
         {
-		$this->_payloadXml = $this->_request->deserialize($object->getMessageContent());
+		$xml = simplexml_load_string($object->getMessageContent());
+                if( strcmp($xml->getName(), "RiskOrderConfirmationRequest") === 0)
+                {
+			$this->_payloadXml = $this->_OCrequest->deserialize($object->getMessageContent());
+                	$apiConfig = $this->_setupApiConfig($this->_payloadXml, $this->_getNewOCREmptyResponse());
+		} else {
+			$this->_payloadXml = $this->_request->deserialize($object->getMessageContent());
+                        $apiConfig = $this->_setupApiConfig($this->_payloadXml, $this->_getNewEmptyResponse());
+                }
 
-        	$apiConfig = $this->_setupApiConfig($this->_payloadXml, $this->_getNewEmptyResponse());
         	$response = $this->_sendRequest($this->_getApi($apiConfig), $order);
 
 		$object->delete();

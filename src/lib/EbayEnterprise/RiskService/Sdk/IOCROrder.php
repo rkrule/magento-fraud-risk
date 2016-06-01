@@ -62,7 +62,7 @@ interface EbayEnterprise_RiskService_Sdk_IOCROrder extends EbayEnterprise_RiskSe
 	 * @return self
 	 *
 	 */
-	public function setStatusDate($statusDate);
+	public function setStatusDate(DateTime $statusDate);
 
 	/**
 	 * ConfirmationType

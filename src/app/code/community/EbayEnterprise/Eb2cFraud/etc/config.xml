@@ -294,5 +294,16 @@ http://opensource.org/licenses/osl-3.0.php
 	        </ebayenterprise_eb2cfraud_retry_sendevent>
 	    </jobs>
      </crontab>
+     <admin>
+        <routers>
+            <eb2cfraud>
+                <use>admin</use>
+                <args>
+                    <frontName>eb2cfraud</frontName>
+                    <module>EbayEnterprise_Eb2cFraud_Adminhtml</module>
+                </args>
+            </eb2cfraud>
+        </routers>
+    </admin>
 </config>
 

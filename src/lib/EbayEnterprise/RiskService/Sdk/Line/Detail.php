@@ -40,16 +40,18 @@ class EbayEnterprise_RiskService_Sdk_Line_Detail
 	{
 		parent::__construct($initParams);
 		$this->_extractionPaths = array(
-			'setSKU' => 'x:SKU',
+			'setSKU' => 'string(x:SKU)',
 			'setQuantity' => 'number(x:Quantity)',
-			'setItemStatus' => 'x:ItemStatus',
+			'setItemStatus' => 'string(x:ItemStatus)',
 		);
 		$this->_optionalExtractionPaths = array(
-			'setTrackingNumber' => 'x:TrackingNumber',
-			'setShippingVendorCode' => 'x:ShippingVendorCode',
-			'setDeliveryMethod' => 'x:DeliveryMethod',
-			'setShipScheduledDate' => 'x:ShipScheduledDate',
-			'setShipActualDate' => 'x:ShipActualDate',
+			'setTrackingNumber' => 'string(x:TrackingNumber)',
+			'setShippingVendorCode' => 'string(x:ShippingVendorCode)',
+			'setDeliveryMethod' => 'string(x:DeliveryMethod)',
+		);
+		$this->_dateTimeExtractionPaths = array(
+                	'setShipScheduledDate' => 'string(x:ShipScheduledDate)',
+                        'setShipActualDate' => 'string(x:ShipActualDate)',
 		);
 	}
 
@@ -166,7 +168,7 @@ class EbayEnterprise_RiskService_Sdk_Line_Detail
 	/**
 	 * @see EbayEnterprise_RiskService_Sdk_Line_IDetail::setShipScheduledDate()
 	 */
-	public function setShipScheduledDate($shipScheduledDate)
+	public function setShipScheduledDate(DateTime $shipScheduledDate)
 	{
 		$this->_shipScheduledDate = $shipScheduledDate;
 		return $this;
@@ -183,7 +185,7 @@ class EbayEnterprise_RiskService_Sdk_Line_Detail
         /**
          * @see EbayEnterprise_RiskService_Sdk_Line_IDetail::setShipActualDate()
          */
-        public function setShipActualDate($shipActualDate)
+        public function setShipActualDate(DateTime $shipActualDate)
         {
                 $this->_shipActualDate = $shipActualDate;
                 return $this;
@@ -216,7 +218,7 @@ class EbayEnterprise_RiskService_Sdk_Line_Detail
 			. $this->_serializeOptionalValue('TrackingNumber', $this->getTrackingNumber())
 			. $this->_serializeOptionalValue('ShippingVendorCode', $this->getShippingVendorCode())
 			. $this->_serializeOptionalValue('DeliveryMethod', $this->getDeliveryMethod())
-			. $this->_serializeOptionalValue('ShipScheduledDate', $this->getShipScheduledDate())
-			. $this->_serializeOptionalValue('ShipActualDate', $this->getShipActualDate());
+			. $this->_serializeOptionalDateValue('ShipScheduledDate', 'c', $this->getShipScheduledDate())
+			. $this->_serializeOptionalDateValue('ShipActualDate', 'c', $this->getShipActualDate());
 	}
 }

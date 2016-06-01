@@ -95,7 +95,7 @@ interface EbayEnterprise_RiskService_Sdk_Line_IDetail extends EbayEnterprise_Ris
          * @param  string
          * @return self
          */
-        public function setShipScheduledDate($shipScheduledDate);
+        public function setShipScheduledDate(DateTime $shipScheduledDate);
 
 	/**
          * @return string
@@ -106,5 +106,5 @@ interface EbayEnterprise_RiskService_Sdk_Line_IDetail extends EbayEnterprise_Ris
          * @param  string
          * @return self
          */
-        public function setShipActualDate($shipActualDate);
+        public function setShipActualDate(DateTime $shipActualDate);
 }
