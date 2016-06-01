@@ -17,6 +17,11 @@
 
 class EbayEnterprise_Eb2cFraud_Helper_Data extends Mage_Core_Helper_Abstract
 {
+	// format strings for working with Zend_Date
+   	const MAGE_DATETIME_FORMAT = 'Y-m-d H:i:s';
+   	const XML_DATETIME_FORMAT = 'c';
+   	const TIME_FORMAT = '%h:%I:%S';
+	
 	const DEFAULT_LANGUAGE_CODE = 'en';
 	const FREE_PAYMENT_METHOD = 'free';
 	const RISK_SERVICE_GIFT_CARD_PAYMENT_METHOD = 'GC';
