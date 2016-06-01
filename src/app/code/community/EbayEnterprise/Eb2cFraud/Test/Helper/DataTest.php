@@ -22,6 +22,8 @@ class EbayEnterprise_Eb2cFraud_Test_Helper_DataTest extends Radial_Core_Test_Bas
 
     public function setUp()
     {
+	//Supress Cookie Header Information
+	@session_start();
         parent::setUp();
         // stub the customer session
         $this->_customerSessionStub = $this->getModelMockBuilder('customer/session')
