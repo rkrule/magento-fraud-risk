@@ -31,7 +31,7 @@
   },
   "repositories": [
     { "type": "composer", "url": "https://packages.firegento.com/" }
-  ]
+  ],
   "extra": {
         "magento-force": true
    }
