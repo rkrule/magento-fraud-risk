@@ -17,7 +17,8 @@ class EbayEnterprise_Eb2cFraud_Model_Adminhtml_System_Config_Backend_Nummaxretry
 {
     public function _afterLoad()
     {
-	$objectCollectionSize = Mage::getModel('ebayenterprise_eb2cfraud/retryQueue')->getCollection()->addFieldToFilter('delivery_status', 2)->getSize();	
+	$maxretries = Mage::helper('ebayenterprise_eb2cfraud/config')->getMaxRetries();
+	$objectCollectionSize = Mage::getModel('ebayenterprise_eb2cfraud/retryQueue')->getCollection()->addFieldToFilter('delivery_status', $maxretries)->getSize();	
 	
 	$publicDisplay = '# of Messages At Max Transmission Retries: '. $objectCollectionSize;
 

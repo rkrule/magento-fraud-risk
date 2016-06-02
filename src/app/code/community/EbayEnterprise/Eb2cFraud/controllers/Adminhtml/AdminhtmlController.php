@@ -17,8 +17,9 @@ class EbayEnterprise_Eb2cFraud_Adminhtml_AdminhtmlController extends Mage_Adminh
     public function messageResetAction()
     {
         Mage::getSingleton('adminhtml/session')->addSuccess("Successfully Reset Messages at Maximum Transmission");
+	$maxretries = Mage::helper('ebayenterprise_eb2cfraud/config')->getMaxRetries();
 
-	$objectCollection = Mage::getModel('ebayenterprise_eb2cfraud/retryQueue')->getCollection()->setPageSize(100)->addFieldToFilter('delivery_status', 2);
+	$objectCollection = Mage::getModel('ebayenterprise_eb2cfraud/retryQueue')->getCollection()->setPageSize(100)->addFieldToFilter('delivery_status', $maxretries);
         $pages = $objectCollection->getLastPageNumber();
         $currentPage = 1;
 

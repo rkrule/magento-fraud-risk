@@ -139,6 +139,11 @@ http://opensource.org/licenses/osl-3.0.php
         </layout>
     </frontend>
     <default>
+	<radial_core>
+		<fraud>
+			<maxretries>3</maxretries>
+		</fraud>
+	</radial_core>
         <ebayenterprise_eb2cfraud>
             <risk_service>
 		<!-- Can be: pound, ounce, kilogram, gram, unknown https://gitlab.gspt.net/Cheetah/retailordermanagement-sdk/blob/master/src/eBayEnterprise/RetailOrderManagement/Schemas/checkout/1.0/Risk-Service-Datatypes-1.0.xsd for UnitOfWeightType -->

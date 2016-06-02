@@ -139,7 +139,7 @@ class EbayEnterprise_Eb2cFraud_Model_Risk_Order
          * @param  EbayEnterprise_RiskService_Sdk_IApi
          * @return EbayEnterprise_RiskService_Sdk_IPayload | null
          */
-        protected function _sendRequest(EbayEnterprise_RiskService_Sdk_IApi $api, Mage_Sales_Model_Order $order )
+        protected function _sendRequest(EbayEnterprise_RiskService_Sdk_IApi $api, Mage_Sales_Model_Order $order, $payload = null, $retry = null )
         {
                 $response = null;
                 try {
@@ -158,43 +158,28 @@ class EbayEnterprise_Eb2cFraud_Model_Risk_Order
                         Mage::log($logMessage, Zend_Log::WARN);
                         Mage::logException($e);
 
-			//Queue up for retry
-			if (strlen($this->_payloadXml) > 0) {
-				//First check to see if this event was sent before, if it has been sent, add 1 to the delivery status (MAX RETRIES)
-				$foundEvent = Mage::getModel('ebayenterprise_eb2cfraud/retryQueue')->getCollection()->addFieldToFilter('message_content', $this->_payloadXml);
-			
-				if( $foundEvent->getSize() > 0 )
+			if( !$retry )
+			{
+				$xml = simplexml_load_string($payload);
+				if( strcmp( $xml->getName(), "RiskAssessmentRequest") === 0)
 				{
-					foreach($foundEvent as $event )
-					{
-						$previousStatus = $event->getDeliveryStatus();
-
-						if( $previousStatus < $this->_config->getMaxRetries())
-						{
-							$event->setDeliveryStatus($previousStatus+1);
-						}
-					}
+					$eventName = 'risk_assessment_request';
+				} elseif (  strcmp( $xml->getName(), "RiskOrderConfirmationRequest") === 0) {
+					$eventName = 'order_confirmation_request';
 				} else {
-					$xml = simplexml_load_string($this->_payloadXml);
-					if( strcmp( $xml->getName(), "RiskAssessmentRequest") === 0)
-					{
-						$eventName = 'risk_assessment_request';
-					} elseif (  strcmp( $xml->getName(), "RiskOrderConfirmationRequest") === 0) {
-						$eventName = 'order_confirmation_request';
-					} else {
-						$eventName = 'not_supported';
-					}
-
-					$object = Mage::getModel('ebayenterprise_eb2cfraud/retryQueue');
-	        			$time = time();
-	        			$data = array('event_name' => $eventName, 'created_at' => $time, 'message_content' => $this->_payloadXml);
-	        			$object->setData($data);
-	        			$object->save();
+					$eventName = 'not_supported';
 				}
-			}
-                }
-                return $response;
-        }
+
+				$object = Mage::getModel('ebayenterprise_eb2cfraud/retryQueue');
+	        		$time = time();
+	        		$data = array('event_name' => $eventName, 'created_at' => $time, 'message_content' => $payload, 'delivery_status' => 0);
+	        		$object->setData($data);
+	        		$object->save();
+                	}
+        	}
+
+		return $response;
+	}
 
     /**
      * Get new empty request payload
@@ -289,9 +274,33 @@ class EbayEnterprise_Eb2cFraud_Model_Risk_Order
                         $apiConfig = $this->_setupApiConfig($this->_payloadXml, $this->_getNewEmptyResponse());
                 }
 
-        	$response = $this->_sendRequest($this->_getApi($apiConfig), $order);
-
-		$object->delete();
+		try
+		{
+			if ( $object->getDeliveryStatus() < $this->_config->getMaxRetries())
+			{
+        			$response = $this->_sendRequest($this->_getApi($apiConfig), $order, $object->getMessageContent(), 1 );
+				if( $response )
+				{
+					$object->delete();
+				} else {
+					//Queue up for retry
+                        		if (strlen($object->getMessageContent()) > 0) {
+                                		if( $object->getDeliveryStatus() < $this->_config->getMaxRetries())
+                                		{
+                                        		$previousStatus = $object->getDeliveryStatus();
+                                        		$object->setDeliveryStatus($previousStatus+1);
+                                        		$object->save();
+                                		} else {
+                                         		$logMessage = sprintf('[%s] Error Transmitting Message (MAX RETRIES) - Body: %s', __CLASS__, $e->getMessage());
+                                         		Mage::log($logMessage, Zend_Log::ERR);
+                                		}
+                        		}
+				}
+			}
+		} catch( Exception $e ) {
+			 $logMessage = sprintf('[%s] Error JOB Retransmission: %s', __CLASS__, $e->getMessage());
+                         Mage::log($logMessage, Zend_Log::ERR);
+		}
         }
     }
 }
