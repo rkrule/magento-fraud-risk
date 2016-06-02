@@ -1,5 +1,5 @@
 # Core
-src/app/code/community/EbayEnterprise/* app/code/community/EbayEnterprise/
+src/app/code/community/Radial/* app/code/community/Radial/
 src/app/etc/*.xml.sample app/etc/
 src/app/etc/modules/*.xml app/etc/modules/
 
@@ -10,6 +10,6 @@ src/app/design/frontend/base/default/template/* app/design/frontend/base/default
 # JS
 src/js/radial_eb2cfraud/* js/radial_eb2cfraud/
 # lib
-src/lib/EbayEnterprise/RiskService/ lib/EbayEnterprise/RiskService/
+src/lib/Radial/RiskService/ lib/Radial/RiskService/
 # locale
 src/app/locale/en_US/template/email/* app/locale/en_US/template/email/
