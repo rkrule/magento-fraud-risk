@@ -128,6 +128,15 @@ http://opensource.org/licenses/osl-3.0.php
 			</observers>
 		</sales_order_save_after>
 	</events>
+	<template>
+		<email>
+			<custom_email_template1 module="FraudRisk">
+				<label>Radial - Fraud / Risk Exception Report</label>
+				<file>fraud_exception_template.html</file>
+				<type>html</type>
+			</custom_email_template1>
+		</email>
+	</template>
     </global>
     <frontend>
         <layout>

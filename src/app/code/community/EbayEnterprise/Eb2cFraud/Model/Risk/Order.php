@@ -142,10 +142,11 @@ class EbayEnterprise_Eb2cFraud_Model_Risk_Order
         protected function _sendRequest(EbayEnterprise_RiskService_Sdk_IApi $api, Mage_Sales_Model_Order $order, $payload = null, $retry = null )
         {
                 $response = null;
+
 		if( !$payload )
-                {
-                        $payload = $this->_request->serialize();
-                }
+		{
+			$payload = $this->_request->serialize();
+		}
 
                 try {
                         $api->send();
@@ -162,6 +163,42 @@ class EbayEnterprise_Eb2cFraud_Model_Risk_Order
                         $logMessage = sprintf('[%s] The following error has occurred while sending request: %s', __CLASS__, $e->getMessage());
                         Mage::log($logMessage, Zend_Log::WARN);
                         Mage::logException($e);
+
+			$fraudEmail = $this->_config->getFraudEmail();
+ 
+			if( $fraudEmail )
+			{
+				$fraudName = Mage::app()->getStore()->getName() . ' - ' . 'Fraud Admin';
+
+				$emailTemplate  = Mage::getModel('core/email_template')->loadDefault('custom_email_template1');
+
+				//Create an array of variables to assign to template
+				$emailTemplateVariables = array();
+				$emailTemplateVariables['myvar1'] = gmdate("Y-m-d\TH:i:s\Z");
+				$emailTemplateVariables['myvar2'] = $e->getMessage();
+				$emailTemplateVariables['myvar3'] = $e->getTraceAsString();
+
+				$processedTemplate = $emailTemplate->getProcessedTemplate($emailTemplateVariables);
+			
+				//Sending E-Mail to Fraud Admin Email.
+                                $mail = Mage::getModel('core/email')
+                                                ->setToName($fraudName)
+                                                ->setToEmail($fraudEmail)
+                                                ->setBody($processedTemplate)
+                                                ->setSubject('Fraud Exception Report From: '. __CLASS__ . ' on ' . gmdate("Y-m-d\TH:i:s\Z") . ' UTC')
+                                                ->setFromEmail(Mage::getStoreConfig('trans_email/ident_general/email'))
+                                                ->setFromName($fraudName)
+                                                ->setType('html');
+                                try{
+                                   //Confimation E-Mail Send
+                                   $mail->send();
+                                }
+                                catch(Exception $error)
+                                {
+                                	$logMessage = sprintf('[%s] Error Sending Email: %s', __CLASS__, $error->getMessage());
+                                        Mage::log($logMessage, Zend_Log::ERR);
+                                }
+			}
 
 			if( !$retry )
 			{
@@ -298,6 +335,43 @@ class EbayEnterprise_Eb2cFraud_Model_Risk_Order
                                 		} else {
                                          		$logMessage = sprintf('[%s] Error Transmitting Message (MAX RETRIES) - Body: %s', __CLASS__, $e->getMessage());
                                          		Mage::log($logMessage, Zend_Log::ERR);
+
+							$fraudEmail = $this->_config->getFraudEmail();
+ 
+				                        if( $fraudEmail )
+                        				{       
+                                				$fraudName = Mage::app()->getStore()->getName() . ' - ' . 'Fraud Admin';
+
+                                				$emailTemplate  = Mage::getModel('core/email_template')->loadDefault('custom_email_template1');
+
+                                				//Create an array of variables to assign to template
+                                				$emailTemplateVariables = array();
+                                				$emailTemplateVariables['myvar1'] = gmdate("Y-m-d\TH:i:s\Z");
+                                				$emailTemplateVariables['myvar2'] = $e->getMessage();
+								$emailTemplateVariables['myvar3'] = $e->getTraceAsString();
+
+                                				$processedTemplate = $emailTemplate->getProcessedTemplate($emailTemplateVariables);
+
+								//Sending E-Mail to Fraud Admin Email.
+								$mail = Mage::getModel('core/email')
+ 									->setToName($fraudName)
+ 									->setToEmail($fraudEmail)
+ 									->setBody($processedTemplate)
+ 									->setSubject('Fraud Exception Report From: '. __CLASS__ . ' on ' . gmdate("Y-m-d\TH:i:s\Z") . ' UTC')
+ 									->setFromEmail(Mage::getStoreConfig('trans_email/ident_general/email'))
+ 									->setFromName($fraudName)
+ 									->setType('html');
+ 								try{
+ 									//Confimation E-Mail Send
+ 									$mail->send();
+ 								}
+ 								catch(Exception $error)
+ 								{
+ 									$logMessage = sprintf('[%s] Error Sending Email: %s', __CLASS__, $error->getMessage());
+                         						Mage::log($logMessage, Zend_Log::ERR);
+								}
+                        				}
+
                                 		}
                         		}
 				}
@@ -305,6 +379,41 @@ class EbayEnterprise_Eb2cFraud_Model_Risk_Order
 		} catch( Exception $e ) {
 			 $logMessage = sprintf('[%s] Error JOB Retransmission: %s', __CLASS__, $e->getMessage());
                          Mage::log($logMessage, Zend_Log::ERR);
+
+			 $fraudEmail = $this->_config->getFraudEmail();
+ 
+                        if( $fraudEmail )
+                        {       
+                                $fraudName = Mage::app()->getStore()->getName() . ' - ' . 'Fraud Admin';
+
+                                $emailTemplate  = Mage::getModel('core/email_template')->loadDefault('custom_email_template1');
+
+                                //Create an array of variables to assign to template
+                                $emailTemplateVariables = array();
+                                $emailTemplateVariables['myvar1'] = gmdate("Y-m-d\TH:i:s\Z");
+                                $emailTemplateVariables['myvar2'] = $e->getMessage();
+				$emailTemplateVariables['myvar3'] = $e->getTraceAsString();
+
+                                $processedTemplate = $emailTemplate->getProcessedTemplate($emailTemplateVariables);
+                        	//Sending E-Mail to Fraud Admin Email.
+                                $mail = Mage::getModel('core/email')
+                                                     ->setToName($fraudName)
+                                                     ->setToEmail($fraudEmail)
+                                                     ->setBody($processedTemplate)
+                                                     ->setSubject('Fraud Exception Report From: '. __CLASS__ . ' on ' . gmdate("Y-m-d\TH:i:s\Z") . ' UTC')
+                                                     ->setFromEmail(Mage::getStoreConfig('trans_email/ident_general/email'))
+                                                     ->setFromName($fraudName)
+                                                     ->setType('html');
+                                try{
+                                   //Confimation E-Mail Send
+                                   $mail->send();
+                                }
+                                catch(Exception $error)
+                                {
+                                	$logMessage = sprintf('[%s] Error Sending Email: %s', __CLASS__, $error->getMessage());
+                                        Mage::log($logMessage, Zend_Log::ERR);
+                                }
+			}
 		}
         }
     }
