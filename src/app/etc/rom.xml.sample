@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!--
-Copyright (c) 2013-2014 eBay Enterprise, Inc.
+Copyright (c) 2013-2016 Radial, Inc.
 
 NOTICE OF LICENSE
 
@@ -9,7 +9,7 @@ that is bundled with this package in the file LICENSE.md.
 It is also available through the world-wide-web at this URL:
 http://opensource.org/licenses/osl-3.0.php
 
-@copyright   Copyright (c) 2013-2014 eBay Enterprise, Inc. (http://www.ebayenterprise.com/)
+@copyright   Copyright (c) 2013-2016 Radial, Inc. (http://www.radial.com/)
 @license     http://opensource.org/licenses/osl-3.0.php  Open Software License (OSL 3.0)
 -->
 <config>
@@ -24,21 +24,21 @@ http://opensource.org/licenses/osl-3.0.php
 
             Suggested Schedule: Once every fifteen minutes
             -->
-            <ebayenterprise_order_create_retry>
+            <radial_order_create_retry>
                 <schedule>
                     <cron_expr>*/15 * * * *</cron_expr>
                 </schedule>
-            </ebayenterprise_order_create_retry>
+            </radial_order_create_retry>
             <!--
             Image Export: This job will export image meta data to the Product Hub.
 
             Suggested Schedule: Once every fifteen minutes
             -->
-            <ebayenterprise_productimageexport>
+            <radial_productimageexport>
                 <schedule>
                     <cron_expr>*/15 * * * *</cron_expr>
                 </schedule>
-            </ebayenterprise_productimageexport>
+            </radial_productimageexport>
             <!--
             AMQP Queue Process: This job will request new messages from the ROM message queues.
 
@@ -62,18 +62,18 @@ http://opensource.org/licenses/osl-3.0.php
                 <flatrate_flatrate>ANY_STD</flatrate_flatrate>
             </shipmap>
         </radial_core>
-        <ebayenterprise_inventory>
+        <radial_inventory>
             <details>
                 <!-- Template to use to display the estimated delivery date. -->
                 <estimated_delivery_template>You can expect to receive your item%s between %s and %s.</estimated_delivery_template>
             </details>
-        </ebayenterprise_inventory>
-        <ebayenterprise_tax>
+        </radial_inventory>
+        <radial_tax>
             <tax_class>
                 <!-- tax class to use for the shipping price group -->
                 <shipping>93000</shipping>
             </tax_class>
-        </ebayenterprise_tax>
+        </radial_tax>
         <!--
         Message Queue: Configuration to fetch messages from the ROM message queue. Unless otherwise noted, the provided
         sample values should suffice for most uses.
@@ -133,7 +133,7 @@ http://opensource.org/licenses/osl-3.0.php
                 <binding_nowait>0</binding_nowait>
             </queue>
         </radial_amqp>
-        <ebayenterprise_creditcard>
+        <radial_creditcard>
             <!--
             Credit Card Tenders: Map Magento credit card types to ROM credit card tender types. Node names must match
             the credit card code as configured in Mage_Payment's etc/config.xml. Values must match credit card tender
@@ -145,8 +145,8 @@ http://opensource.org/licenses/osl-3.0.php
                 <MC>MC</MC>
                 <VI>VC</VI>
             </tender_types>
-        </ebayenterprise_creditcard>
-        <ebayenterprise_order>
+        </radial_creditcard>
+        <radial_order>
             <create>
                 <gender_map>
                     <!--
@@ -169,8 +169,8 @@ http://opensource.org/licenses/osl-3.0.php
                     <OTH>Other</OTH>
                 </reason_map>
             </cancel>
-        </ebayenterprise_order>
-        <ebayenterprise_paypal>
+        </radial_order>
+        <radial_paypal>
             <url>
                 <!-- logo image for category pages -->
                 <logo_image_src>https://www.paypalobjects.com/{locale_code}/i/bnr/bnr_{logo_type}.gif</logo_image_src>
@@ -183,6 +183,6 @@ http://opensource.org/licenses/osl-3.0.php
                 <!-- What is PayPal link on express payment method in checkout -->
                 <what_is_page_url>https://www.paypal.com/us/cgi-bin/webscr?cmd=xpt/Marketing/popup/OLCWhatIsPayPal-outside</what_is_page_url>
             </url>
-        </ebayenterprise_paypal>
+        </radial_paypal>
     </default>
 </config>

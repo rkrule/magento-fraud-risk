@@ -1,0 +1,990 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xsd:schema attributeFormDefault="unqualified" elementFormDefault="qualified"
+            xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+            targetNamespace="http://api.gsicommerce.com/schema/checkout/1.0"
+            xmlns="http://api.gsicommerce.com/schema/checkout/1.0"
+            version="1.0">
+
+    <xsd:element name="RiskServiceRequest" type="RiskServiceRequestType"/>
+
+    <xsd:complexType name="RiskServiceRequestType">
+        <xsd:annotation>
+            <xsd:documentation xml:lang="en">
+                Definition: The full detail for an event being submitted to the UCP Service.
+            </xsd:documentation>
+        </xsd:annotation>
+        <xsd:sequence>
+            <xsd:element type="PrimaryLangIdType" name="PrimaryLangId" minOccurs="0"/>
+            <xsd:element type="OrderType" name="Order"/>
+        </xsd:sequence>
+    </xsd:complexType>
+
+    <xsd:simpleType name="PrimaryLangIdType">
+        <xsd:annotation>
+            <xsd:documentation xml:lang="en">
+                Definition: The primary language ID used in the XML message.
+                Sample Data: en-US
+                Implementation Notes: For future internationalization support.
+            </xsd:documentation>
+        </xsd:annotation>
+        <xsd:restriction base="xsd:string">
+            <xsd:enumeration value="en"/>
+        </xsd:restriction>
+    </xsd:simpleType>
+
+    <xsd:complexType name="OrderType">
+        <xsd:sequence>
+            <xsd:element type="OrderIdType" name="OrderId"/>
+            <xsd:element type="OrderSourceType" name="OrderSource" minOccurs="0"/>
+            <xsd:element type="OrderDateType" name="OrderDate"/>
+            <xsd:element type="StoreIdType" name="StoreId"/>
+            <xsd:element type="ShippingListType" name="ShippingList" minOccurs="0"/>
+            <xsd:element type="LineItemsType" name="LineItems" minOccurs="0"/>
+            <xsd:element type="FormOfPaymentsType" name="FormOfPayments"/>
+            <xsd:element type="TotalCostType" name="TotalCost" minOccurs="0"/>
+            <xsd:element type="DeviceInfoType" name="DeviceInfo" minOccurs="0"/>
+        </xsd:sequence>
+    </xsd:complexType>
+
+    <xsd:simpleType name="OrderIdType">
+        <xsd:annotation>
+            <xsd:documentation xml:lang="en">
+                Unique identifier of the order in the web site.
+            </xsd:documentation>
+        </xsd:annotation>
+        <xsd:restriction base="nonEmptyString">
+            <xsd:maxLength value="40"/>
+        </xsd:restriction>
+    </xsd:simpleType>
+
+    <xsd:simpleType name="OrderSourceType">
+        <xsd:annotation>
+            <xsd:documentation xml:lang="en">
+                Identifies the system/method that was used to take the order.
+            </xsd:documentation>
+        </xsd:annotation>
+        <xsd:restriction base="orderSourceEnums">
+        </xsd:restriction>
+    </xsd:simpleType>
+
+    <xsd:simpleType name="OrderDateType">
+        <xsd:annotation>
+            <xsd:documentation xml:lang="en">
+                Definition: The timestamp of the order submitted in UTC.
+                Sample Data: 2015-05-30T09:00:00 or 2015-05-30T09:30:10.5 or 2015-05-30T09:30:10Z
+            </xsd:documentation>
+        </xsd:annotation>
+        <xsd:restriction base="xsd:dateTime">
+        </xsd:restriction>
+    </xsd:simpleType>
+
+    <xsd:simpleType name="StoreIdType">
+        <xsd:annotation>
+            <xsd:documentation xml:lang="en">
+                Store code/identifier for each partner. New store codes will require configuration by Radial.
+            </xsd:documentation>
+        </xsd:annotation>
+        <xsd:restriction base="xsd:string">
+            <xsd:minLength value="1"/>
+        </xsd:restriction>
+    </xsd:simpleType>
+
+    <xsd:complexType name="ShippingListType">
+        <xsd:sequence>
+            <xsd:element type="ShipmentType" name="Shipment" maxOccurs="unbounded"/>
+        </xsd:sequence>
+    </xsd:complexType>
+
+    <xsd:complexType name="ShipmentType">
+        <xsd:sequence>
+            <xsd:element type="PersonNameType" name="PersonName" minOccurs="0">
+                <xsd:annotation>
+                    <xsd:documentation>Definition: The recipient's name who is receiving the goods.
+                    </xsd:documentation>
+                </xsd:annotation>
+            </xsd:element>
+            <xsd:element type="EmailType" name="Email" minOccurs="0">
+                <xsd:annotation>
+                    <xsd:documentation>Definition: The email address where the product(digital goods) is being shipped.
+                        Sample Data: williams.drek@yahoo.com
+                        Implementation Notes: Only send if it's a digital goods. Please do not send this field for
+                        Physical goods.
+                    </xsd:documentation>
+                </xsd:annotation>
+            </xsd:element>
+            <xsd:element type="TelephoneType" name="Telephone" minOccurs="0"/>
+            <xsd:element type="AddressType" name="Address" minOccurs="0">
+                <xsd:annotation>
+                    <xsd:documentation>Definition: The recipient's address who is receiving the goods.
+                    </xsd:documentation>
+                </xsd:annotation>
+            </xsd:element>
+            <xsd:element type="xsd:string" name="ShippingMethod">
+                <xsd:annotation>
+                    <xsd:documentation xml:lang="en">
+                        Definition: The method of shipment for the order.
+                        Sample Data: Ground, Overnight, 2 Day, 3 Day
+                    </xsd:documentation>
+                </xsd:annotation>
+            </xsd:element>
+        </xsd:sequence>
+
+        <xsd:attribute name="ShipmentId" type="nonEmptyString" use="required">
+            <xsd:annotation>
+                <xsd:documentation xml:lang="en">
+                    Unique identifier for this shipment.
+                </xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+    </xsd:complexType>
+
+    <xsd:complexType name="PersonNameType">
+        <xsd:sequence>
+            <xsd:element name="LastName" type="xsd:string" minOccurs="0">
+                <xsd:annotation>
+                    <xsd:documentation>Definition: The last (family) name.
+                        Sample Data: Williams
+                        Implementation Notes: Letters only, upper or lower case.
+                    </xsd:documentation>
+                </xsd:annotation>
+            </xsd:element>
+            <xsd:element name="MiddleName" minOccurs="0">
+                <xsd:annotation>
+                    <xsd:documentation>Definition: The middle name of the person.
+                        Sample Data: Edward
+                        Implementation Notes: Letters only, upper or lower case. Maximum of 10 characters
+                    </xsd:documentation>
+                </xsd:annotation>
+                <xsd:simpleType>
+                    <xsd:restriction base="nonEmptyString">
+                        <xsd:maxLength value="10"/>
+                    </xsd:restriction>
+                </xsd:simpleType>
+            </xsd:element>
+            <xsd:element name="FirstName" type="xsd:string">
+                <xsd:annotation>
+                    <xsd:documentation>
+                        Definition: The person's (given) name) or full name if only full name field exists in web store.
+                        Sample Data: David or David Williams
+                    </xsd:documentation>
+                </xsd:annotation>
+            </xsd:element>
+        </xsd:sequence>
+    </xsd:complexType>
+
+    <xsd:simpleType name="EmailType">
+        <xsd:annotation>
+            <xsd:documentation xml:lang="en">
+                A valid email address format.
+            </xsd:documentation>
+        </xsd:annotation>
+        <xsd:restriction base="String256Type">
+        </xsd:restriction>
+    </xsd:simpleType>
+
+    <xsd:complexType name="TelephoneType">
+        <xsd:sequence>
+            <xsd:element name="CountryCode" type="nonEmptyString" minOccurs="0">
+                <xsd:annotation>
+                    <xsd:documentation xml:lang="en">
+                        Country code of the Phone number
+                        Sample Data: 001 or 091
+                    </xsd:documentation>
+                </xsd:annotation>
+            </xsd:element>
+            <xsd:element name="AreaCode" type="nonEmptyString" minOccurs="0">
+                <xsd:annotation>
+                    <xsd:documentation xml:lang="en">
+                        Area code of the Phone number
+                        Sample Data: 480 or 610
+                    </xsd:documentation>
+                </xsd:annotation>
+            </xsd:element>
+            <xsd:element name="Number" type="nonEmptyString">
+                <xsd:annotation>
+                    <xsd:documentation xml:lang="en">
+                        Phone number or full phone number if AreaCode or CountryCode doesn't exist
+                        Sample Data: 5551212 or (480) 555-1212 or 4805551212 or
+                        01-4805551212 or 1-480-123-4567 or 480-123-4567
+                    </xsd:documentation>
+                </xsd:annotation>
+            </xsd:element>
+            <xsd:element name="Extension" type="nonEmptyString" minOccurs="0">
+                <xsd:annotation>
+                    <xsd:documentation xml:lang="en">
+                        Extension Number, if any
+                        Sample Data: 101 or 202
+                    </xsd:documentation>
+                </xsd:annotation>
+            </xsd:element>
+        </xsd:sequence>
+    </xsd:complexType>
+
+    <xsd:complexType name="AddressType">
+        <xsd:sequence>
+            <xsd:element name="Line1">
+                <xsd:simpleType>
+                    <xsd:restriction base="nonEmptyString">
+                        <xsd:maxLength value="100"/>
+                    </xsd:restriction>
+                </xsd:simpleType>
+            </xsd:element>
+            <xsd:element name="Line2" minOccurs="0">
+                <xsd:simpleType>
+                    <xsd:restriction base="nonEmptyString">
+                        <xsd:maxLength value="100"/>
+                    </xsd:restriction>
+                </xsd:simpleType>
+            </xsd:element>
+            <xsd:element name="Line3" minOccurs="0">
+                <xsd:simpleType>
+                    <xsd:restriction base="nonEmptyString">
+                        <xsd:maxLength value="100"/>
+                    </xsd:restriction>
+                </xsd:simpleType>
+            </xsd:element>
+            <xsd:element name="Line4" minOccurs="0">
+                <xsd:simpleType>
+                    <xsd:restriction base="nonEmptyString">
+                        <xsd:maxLength value="100"/>
+                    </xsd:restriction>
+                </xsd:simpleType>
+            </xsd:element>
+            <xsd:element name="City" type="xsd:string" minOccurs="0"/>
+            <xsd:element name="PostalCode" type="nonEmptyString"/>
+            <xsd:element name="MainDivisionCode" type="nonEmptyString" minOccurs="0">
+                <xsd:annotation>
+                    <xsd:documentation>
+                        Typically a two- or three-digit postal abbreviation for
+                        the state or province. Mainly used in Canada and the US.
+                        This does not necessarily conform to the ISO 3166-2 code.
+                    </xsd:documentation>
+                </xsd:annotation>
+            </xsd:element>
+            <xsd:element name="CountryCode" type="xsd:string">
+                <xsd:annotation>
+                    <xsd:documentation>
+                        Two digit ISO country code conforming to ISO 3166 alpha 2.
+                        See: http://en.wikipedia.org/wiki/ISO_3166-1_alpha-2
+                    </xsd:documentation>
+                </xsd:annotation>
+            </xsd:element>
+        </xsd:sequence>
+    </xsd:complexType>
+
+    <xsd:complexType name="LineItemsType">
+        <xsd:sequence>
+            <xsd:element type="LineItemType" name="LineItem" minOccurs="0" maxOccurs="unbounded"/>
+        </xsd:sequence>
+    </xsd:complexType>
+
+    <xsd:complexType name="LineItemType">
+        <xsd:sequence>
+            <xsd:element name="ProductId" type="nonEmptyString" minOccurs="0">
+                <xsd:annotation>
+                    <xsd:documentation xml:lang="en">
+                        Definition: A unique identifier for a distinct product on web site. Generally called SKU or PID
+                        Sample Data: 13548975
+                    </xsd:documentation>
+                </xsd:annotation>
+            </xsd:element>
+            <xsd:element name="Description" type="nonEmptyString" minOccurs="0">
+                <xsd:annotation>
+                    <xsd:documentation xml:lang="en">
+                        Definition: Title of the product as it appears on the web site.
+                        Sample Data: Open Heart Earrings.
+                    </xsd:documentation>
+                </xsd:annotation>
+            </xsd:element>
+            <xsd:element name="UnitCost" type="xsd:float" minOccurs="0">
+                <xsd:annotation>
+                    <xsd:documentation xml:lang="en">
+                        Definition: The cost of an individual unit.
+                        Sample Data: 101.00
+                        Implementation Notes: No currency symbols.
+                    </xsd:documentation>
+                </xsd:annotation>
+            </xsd:element>
+            <xsd:element name="UnitCurrencyCode" type="nonEmptyString" minOccurs="0">
+                <xsd:annotation>
+                    <xsd:documentation xml:lang="en">
+                        Definition: Three-letter ISO-4217 code identifying the type of currency used for the
+                        transaction.
+                        Sample Data: USD
+                    </xsd:documentation>
+                </xsd:annotation>
+            </xsd:element>
+            <xsd:element name="Quantity" type="xsd:int" minOccurs="0">
+                <xsd:annotation>
+                    <xsd:documentation xml:lang="en">
+                        Definition: The number of productId's(units) ordered.
+                        Sample Data: 3
+                    </xsd:documentation>
+                </xsd:annotation>
+            </xsd:element>
+            <xsd:element name="Category" type="nonEmptyString" minOccurs="0">
+                <xsd:annotation>
+                    <xsd:documentation xml:lang="en">
+                        Definition: Identifies the class of product the individual unit belongs to. Send a comma
+                        separated list of categories if there is a 1-to-many relationship
+                        Sample Data: Electronics or Shoes
+                    </xsd:documentation>
+                </xsd:annotation>
+            </xsd:element>
+            <xsd:element name="PromoCode" type="nonEmptyString" minOccurs="0">
+                <xsd:annotation>
+                    <xsd:documentation xml:lang="en">
+                        Definition: A code related to a promotional campaign used for the purchase. Just send "Y" if
+                        there is a promo code and it can't be shared.
+                        Sample Data: 25OFF or Y
+                    </xsd:documentation>
+                </xsd:annotation>
+            </xsd:element>
+        </xsd:sequence>
+        <xsd:attribute name="LineItemId" type="nonEmptyString" use="required">
+            <xsd:annotation>
+                <xsd:documentation xml:lang="en">
+                    Definition: The unique identifier for a specific line item.
+                    Sample Data: ATX1821
+                </xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="ShipmentId" type="nonEmptyString" use="required">
+            <xsd:annotation>
+                <xsd:documentation xml:lang="en">
+                    Identifier of the shipment associated with this line item.
+                </xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+    </xsd:complexType>
+
+    <xsd:complexType name="FormOfPaymentsType">
+        <xsd:sequence>
+            <xsd:element type="FormOfPaymentType" name="FormOfPayment" maxOccurs="unbounded"/>
+        </xsd:sequence>
+    </xsd:complexType>
+
+    <xsd:complexType name="FormOfPaymentType">
+        <xsd:annotation>
+            <xsd:documentation xml:lang="en">
+                Definition: The FormOfPayment section allows multiple forms of payment to be used on an order.
+                Each FormOfPayment must be one that has been used while payment during checkout.
+            </xsd:documentation>
+        </xsd:annotation>
+        <xsd:sequence>
+            <xsd:element name="PaymentCard" type="PaymentCardType" minOccurs="0">
+                <xsd:annotation>
+                    <xsd:documentation>Definition: The payment card details used. This is for all types of payment
+                        including credit cards,
+                        debit cards, PayPal, PayPalCredit(bill me later), OpenInvoice, gift cards, Online gift
+                        certificates, etc.
+                    </xsd:documentation>
+                </xsd:annotation>
+            </xsd:element>
+            <xsd:element name="PersonName" type="PersonNameType" minOccurs="0">
+                <xsd:annotation>
+                    <xsd:documentation>Definition: The name associated with the form of payment used.
+                    </xsd:documentation>
+                </xsd:annotation>
+            </xsd:element>
+            <xsd:element name="Email" type="EmailType">
+                <xsd:annotation>
+                    <xsd:documentation>Definition: The email associated with the form of payment used.
+                    </xsd:documentation>
+                </xsd:annotation>
+            </xsd:element>
+            <xsd:element name="Telephone" type="TelephoneType" minOccurs="0">
+                <xsd:annotation>
+                    <xsd:documentation>Definition: The phone number associated with the form of payment used.
+                    </xsd:documentation>
+                </xsd:annotation>
+            </xsd:element>
+            <xsd:element name="Address" type="AddressType" minOccurs="0">
+                <xsd:annotation>
+                    <xsd:documentation xml:lang="en">
+                        Billing address for the form of payment.
+                    </xsd:documentation>
+                </xsd:annotation>
+            </xsd:element>
+            <xsd:element name="PaymentTransactionDate" type="xsd:dateTime" minOccurs="0">
+                <xsd:annotation>
+                    <xsd:documentation xml:lang="en">
+                        Definition: The timestamp of the credit card transaction in UTC.
+                        Sample Data: 2015-05-30T09:00:00 or 2015-05-30T09:30:10.5 or 2015-05-30T09:30:10Z
+                    </xsd:documentation>
+                </xsd:annotation>
+            </xsd:element>
+            <xsd:element name="CurrencyCode" minOccurs="0">
+                <xsd:annotation>
+                    <xsd:documentation xml:lang="en">
+                        Definition: Three-letter ISO-4217 code identifying the type of currency used for the
+                        transaction.
+                        Sample Data: USD
+                    </xsd:documentation>
+                </xsd:annotation>
+                <xsd:simpleType>
+                    <xsd:restriction base="nonEmptyString">
+                        <xsd:whiteSpace value="preserve"/>
+                    </xsd:restriction>
+                </xsd:simpleType>
+            </xsd:element>
+            <xsd:element name="Amount" type="xsd:decimal" minOccurs="0">
+                <xsd:annotation>
+                    <xsd:documentation xml:lang="en">
+                        Definition: The amount of the payment.
+                        Sample Data: 704.7
+                    </xsd:documentation>
+                </xsd:annotation>
+            </xsd:element>
+            <xsd:element type="xsd:byte" name="TotalAuthAttemptCount" minOccurs="0">
+                <xsd:annotation>
+                    <xsd:documentation xml:lang="en">
+                        Definition: The number of auths tried with this card in the same transaction
+                    </xsd:documentation>
+                </xsd:annotation>
+            </xsd:element>
+            <xsd:element name="TransactionResponses" type="TransactionResponseListType" minOccurs="0"/>
+        </xsd:sequence>
+    </xsd:complexType>
+
+    <xsd:complexType name="PaymentCardType">
+        <xsd:annotation>
+            <xsd:documentation xml:lang="en">
+                Definition: Contains credit card and card holder information.
+            </xsd:documentation>
+        </xsd:annotation>
+        <xsd:sequence>
+            <xsd:element name="CardHolderName" type="nonEmptyString" minOccurs="0">
+                <xsd:annotation>
+                    <xsd:documentation xml:lang="en">
+                        Definition: The card holder's name as it appears on the credit card.
+                        Only send this if Name on the Card prompted to enter on the web site.
+                        Sample Data: Samuel Florez
+                    </xsd:documentation>
+                </xsd:annotation>
+            </xsd:element>
+            <xsd:element name="PaymentAccountUniqueId" type="PaymentAccountUniqueIdType" minOccurs="0">
+                <xsd:annotation>
+                    <xsd:documentation xml:lang="en">
+                        Definintion: The account id.
+                        This should be the unencrypted/raw account number or the tokenized account number.
+                    </xsd:documentation>
+                </xsd:annotation>
+            </xsd:element>
+            <xsd:element name="PaymentAccountBin" type="nonEmptyString" minOccurs="0">
+                <xsd:annotation>
+                    <xsd:documentation xml:lang="en">
+                        Definintion: The first six digits of the payment account number used.
+                    </xsd:documentation>
+                </xsd:annotation>
+            </xsd:element>
+            <xsd:element name="ExpireDate" type="xsd:gYearMonth" minOccurs="0">
+                <xsd:annotation>
+                    <xsd:documentation xml:lang="en">
+                        Definintion: The credit card expiration date.
+                        Sample Data: 2011-09
+                    </xsd:documentation>
+                </xsd:annotation>
+            </xsd:element>
+            <xsd:element name="CardType" type="cardTypeEnums" minOccurs="0">
+                <xsd:annotation>
+                    <xsd:documentation xml:lang="en">
+                        Definition: The type of card used for payment;
+                        Use enumerated values and if not found in enums, send string.
+                        Contact Radial for more information.
+                        Sample Data: VC or AM
+                    </xsd:documentation>
+                </xsd:annotation>
+            </xsd:element>
+        </xsd:sequence>
+    </xsd:complexType>
+
+    <xsd:complexType name="PaymentAccountUniqueIdType">
+        <xsd:annotation>
+            <xsd:documentation xml:lang="en">
+                Either a raw PaymentAccountNumber(PAN) or a token representing a PAN.
+                The type includes an attribute, isToken, to indicate if the PAN is tokenized.
+            </xsd:documentation>
+        </xsd:annotation>
+        <xsd:simpleContent>
+            <xsd:extension base="AccountUniqueIdType">
+                <xsd:attribute name="isToken" type="xsd:boolean" use="required">
+                    <xsd:annotation>
+                        <xsd:documentation xml:lang="en">
+                            Definintion: Set it to true if a tokenized value is being sent. If a raw account/credit card
+                            number is being sent, set it to false.
+                            Sample Data: true or false
+                        </xsd:documentation>
+                    </xsd:annotation>
+                </xsd:attribute>
+            </xsd:extension>
+        </xsd:simpleContent>
+    </xsd:complexType>
+    <xsd:simpleType name="AccountUniqueIdType">
+        <xsd:restriction base="xsd:string">
+            <xsd:maxLength value="32"/>
+            <xsd:pattern value="[a-zA-Z0-9\-=+/]{1,}"/>
+        </xsd:restriction>
+    </xsd:simpleType>
+
+    <xsd:complexType name="TransactionResponseListType">
+        <xsd:annotation>
+            <xsd:documentation xml:lang="en">
+                Definition: Contains the list of responses from the payment processor.
+            </xsd:documentation>
+        </xsd:annotation>
+        <xsd:sequence>
+            <xsd:element name="TransactionResponse" type="TransactionResponseType" minOccurs="0" maxOccurs="unbounded"/>
+        </xsd:sequence>
+    </xsd:complexType>
+
+    <xsd:complexType name="TransactionResponseType">
+        <xsd:annotation>
+            <xsd:documentation xml:lang="en">
+                Definition: Each transaction response specifies the type of transaction response and the value returned.
+                Sample Data:
+                <TransactionResponse ResponseType="avsAddr">Y</TransactionResponse>
+                <TransactionResponse ResponseType="avsZip">Y</TransactionResponse>
+                <TransactionResponse ResponseType="cvv2">M</TransactionResponse>
+            </xsd:documentation>
+        </xsd:annotation>
+        <xsd:simpleContent>
+            <xsd:extension base="transactionResponseTypeReturnValueEnums">
+                <xsd:attribute name="ResponseType" type="transactionResponseTypeEnums" use="required">
+                    <xsd:annotation>
+                        <xsd:documentation xml:lang="en">
+                            Definition: The transaction response type.
+                            Sample Data: cvv2,avs,3ds
+                        </xsd:documentation>
+                    </xsd:annotation>
+                </xsd:attribute>
+            </xsd:extension>
+        </xsd:simpleContent>
+    </xsd:complexType>
+
+    <xsd:complexType name="DeviceInfoType">
+        <xsd:annotation>
+            <xsd:documentation xml:lang="en">
+                Definition: Contains information about the user's device when an order is placed electronically.
+            </xsd:documentation>
+        </xsd:annotation>
+        <xsd:sequence>
+            <xsd:element name="DeviceIP" minOccurs="0">
+                <xsd:annotation>
+                    <xsd:documentation xml:lang="en">
+                        Definition: The IP address of the customer's device creating the order.
+                        Sample Data: 192.168.2.251
+                        Implementation Notes: Dotted decimal representation of an IP address.
+                    </xsd:documentation>
+                </xsd:annotation>
+                <xsd:simpleType>
+                    <xsd:restriction base="nonEmptyString">
+                        <xsd:maxLength value="15"/>
+                    </xsd:restriction>
+                </xsd:simpleType>
+            </xsd:element>
+            <xsd:element name="HttpHeaders" type="HttpHeaderListType" minOccurs="0"/>
+        </xsd:sequence>
+    </xsd:complexType>
+
+    <xsd:complexType name="HttpHeaderListType">
+        <xsd:annotation>
+            <xsd:documentation xml:lang="en">
+                Definition: The HTTP Headers are collected on the Web Application server on receipt of the request.
+                Implementation Notes: Includes Accept, Accept-Charset, Accept-Language, User-Agent, Referer
+            </xsd:documentation>
+        </xsd:annotation>
+        <xsd:sequence>
+            <xsd:element name="HttpHeader" type="HttpHeaderType" minOccurs="0" maxOccurs="unbounded"/>
+        </xsd:sequence>
+    </xsd:complexType>
+
+    <xsd:complexType name="HttpHeaderType">
+        <xsd:annotation>
+            <xsd:documentation xml:lang="en">
+                Definition: Each HttpHeader element represents one HTTP header entry collected from the HTTP session for
+                the customer's order.
+                Implementation Notes: Header names should conform to HTTP 1.1 spec.
+                Sample data:
+                <HttpHeader name="user-agent">Mozilla/4.0 (compatible; MSIE 8.0; Windows NT 6.1; WOW64; Trident/7.0;
+                    SLCC2; .NET CLR 2.0.50727; .NET CLR 3.5.30729; .NET CLR 3.0.30729; Media Center PC 6.0; .NET4.0C;
+                    .NET4.0E)
+                </HttpHeader>
+            </xsd:documentation>
+        </xsd:annotation>
+        <xsd:simpleContent>
+            <xsd:extension base="xsd:string">
+                <xsd:attribute name="name" type="nonEmptyString" use="required"/>
+            </xsd:extension>
+        </xsd:simpleContent>
+    </xsd:complexType>
+
+    <xsd:complexType name="TotalCostType">
+        <xsd:sequence>
+            <xsd:element type="CostTotalsType" name="CostTotals" minOccurs="0"/>
+        </xsd:sequence>
+    </xsd:complexType>
+
+    <xsd:complexType name="CostTotalsType">
+        <xsd:annotation>
+            <xsd:documentation xml:lang="en">
+                Definition: Contains the total cost details regarding currency used, before tax amount, and after tax
+                amount.
+            </xsd:documentation>
+        </xsd:annotation>
+        <xsd:sequence>
+            <xsd:element name="CurrencyCode" type="nonEmptyString">
+                <xsd:annotation>
+                    <xsd:documentation xml:lang="en">
+                        Definition: Three-letter ISO-4217 code identifying the type of currency used for the
+                        transaction.
+                        Sample Data: USD
+                    </xsd:documentation>
+                </xsd:annotation>
+            </xsd:element>
+            <xsd:element name="AmountBeforeTax" type="xsd:double">
+                <xsd:annotation>
+                    <xsd:documentation xml:lang="en">
+                        Definition: The total fare excluding taxes.
+                        Sample Data: 59.99
+                    </xsd:documentation>
+                </xsd:annotation>
+            </xsd:element>
+            <xsd:element name="AmountAfterTax" type="xsd:double" minOccurs="0">
+                <xsd:annotation>
+                    <xsd:documentation xml:lang="en">
+                        Definition: All charges including fare, fees, and taxes.
+                        Sample Data: 64.19
+                    </xsd:documentation>
+                </xsd:annotation>
+            </xsd:element>
+        </xsd:sequence>
+    </xsd:complexType>
+
+    <xsd:simpleType name="orderSourceEnums">
+        <xsd:restriction base="xsd:string">
+            <xsd:enumeration value="WEBSTORE">
+                <xsd:annotation>
+                    <xsd:documentation xml:lang="en">
+                        Definition: use this value if the order was placed on web by customer.
+                    </xsd:documentation>
+                </xsd:annotation>
+            </xsd:enumeration>
+            <xsd:enumeration value="DASHBOARD">
+                <xsd:annotation>
+                    <xsd:documentation xml:lang="en">
+                        Definition: use this value if the order was placed by Customer service agents.
+                    </xsd:documentation>
+                </xsd:annotation>
+            </xsd:enumeration>
+            <xsd:enumeration value="KIOSK">
+                <xsd:annotation>
+                    <xsd:documentation xml:lang="en">
+                        Definition: use this value if the order was placed in a physical store.
+                    </xsd:documentation>
+                </xsd:annotation>
+            </xsd:enumeration>
+            <xsd:enumeration value="MOBILE">
+                <xsd:annotation>
+                    <xsd:documentation xml:lang="en">
+                        Definition: use this value if the order was placed by customer from a mobile device.
+                    </xsd:documentation>
+                </xsd:annotation>
+            </xsd:enumeration>
+            <xsd:enumeration value="OTHER">
+                <xsd:annotation>
+                    <xsd:documentation xml:lang="en">
+                        Definition: use this value if the order was placed by a different method other than the above
+                        methods.
+                    </xsd:documentation>
+                </xsd:annotation>
+            </xsd:enumeration>
+        </xsd:restriction>
+    </xsd:simpleType>
+
+    <xsd:simpleType name="cardTypeEnums">
+        <xsd:restriction base="xsd:string">
+            <xsd:enumeration value="VC">
+                <xsd:annotation>
+                    <xsd:documentation xml:lang="en">
+                        Definition: use this code for Visa credit card.
+                    </xsd:documentation>
+                </xsd:annotation>
+            </xsd:enumeration>
+            <xsd:enumeration value="MC">
+                <xsd:annotation>
+                    <xsd:documentation xml:lang="en">
+                        Definition: use this code for Master card credit card.
+                    </xsd:documentation>
+                </xsd:annotation>
+            </xsd:enumeration>
+            <xsd:enumeration value="AM">
+                <xsd:annotation>
+                    <xsd:documentation xml:lang="en">
+                        Definition: use this code for American Express credit card.
+                    </xsd:documentation>
+                </xsd:annotation>
+            </xsd:enumeration>
+            <xsd:enumeration value="DC">
+                <xsd:annotation>
+                    <xsd:documentation xml:lang="en">
+                        Definition: use this code for Discover credit card.
+                    </xsd:documentation>
+                </xsd:annotation>
+            </xsd:enumeration>
+            <xsd:enumeration value="PY">
+                <xsd:annotation>
+                    <xsd:documentation xml:lang="en">
+                        Definition: use this code for PayPal.
+                    </xsd:documentation>
+                </xsd:annotation>
+            </xsd:enumeration>
+            <xsd:enumeration value="BL">
+                <xsd:annotation>
+                    <xsd:documentation xml:lang="en">
+                        Definition: use this code for Bill Me Later(PayPal Credit).
+                    </xsd:documentation>
+                </xsd:annotation>
+            </xsd:enumeration>
+            <xsd:enumeration value="OI">
+                <xsd:annotation>
+                    <xsd:documentation xml:lang="en">
+                        Definition: use this code for Open Invoice.
+                    </xsd:documentation>
+                </xsd:annotation>
+            </xsd:enumeration>
+            <xsd:enumeration value="GC">
+                <xsd:annotation>
+                    <xsd:documentation xml:lang="en">
+                        Definition: use this code if Gift Card was used for payment.
+                    </xsd:documentation>
+                </xsd:annotation>
+            </xsd:enumeration>
+            <xsd:enumeration value="OGC">
+                <xsd:annotation>
+                    <xsd:documentation xml:lang="en">
+                        Definition: use this code if Online Gift Certificate was used.
+                    </xsd:documentation>
+                </xsd:annotation>
+            </xsd:enumeration>
+            <xsd:enumeration value="BC">
+                <xsd:annotation>
+                    <xsd:documentation xml:lang="en">
+                        Definition: use this code for Bit Coin.
+                    </xsd:documentation>
+                </xsd:annotation>
+            </xsd:enumeration>
+            <xsd:enumeration value="CASH">
+                <xsd:annotation>
+                    <xsd:documentation xml:lang="en">
+                        Definition: use this code if Cash was used for payment.
+                    </xsd:documentation>
+                </xsd:annotation>
+            </xsd:enumeration>
+            <xsd:enumeration value="OTHER">
+                <xsd:annotation>
+                    <xsd:documentation xml:lang="en">
+                        Definition: use this code if payment method is none of the above.
+                    </xsd:documentation>
+                </xsd:annotation>
+            </xsd:enumeration>
+        </xsd:restriction>
+    </xsd:simpleType>
+
+    <xsd:simpleType name="transactionResponseTypeEnums">
+        <xsd:restriction base="xsd:string">
+            <xsd:enumeration value="avsAddr">
+                <xsd:annotation>
+                    <xsd:documentation xml:lang="en">
+                        Definition: use this code for response from AVS Address verification.
+                    </xsd:documentation>
+                </xsd:annotation>
+            </xsd:enumeration>
+            <xsd:enumeration value="avsZip">
+                <xsd:annotation>
+                    <xsd:documentation xml:lang="en">
+                        Definition: use this code for response from AVS Address verification.
+                    </xsd:documentation>
+                </xsd:annotation>
+            </xsd:enumeration>
+            <xsd:enumeration value="3ds">
+                <xsd:annotation>
+                    <xsd:documentation xml:lang="en">
+                        Definition: use this code for response from 3DS.
+                    </xsd:documentation>
+                </xsd:annotation>
+            </xsd:enumeration>
+            <xsd:enumeration value="cvv2">
+                <xsd:annotation>
+                    <xsd:documentation xml:lang="en">
+                        Definition: use this code for response from CVV value of the credit card.
+                    </xsd:documentation>
+                </xsd:annotation>
+            </xsd:enumeration>
+            <xsd:enumeration value="PayPalPayer">
+                <xsd:annotation>
+                    <xsd:documentation xml:lang="en">
+                        Definition: use this code for response from PayPal about payer.
+                    </xsd:documentation>
+                </xsd:annotation>
+            </xsd:enumeration>
+            <xsd:enumeration value="PayPalAddress">
+                <xsd:annotation>
+                    <xsd:documentation xml:lang="en">
+                        Definition: use this code for response from from PayPal about address.
+                    </xsd:documentation>
+                </xsd:annotation>
+            </xsd:enumeration>
+            <xsd:enumeration value="PayPalPayerCountry">
+                <xsd:annotation>
+                    <xsd:documentation xml:lang="en">
+                        Definition: use this code for response from from PayPal about country.
+                    </xsd:documentation>
+                </xsd:annotation>
+            </xsd:enumeration>
+            <xsd:enumeration value="PayPalSellerProtection">
+                <xsd:annotation>
+                    <xsd:documentation xml:lang="en">
+                        Definition: use this code for response from from PayPal about Seller Protection.
+                    </xsd:documentation>
+                </xsd:annotation>
+            </xsd:enumeration>
+            <xsd:enumeration value="AmexName">
+                <xsd:annotation>
+                    <xsd:documentation xml:lang="en">
+                        Definition: use this code for response from Amex about name.
+                    </xsd:documentation>
+                </xsd:annotation>
+            </xsd:enumeration>
+            <xsd:enumeration value="AmexEmail">
+                <xsd:annotation>
+                    <xsd:documentation xml:lang="en">
+                        Definition: use this code for response from Amex about email.
+                    </xsd:documentation>
+                </xsd:annotation>
+            </xsd:enumeration>
+            <xsd:enumeration value="AmexPhone">
+                <xsd:annotation>
+                    <xsd:documentation xml:lang="en">
+                        Definition: use this code for response from Amex about telephone number.
+                    </xsd:documentation>
+                </xsd:annotation>
+            </xsd:enumeration>
+        </xsd:restriction>
+    </xsd:simpleType>
+
+    <xsd:simpleType name="transactionResponseTypeReturnValueEnums">
+        <xsd:restriction base="xsd:string">
+            <xsd:enumeration value="M">
+                <xsd:annotation>
+                    <xsd:documentation xml:lang="en">
+                        Definition: use this value if the response says Matched.
+                    </xsd:documentation>
+                </xsd:annotation>
+            </xsd:enumeration>
+            <xsd:enumeration value="N">
+                <xsd:annotation>
+                    <xsd:documentation xml:lang="en">
+                        Definition: use this value if the response says doesn't match.
+                    </xsd:documentation>
+                </xsd:annotation>
+            </xsd:enumeration>
+            <xsd:enumeration value="confirmed">
+                <xsd:annotation>
+                    <xsd:documentation xml:lang="en">
+                        Definition: use this value if the response says confirmed.
+                    </xsd:documentation>
+                </xsd:annotation>
+            </xsd:enumeration>
+            <xsd:enumeration value="verified">
+                <xsd:annotation>
+                    <xsd:documentation xml:lang="en">
+                        Definition: use this value if the response says verified.
+                    </xsd:documentation>
+                </xsd:annotation>
+            </xsd:enumeration>
+            <xsd:enumeration value="X">
+                <xsd:annotation>
+                    <xsd:documentation xml:lang="en">
+                        Definition: use this value if the response is unknown.
+                    </xsd:documentation>
+                </xsd:annotation>
+            </xsd:enumeration>
+        </xsd:restriction>
+    </xsd:simpleType>
+
+    <xsd:simpleType name="shipMethodTypeEnums">
+        <xsd:restriction base="xsd:string">
+            <xsd:enumeration value="Ground">
+                <xsd:annotation>
+                    <xsd:documentation xml:lang="en">
+                        Definition: use this code if the shipping method used is ground.
+                    </xsd:documentation>
+                </xsd:annotation>
+            </xsd:enumeration>
+            <xsd:enumeration value="Overnight">
+                <xsd:annotation>
+                    <xsd:documentation xml:lang="en">
+                        Definition: use this code if the shipping method used is overnight or 1 day delivery.
+                    </xsd:documentation>
+                </xsd:annotation>
+            </xsd:enumeration>
+            <xsd:enumeration value="Same Day">
+                <xsd:annotation>
+                    <xsd:documentation xml:lang="en">
+                        Definition: use this code if the shipping method used is Same Day delivery.
+                    </xsd:documentation>
+                </xsd:annotation>
+            </xsd:enumeration>
+            <xsd:enumeration value="2 Day">
+                <xsd:annotation>
+                    <xsd:documentation xml:lang="en">
+                        Definition: use this code if the shipping method used is 2 Day delivery.
+                    </xsd:documentation>
+                </xsd:annotation>
+            </xsd:enumeration>
+            <xsd:enumeration value="3 Day">
+                <xsd:annotation>
+                    <xsd:documentation xml:lang="en">
+                        Definition: use this code if the shipping method used is 3 Day delivery.
+                    </xsd:documentation>
+                </xsd:annotation>
+            </xsd:enumeration>
+            <xsd:enumeration value="In Store Pickup">
+                <xsd:annotation>
+                    <xsd:documentation xml:lang="en">
+                        Definition: use this code if the customer is going to pick up the item in store.
+                    </xsd:documentation>
+                </xsd:annotation>
+            </xsd:enumeration>
+            <xsd:enumeration value="Ship To Store">
+                <xsd:annotation>
+                    <xsd:documentation xml:lang="en">
+                        Definition: use this code if the item is going from warehouse to store.
+                    </xsd:documentation>
+                </xsd:annotation>
+            </xsd:enumeration>
+            <xsd:enumeration value="Unknown">
+                <xsd:annotation>
+                    <xsd:documentation xml:lang="en">
+                        Definition: use this code if the shipping method is none of the above enums provided.
+                    </xsd:documentation>
+                </xsd:annotation>
+            </xsd:enumeration>
+        </xsd:restriction>
+    </xsd:simpleType>
+
+    <xsd:simpleType name="String256Type">
+        <xsd:restriction base="xsd:string">
+            <xsd:minLength value="1"/>
+            <xsd:maxLength value="256"/>
+        </xsd:restriction>
+    </xsd:simpleType>
+
+    <xsd:simpleType name="nonEmptyString">
+        <xsd:restriction base="xsd:string">
+            <xsd:minLength value="1"/>
+        </xsd:restriction>
+    </xsd:simpleType>
+
+</xsd:schema>
