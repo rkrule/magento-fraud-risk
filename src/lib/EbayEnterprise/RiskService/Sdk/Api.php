@@ -117,14 +117,14 @@ class EbayEnterprise_RiskService_Sdk_Api
 		// If a payload doesn't exist for the request, the operation cannot
 		// be supported.
 		try {
-                        $this->_requestPayload = $this->_config->getRequest();
+			$this->_requestPayload = $this->_config->getRequest();	
 		} catch (EbayEnterprise_RiskService_Sdk_Exception_Unsupported_Payload_Exception $e) {
 			$this->_requestPayload = $this->_config->getOCRequest();
-	
-			if(!$this->_requestPayload)
-			{
-				throw Mage::exception('EbayEnterprise_RiskService_Sdk_Exception_Unsupported_Operation', '');
-			}
+ 	
+ 			if(!$this->_requestPayload)
+ 			{
+ 				throw Mage::exception('EbayEnterprise_RiskService_Sdk_Exception_Unsupported_Operation', '');
+ 			}
 		}
 		return $this->_requestPayload;
 	}
