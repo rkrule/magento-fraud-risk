@@ -142,6 +142,11 @@ class EbayEnterprise_Eb2cFraud_Model_Risk_Order
         protected function _sendRequest(EbayEnterprise_RiskService_Sdk_IApi $api, Mage_Sales_Model_Order $order, $payload = null, $retry = null )
         {
                 $response = null;
+		if( !$payload )
+                {
+                        $payload = $this->_request->serialize();
+                }
+
                 try {
                         $api->send();
 
