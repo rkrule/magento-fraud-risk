@@ -143,11 +143,6 @@ class Radial_Eb2cFraud_Model_Risk_Order
         {
                 $response = null;
 
-		if( !$payload )
-		{
-			$payload = $this->_request->serialize();
-		}
-
                 try {
                         $api->send();
 
@@ -160,6 +155,11 @@ class Radial_Eb2cFraud_Model_Risk_Order
 
                         $response = $api->getResponseBody();
                 } catch (Exception $e) {
+			if( !$payload )
+                	{
+                        	$payload = $this->_request->serialize();
+                	}
+
                         $logMessage = sprintf('[%s] The following error has occurred while sending request: %s', __CLASS__, $e->getMessage());
                         Mage::log($logMessage, Zend_Log::WARN);
                         Mage::logException($e);
