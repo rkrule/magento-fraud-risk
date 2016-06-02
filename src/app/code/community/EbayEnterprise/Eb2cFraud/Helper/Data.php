@@ -14,24 +14,148 @@
  * @license     http://www.radial.com/files/pdf/Magento_Connect_Extensions_EULA_050714.pdf  eBay Enterprise Magento Extensions End User License Agreement
  *
  */
-
 class EbayEnterprise_Eb2cFraud_Helper_Data extends Mage_Core_Helper_Abstract
 {
+	// format strings for working with Zend_Date
+   	const MAGE_DATETIME_FORMAT = 'Y-m-d H:i:s';
+   	const XML_DATETIME_FORMAT = 'c';
+   	const TIME_FORMAT = '%h:%I:%S';
+	
 	const DEFAULT_LANGUAGE_CODE = 'en';
 	const FREE_PAYMENT_METHOD = 'free';
 	const RISK_SERVICE_GIFT_CARD_PAYMENT_METHOD = 'GC';
 	const RISK_SERVICE_DEFAULT_PAYMENT_METHOD = 'OTHER';
-
+	const BACKEND_ORDER_SOURCE = 'phone';
+        const FRONTEND_ORDER_SOURCE = 'web';
 	/** @var EbayEnterprise_Eb2cFraud_Helper_Config */
 	protected $_config;
 	/** @var array */
 	protected $_paymentMethodMap;
-
-	public function __construct()
-	{
-		$this->_config = Mage::helper('ebayenterprise_eb2cfraud/config');
-	}
-
+	/** @var Mage_Log_Model_Visitor */
+    	protected $_visitorLog;
+    	/** @var Mage_Log_Model_Customer */
+    	protected $_customerLog;
+    	/** @var Mage_Core_Model_Session */
+    	protected $_session;
+	/**
+     	* inject dependencies
+     	* @param array
+     	*/
+    	public function __construct(array $args = [])
+    	{
+        	list($this->_customerLog, $this->_visitorLog, $this->_coreHelper, $this->_config) =
+        	    $this->_checkTypes(
+        	        $this->_nullCoalesce('customer_log', $args, Mage::getModel('log/customer')),
+        	        $this->_nullCoalesce('visitor_log', $args, Mage::getModel('log/visitor')),
+        	        $this->_nullCoalesce('core_helper', $args, Mage::helper('radial_core')),
+			$this->_nullCoalesce('config', $args, Mage::helper('ebayenterprise_eb2cfraud/config'))
+        	    );
+    	}
+    	/**
+    	 * ensure correct types
+    	 * @param  Mage_Log_Model_Customer
+    	 * @param  Mage_Log_Model_Visitor
+    	 * @param  EbayEnterprise_Eb2cCore_Helper_Data
+    	 * @return array
+    	 */
+    	protected function _checkTypes(
+    	    Mage_Log_Model_Customer $customerLog,
+    	    Mage_Log_Model_Visitor $visitorLog,
+    	    Radial_Core_Helper_Data $coreHelper,
+	    EbayEnterprise_Eb2cFraud_Helper_Config $config
+    	) {
+    	    return [$customerLog, $visitorLog, $coreHelper, $config];
+    	}
+	/**
+     * return $ar[$key] if it exists otherwise return $default
+     * @param  string
+     * @param  array
+     * @param  mixed
+     * @return mixed
+     */
+    protected function _nullCoalesce($key, array $ar, $default)
+    {
+        return isset($ar[$key]) ? $ar[$key] : $default;
+    }
+    /**
+     * return an array with data for the session info element
+     * @return array
+     */
+    public function getSessionInfo()
+    {
+        /**
+         * @var Mage_Customer_Model_Session $session
+         * @var Mage_Log_Model_Visitor $visitorLog
+         */
+        $session = $this->_getCustomerSession();
+        $sessionId = $session->getEncryptedSessionId();
+        $visitorLog = $this->_visitorLog->load($sessionId, 'session_id');
+        return array(
+            'encrypted_session_id' => hash('sha256', $sessionId),
+            'last_login' => $this->_getLastLoginTime($session, $visitorLog),
+            'order_source' => $this->_getOrderSource(),
+            'rtc_transaction_response_code' => null,
+            'rtc_reason_codes' => null,
+            'time_on_file' => null,
+            'time_spent_on_site' => $this->_getTimeSpentOnSite($visitorLog),
+        );
+    }
+    /**
+     * return the last login time as a DateTime object.
+     * return null if the last login time cannot be calculated.
+     * @param  Mage_Customer_Model_Session
+     * @param  Mage_Log_Model_Visitor
+     * @return DateTime
+     */
+    protected function _getLastLoginTime(Mage_Customer_Model_Session $session, Mage_Log_Model_Visitor $visitorLog = null)
+    {
+        if ($visitorLog && $session->isLoggedIn()) {
+            $lastLogin = date_create_from_format(
+                self::MAGE_DATETIME_FORMAT,
+                $this->_customerLog->load($visitorLog->getId(), 'visitor_id')->getLoginAt()
+            );
+        }
+        return isset($lastLogin) ? $lastLogin : null;
+    }
+    /**
+     * get the time spent on the site as a DateInterval
+     * returns null if unable to calculate the interval.
+     * @param  Mage_Log_Model_Visitor
+     * @return DateInterval
+     */
+    protected function _getTimeSpentOnSite(Mage_Log_Model_Visitor $visitorLog = null)
+    {
+        if ($visitorLog) {
+            $start = date_create_from_format(self::MAGE_DATETIME_FORMAT, $visitorLog->getFirstVisitAt()) ?: null;
+            $end = date_create_from_format(self::MAGE_DATETIME_FORMAT, $visitorLog->getLastVisitAt()) ?: null;
+            if ($start && $end && $start < $end) {
+                $timeSpentOnSite = $end->diff($start);
+            }
+        }
+        return isset($timeSpentOnSite) ? $timeSpentOnSite : null;
+    }
+    /**
+     * getting the referrer value as self::BACKEND_ORDER_SOURCE when the order is placed via ADMIN
+     * otherwise this order is being placed in the FRONTEND return this constant value self::FRONTEND_ORDER_SOURCE
+     * @return string
+     */
+    protected function _getOrderSource()
+    {
+        $session = $this->_getCustomerSession();
+        $orderSource = $session->getOrderSource() ?: self::FRONTEND_ORDER_SOURCE;
+        return ($this->_coreHelper->getCurrentStore()->isAdmin()) ? self::BACKEND_ORDER_SOURCE : $orderSource;
+    }
+    /**
+     * get the current customer session
+     * @return Mage_Customer_Model_Session
+     */
+    protected function _getCustomerSession()
+    {
+        if (!$this->_session) {
+            $this->_session = Mage::getSingleton('customer/session');
+        }
+        return $this->_session;
+    }
 	/**
 	 * Get all header data.
 	 *
@@ -47,7 +171,6 @@ class EbayEnterprise_Eb2cFraud_Helper_Data extends Mage_Core_Helper_Abstract
 		}
 		return $headers;
 	}
-
 	/**
 	 * Get a collection of risk service object where UCP request has not been sent.
 	 *
@@ -58,7 +181,6 @@ class EbayEnterprise_Eb2cFraud_Helper_Data extends Mage_Core_Helper_Abstract
 		return Mage::getResourceModel('ebayenterprise_eb2cfraud/risk_service_collection')
 			->addFieldToFilter('is_request_sent', 0);
 	}
-
 	/**
 	 * Get a collection of risk service object where the risk service request had already been sent,
 	 * there was no successful feedback request sent, and the fail attempt feedback request counter is
@@ -75,7 +197,6 @@ class EbayEnterprise_Eb2cFraud_Helper_Data extends Mage_Core_Helper_Abstract
 				'lt' => $this->_config->getFeedbackResendThreshold()
 			));
 	}
-
 	/**
 	 * Getting a collection of sales/order object filtered by increment ids.
 	 *
@@ -87,7 +208,6 @@ class EbayEnterprise_Eb2cFraud_Helper_Data extends Mage_Core_Helper_Abstract
 		return Mage::getResourceModel('sales/order_collection')
 			->addFieldToFilter('increment_id', array('in' => $incrementIds));
 	}
-
 	/**
 	 * @param  string
 	 * @return DateTime
@@ -96,7 +216,6 @@ class EbayEnterprise_Eb2cFraud_Helper_Data extends Mage_Core_Helper_Abstract
 	{
 		return new DateTime($dateTime);
 	}
-
 	/**
 	 * Get Magento locale language code.
 	 *
@@ -107,7 +226,6 @@ class EbayEnterprise_Eb2cFraud_Helper_Data extends Mage_Core_Helper_Abstract
 		$locale = trim(Mage::app()->getLocale()->getLocaleCode());
 		return $locale ? substr($locale, 0, 2) : static::DEFAULT_LANGUAGE_CODE;
 	}
-
 	/**
 	 * Get a loaded risk service object by order increment id from the passed in sales order object.
 	 *
@@ -119,7 +237,6 @@ class EbayEnterprise_Eb2cFraud_Helper_Data extends Mage_Core_Helper_Abstract
 		return Mage::getModel('ebayenterprise_eb2cfraud/risk_service')
 			->load($order->getIncrementId(), 'order_increment_id');
 	}
-
 	/**
 	 * Check if risk service request has already been sent for the passed in order.
 	 *
@@ -130,7 +247,6 @@ class EbayEnterprise_Eb2cFraud_Helper_Data extends Mage_Core_Helper_Abstract
 	{
 		return ((int) $this->getEb2cFraud($order)->getIsRequestSent() === 1);
 	}
-
 	/**
 	 * Get the source of an order, determined by the area in which the order
 	 * was placed: admin or frontend.
@@ -144,7 +260,6 @@ class EbayEnterprise_Eb2cFraud_Helper_Data extends Mage_Core_Helper_Abstract
 			? EbayEnterprise_Eb2cFraud_Model_System_Config_Source_Ordersource::DASHBOARD
 			: EbayEnterprise_Eb2cFraud_Model_System_Config_Source_Ordersource::WEBSTORE;
 	}
-
 	/**
 	 * Determine if the passed in order object was created from the admin interface.
 	 *
@@ -157,7 +272,6 @@ class EbayEnterprise_Eb2cFraud_Helper_Data extends Mage_Core_Helper_Abstract
 		// For more information reference this link http://magento.stackexchange.com/questions/16757/
 		return !$order->getRemoteIp();
 	}
-
 	/**
 	 * @param  Mage_Sales_Model_Order
 	 * @param  Mage_Sales_Model_Order_Payment
@@ -170,7 +284,6 @@ class EbayEnterprise_Eb2cFraud_Helper_Data extends Mage_Core_Helper_Abstract
 	{
 		return ($this->_hasGiftCard($order) && ($payment->getMethod() === static::FREE_PAYMENT_METHOD));
 	}
-
 	/**
 	 * Determine if the passed in order has gift card data.
 	 *
@@ -182,7 +295,6 @@ class EbayEnterprise_Eb2cFraud_Helper_Data extends Mage_Core_Helper_Abstract
 		$giftCards = $this->getGiftCard($order);
 		return !empty($giftCards);
 	}
-
 	/**
 	 * Get the gift card data in the order.
 	 *
@@ -193,7 +305,6 @@ class EbayEnterprise_Eb2cFraud_Helper_Data extends Mage_Core_Helper_Abstract
 	{
 		return (array) unserialize($order->getGiftCards());
 	}
-
 	/**
 	 * Used configuration map to retrieve enumerated value for the risk service request.
 	 *
@@ -206,7 +317,6 @@ class EbayEnterprise_Eb2cFraud_Helper_Data extends Mage_Core_Helper_Abstract
 			?: $this->_config->getTenderNameForCcType($payment->getMethod());
 		return $method ?: static::RISK_SERVICE_DEFAULT_PAYMENT_METHOD;
 	}
-
 	/**
 	 * @param  string
 	 * @return string | null
@@ -215,7 +325,6 @@ class EbayEnterprise_Eb2cFraud_Helper_Data extends Mage_Core_Helper_Abstract
 	{
 		return isset($this->_paymentMethodMap[$key]) ? $this->_paymentMethodMap[$key] : null;
 	}
-
 	/**
 	 * @param  Mage_Sales_Model_Order_Payment
 	 * @return string | null
@@ -225,7 +334,6 @@ class EbayEnterprise_Eb2cFraud_Helper_Data extends Mage_Core_Helper_Abstract
 		$encryptedCc = $payment->getCcNumberEnc();
 		return $encryptedCc ? Mage::helper('core')->decrypt($encryptedCc) : null;
 	}
-
 	/**
 	 * Decrypt the encrypted credit card number and return the first 6 digits.
 	 *
@@ -237,7 +345,6 @@ class EbayEnterprise_Eb2cFraud_Helper_Data extends Mage_Core_Helper_Abstract
 		$cc = $this->_decryptCc($payment);
 		return $this->getFirstSixChars($cc);
 	}
-
 	/**
 	 * Get the first 6 characters from a passed in string
 	 *
@@ -248,7 +355,6 @@ class EbayEnterprise_Eb2cFraud_Helper_Data extends Mage_Core_Helper_Abstract
 	{
 		return $string ? substr($string, 0, 6) : $string;
 	}
-
 	/**
 	 * Decrypt the encrypted credit card number
 	 *
@@ -260,7 +366,6 @@ class EbayEnterprise_Eb2cFraud_Helper_Data extends Mage_Core_Helper_Abstract
 		$cc = $this->_decryptCc($payment);
 		return $cc ? $cc : $payment->getCcNumber();
 	}
-
 	/**
 	 * Return a hash and base64 encoded string of the passed in credit card number.
 	 * @param  string $cc
@@ -270,7 +375,6 @@ class EbayEnterprise_Eb2cFraud_Helper_Data extends Mage_Core_Helper_Abstract
 	{
 		return base64_encode(hash('sha1', $cc, true));
 	}
-
 	/**
 	 * @param  Mage_Sales_Model_Order_Payment
 	 * @return string | null
@@ -281,7 +385,6 @@ class EbayEnterprise_Eb2cFraud_Helper_Data extends Mage_Core_Helper_Abstract
 		$year = $payment->getCcExpYear();
 		return ($year > 0 && $month > 0) ? $this->getYearMonth($year, $month) : null;
 	}
-
 	/**
 	 * @param  string
 	 * @param  string
@@ -291,7 +394,6 @@ class EbayEnterprise_Eb2cFraud_Helper_Data extends Mage_Core_Helper_Abstract
 	{
 		return $year . '-' . $this->_correctMonth($month);
 	}
-
 	/**
 	 * @param  string
 	 * @return string
@@ -300,7 +402,6 @@ class EbayEnterprise_Eb2cFraud_Helper_Data extends Mage_Core_Helper_Abstract
 	{
 		return (strlen($month) === 1) ? sprintf('%02d', $month) : $month;
 	}
-
 	/**
 	 * Determine if the passed order can be used to send feedback request.
 	 *
@@ -314,7 +415,6 @@ class EbayEnterprise_Eb2cFraud_Helper_Data extends Mage_Core_Helper_Abstract
 			|| $order->getState() === Mage_Sales_Model_Order::STATE_COMPLETE
 		);
 	}
-
 	/**
 	 * Determine if feedback request can be sent.
 	 *
@@ -334,7 +434,6 @@ class EbayEnterprise_Eb2cFraud_Helper_Data extends Mage_Core_Helper_Abstract
 			&& (int) $service->getFeedbackSentAttemptCount() < $this->_config->getFeedbackResendThreshold()
 		);
 	}
-
 	/**
          * @param  string
          * @return self
@@ -345,7 +444,6 @@ class EbayEnterprise_Eb2cFraud_Helper_Data extends Mage_Core_Helper_Abstract
                 Mage::log($logMessage, Zend_Log::WARN);
                 return $this;
         }
-
 	/**
          * @param  string
          * @return self
