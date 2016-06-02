@@ -27,6 +27,7 @@ class EbayEnterprise_Eb2cFraud_Helper_Config
 	const API_TIMEOUT = 'radial_core/api/timeout';
 	const MAXRETRIES = 'radial_core/fraud/maxretries';
 	const DEBUG = 'radial_core/fraud/debug';
+	const FRAUD_EMAIL = 'radial_core/fraud/fraud_email';
 	const LANGUAGE_CODE = 'radial_core/general/language_code';
         const CARD_TYPE_MAP = 'ebayenterprise_eb2cfraud/risk_service/card_type_map';
 	const CARD_NAME_MAP = 'ebayenterprise_eb2cfraud/risk_service/card_name_map';
@@ -71,6 +72,17 @@ class EbayEnterprise_Eb2cFraud_Helper_Config
 	public function getMaxRetries($store=null)
 	{
 		return Mage::getStoreConfig(static::MAXRETRIES, $store);
+	}
+
+	/**
+	 * get fraud admin email
+	 *
+	 * @param   mixed
+	 * @return  string
+	 */
+	public function getFraudEmail($store=null)
+	{
+		return Mage::getStoreConfig(static::FRAUD_EMAIL, $store);
 	}
 
 	/**

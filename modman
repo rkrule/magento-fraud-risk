@@ -11,3 +11,5 @@ src/app/design/frontend/base/default/template/* app/design/frontend/base/default
 src/js/radial_eb2cfraud/* js/radial_eb2cfraud/
 # lib
 src/lib/EbayEnterprise/RiskService/ lib/EbayEnterprise/RiskService/
+# locale
+src/app/locale/en_US/template/email/* app/locale/en_US/template/email/
