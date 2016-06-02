@@ -31,9 +31,9 @@ class Radial_Eb2cFraud_Model_Risk_Order
 	protected $_OCrequest;
 	/** @var Radial_RiskService_Sdk_Response */
 	protected $_response;
-	/** @var Radial_MageLog_Helper_Data */
+	/** @var EbayEnterprise_MageLog_Helper_Data */
     	protected $_logger;
-	/** @var Radial_MageLog_Helper_Context */
+	/** @var EbayEnterprise_MageLog_Helper_Context */
    	protected $_context;
 	/** @var payload message **/
 	protected $_payloadXml;
@@ -65,8 +65,8 @@ class Radial_Eb2cFraud_Model_Risk_Order
 	 * @param  Radial_Eb2cFraud_Helper_Data
 	 * @param  Radial_Eb2cFraud_Helper_Http
 	 * @param  Radial_Eb2cFraud_Helper_Config
-	 * @param  Radial_MageLog_Helper_Data
-	 * @param  Radial_MageLog_Helper_Context
+	 * @param  EbayEnterprise_MageLog_Helper_Data
+	 * @param  EbayEnterprise_MageLog_Helper_Context
 	 * @return array
 	 */
 	protected function _checkTypes(
@@ -75,8 +75,8 @@ class Radial_Eb2cFraud_Model_Risk_Order
         Radial_RiskService_Sdk_Request $request,
 		Radial_Eb2cFraud_Helper_Config $config,
 		Radial_RiskService_Sdk_Response $response,
-		Radial_MageLog_Helper_Data $logger,
-		Radial_MageLog_Helper_Context $context,
+		EbayEnterprise_MageLog_Helper_Data $logger,
+		EbayEnterprise_MageLog_Helper_Context $context,
 		Radial_RiskService_Sdk_OrderConfirmationRequest $OCrequest
 	) {
 		return array($helper, $httpHelper, $request, $config, $response, $logger, $context, $OCrequest);
