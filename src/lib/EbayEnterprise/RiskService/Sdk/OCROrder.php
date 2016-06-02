@@ -46,15 +46,17 @@ class EbayEnterprise_RiskService_Sdk_OCROrder
             		'setCustomAttributesList' => 'x:CustomAttributesList',
 		);
 		$this->_extractionPaths = array(
-			'setOrderId' => 'x:OrderId',
-			'setStoreId' => 'x:StoreId',
-			'setStatusDate' => 'x:StatusDate',
-			'setConfirmationType' => 'x:ConfirmationType',
+			'setOrderId' => 'string(x:OrderId)',
+			'setStoreId' => 'string(x:StoreId)',
+			'setConfirmationType' => 'string(x:ConfirmationType)',
 		);
 		$this->_optionalExtractionPaths = array(
 			'setOrderStatus' => 'x:OrderStatus',
 			'setOrderStatusReason' => 'x:OrderStatusReason',
 		);
+		$this->_dateTimeExtractionPaths = array(
+                        'setStatusDate' => 'string(x:StatusDate)', 
+                );
 	}
 
 	/**
@@ -102,7 +104,7 @@ class EbayEnterprise_RiskService_Sdk_OCROrder
     	/**
      	 * @see EbayEnterprise_RiskService_Sdk_IOrderConfirmationRequest::setStatusDate()
      	 */
-    	public function setStatusDate($statusDate)
+    	public function setStatusDate(DateTime $statusDate)
     	{
         	$this->_statusDate = $statusDate;
         	return $this;
@@ -224,7 +226,7 @@ class EbayEnterprise_RiskService_Sdk_OCROrder
 	{
 		return $this->_serializeNode('OrderId', $this->getOrderId())
                         . $this->_serializeNode('StoreId', $this->getStoreId())
-                        . $this->_serializeNode('StatusDate', $this->getStatusDate())
+			. $this->_serializeOptionalDateValue('StatusDate', 'c', $this->getStatusDate())
 			. $this->_serializeNode('ConfirmationType', $this->getConfirmationType())
 			. $this->_serializeOptionalValue('OrderStatus', $this->getOrderStatus())
 			. $this->_serializeOptionalValue('OrderStatusReason', $this->getOrderStatusReason())

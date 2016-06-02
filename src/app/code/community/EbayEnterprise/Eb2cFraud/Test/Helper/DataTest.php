@@ -13,7 +13,7 @@
  * @license     http://opensource.org/licenses/osl-3.0.php  Open Software License (OSL 3.0)
  */
 
-class Radial_Eb2cFraud_Test_Helper_DataTest extends Radial_Core_Test_Base
+class EbayEnterprise_Eb2cFraud_Test_Helper_DataTest extends Radial_Core_Test_Base
 {
     /** @var Mage_Customer_Model_Session stub */
     protected $_customerSessionStub;
@@ -22,6 +22,8 @@ class Radial_Eb2cFraud_Test_Helper_DataTest extends Radial_Core_Test_Base
 
     public function setUp()
     {
+	//Supress Cookie Header Information
+	@session_start();
         parent::setUp();
         // stub the customer session
         $this->_customerSessionStub = $this->getModelMockBuilder('customer/session')
@@ -98,7 +100,7 @@ class Radial_Eb2cFraud_Test_Helper_DataTest extends Radial_Core_Test_Base
         if ($isLoggedIn) {
             $this->assertSame(
                 '2014-01-01 09:05:01',
-                $lastLogin->format(Radial_Eb2cFraud_Helper_Data::MAGE_DATETIME_FORMAT)
+                $lastLogin->format(EbayEnterprise_Eb2cFraud_Helper_Data::MAGE_DATETIME_FORMAT)
             );
         } else {
             $this->assertNull($result['last_login']);
@@ -148,8 +150,8 @@ class Radial_Eb2cFraud_Test_Helper_DataTest extends Radial_Core_Test_Base
     public function provideOrderSourceData()
     {
         return [
-            [true, 'sessionsource', Radial_Eb2cFraud_Helper_Data::BACKEND_ORDER_SOURCE],
-            [false, null, Radial_Eb2cFraud_Helper_Data::FRONTEND_ORDER_SOURCE],
+            [true, 'sessionsource', EbayEnterprise_Eb2cFraud_Helper_Data::BACKEND_ORDER_SOURCE],
+            [false, null, EbayEnterprise_Eb2cFraud_Helper_Data::FRONTEND_ORDER_SOURCE],
             [false, 'sessionsource', 'sessionsource'],
         ];
     }

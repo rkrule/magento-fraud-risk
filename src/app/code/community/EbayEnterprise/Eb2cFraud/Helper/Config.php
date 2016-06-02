@@ -25,6 +25,7 @@ class EbayEnterprise_Eb2cFraud_Helper_Config
 	const API_HOSTNAME = 'radial_core/api/hostname';
 	const API_KEY = 'radial_core/api/key';
 	const API_TIMEOUT = 'radial_core/api/timeout';
+	const MAXRETRIES = 'radial_core/fraud/maxretries';
 	const DEBUG = 'radial_core/fraud/debug';
 	const LANGUAGE_CODE = 'radial_core/general/language_code';
         const CARD_TYPE_MAP = 'ebayenterprise_eb2cfraud/risk_service/card_type_map';
@@ -59,6 +60,17 @@ class EbayEnterprise_Eb2cFraud_Helper_Config
 	public function isDebugMode($store=null)
 	{
 		return Mage::getStoreConfigFlag(static::DEBUG, $store);
+	}
+
+	/**
+	 * get maximum transmission retry attempts
+	 *
+	 * @param   mixed
+	 * @return  integer
+	 */
+	public function getMaxRetries($store=null)
+	{
+		return Mage::getStoreConfig(static::MAXRETRIES, $store);
 	}
 
 	/**

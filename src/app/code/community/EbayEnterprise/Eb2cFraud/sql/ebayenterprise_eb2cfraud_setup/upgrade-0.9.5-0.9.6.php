@@ -34,7 +34,7 @@ $status->setStatus('risk_submitted')
 //Add a new status
 $status->setStatus('risk_processing')
        ->setLabel('Order Under Review for Fraud Detection')
-       ->assignState('pending')
+       ->assignState(Mage_Sales_Model_Order::STATE_PROCESSING)
        ->save();
 
 //Add a new status

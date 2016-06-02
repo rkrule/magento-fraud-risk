@@ -15,7 +15,7 @@ http://opensource.org/licenses/osl-3.0.php
 <config>
     <modules>
         <EbayEnterprise_Eb2cFraud>
-            <version>0.9.5</version>
+            <version>0.9.6</version>
         </EbayEnterprise_Eb2cFraud>
     </modules>
     <global>
@@ -139,6 +139,11 @@ http://opensource.org/licenses/osl-3.0.php
         </layout>
     </frontend>
     <default>
+	<radial_core>
+		<fraud>
+			<maxretries>3</maxretries>
+		</fraud>
+	</radial_core>
         <ebayenterprise_eb2cfraud>
             <risk_service>
 		<!-- Can be: pound, ounce, kilogram, gram, unknown https://gitlab.gspt.net/Cheetah/retailordermanagement-sdk/blob/master/src/eBayEnterprise/RetailOrderManagement/Schemas/checkout/1.0/Risk-Service-Datatypes-1.0.xsd for UnitOfWeightType -->
@@ -232,9 +237,9 @@ http://opensource.org/licenses/osl-3.0.php
 			<Manual_Accept>processing</Manual_Accept>
 			<Cancel>canceled</Cancel>
 			<Reject>canceled</Reject>
-			<Ignore>holded</Ignore>
-			<Suspend>holded</Suspend>
-			<Reject_Pending>holded</Reject_Pending>
+			<Ignore>processing</Ignore>
+			<Suspend>processing</Suspend>
+			<Reject_Pending>processing</Reject_Pending>
 		</response_codes_states>
 		<order_status_codes_to_fraud>
 			<new>IN_PROCESS</new>
@@ -294,5 +299,16 @@ http://opensource.org/licenses/osl-3.0.php
 	        </ebayenterprise_eb2cfraud_retry_sendevent>
 	    </jobs>
      </crontab>
+     <admin>
+        <routers>
+            <eb2cfraud>
+                <use>admin</use>
+                <args>
+                    <frontName>eb2cfraud</frontName>
+                    <module>EbayEnterprise_Eb2cFraud_Adminhtml</module>
+                </args>
+            </eb2cfraud>
+        </routers>
+    </admin>
 </config>
 

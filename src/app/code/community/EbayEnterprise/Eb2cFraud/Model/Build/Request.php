@@ -39,6 +39,8 @@ class EbayEnterprise_Eb2cFraud_Model_Build_Request
     protected $_shippingId;
     /** @var string */
     protected $_billingId;
+    /** @var Radial_Core_Helper_Shipping */
+    protected $_shippingHelper; 
 
     /**
      * @param array $initParams Must have this key:
@@ -48,10 +50,11 @@ class EbayEnterprise_Eb2cFraud_Model_Build_Request
      *                          - 'helper' => EbayEnterprise_Eb2cFraud_Helper_Data
      *                          - 'product' => Mage_Catalog_Model_Product
      *				- 'config'  => EbayEnterprise_Eb2cFraud_Helper_config
+     *				- 'shippinghelper' => Radial_Core_Helper_Shipping
      */
     public function __construct(array $initParams=array())
     {
-        list($this->_request, $this->_order, $this->_quote, $this->_helper, $this->_httpHelper, $this->_product, $this->_config, $this->_service) = $this->_checkTypes(
+        list($this->_request, $this->_order, $this->_quote, $this->_helper, $this->_httpHelper, $this->_product, $this->_config, $this->_service, $this->_shippingHelper) = $this->_checkTypes(
             $this->_nullCoalesce($initParams, 'request', $this->_getNewSdkInstance('EbayEnterprise_RiskService_Sdk_Request')),
             $this->_nullCoalesce($initParams, 'order', $initParams['order']),
             $this->_nullCoalesce($initParams, 'quote', Mage::getModel('sales/quote')),
@@ -59,7 +62,8 @@ class EbayEnterprise_Eb2cFraud_Model_Build_Request
             $this->_nullCoalesce($initParams, 'http_helper', Mage::helper('ebayenterprise_eb2cfraud/http')),
             $this->_nullCoalesce($initParams, 'product', Mage::getModel('catalog/product')),
 	    $this->_nullCoalesce($initParams, 'config', Mage::helper('ebayenterprise_eb2cfraud/config')),
-	    $this->_nullCoalesce($initParams, 'service', Mage::getModel('ebayenterprise_eb2cfraud/risk_service'))
+	    $this->_nullCoalesce($initParams, 'service', Mage::getModel('ebayenterprise_eb2cfraud/risk_service')),
+	    $this->_nullCoalesce($initParams, 'shipping_helper', Mage::helper('radial_core/shipping'))
         );
     }
 
@@ -74,6 +78,7 @@ class EbayEnterprise_Eb2cFraud_Model_Build_Request
      * @param  Mage_Catalog_Model_Product
      * @param  EbayEnterprise_Eb2cFraud_Helper_Config
      * @param  EbayEnterprise_Eb2cFraud_Model_Risk_Service
+     * @param  Radial_Core_Helper_Shipping
      * @return array
      */
     protected function _checkTypes(
@@ -84,9 +89,10 @@ class EbayEnterprise_Eb2cFraud_Model_Build_Request
         EbayEnterprise_Eb2cFraud_Helper_Http $httpHelper,
         Mage_Catalog_Model_Product $product,
 	EbayEnterprise_Eb2cFraud_Helper_Config $config,
-	EbayEnterprise_Eb2cFraud_Model_Risk_Service $service
+	EbayEnterprise_Eb2cFraud_Model_Risk_Service $service,
+	Radial_Core_Helper_Shipping $shippingHelper
     ) {
-        return array($request, $order, $quote, $helper, $httpHelper, $product, $config, $service);
+        return array($request, $order, $quote, $helper, $httpHelper, $product, $config, $service, $shippingHelper);
     }
 
     public function build()
@@ -533,6 +539,7 @@ class EbayEnterprise_Eb2cFraud_Model_Build_Request
 	$type
     )
     {
+	$shippingMethod = $this->_shippingHelper->getUsableMethod($orderShippingAddress);
 	$subPayloadShipment->setAddressId($orderShippingAddress->getId())
         		   ->setShipmentId($orderShippingAddress->getId());
 
@@ -542,7 +549,7 @@ class EbayEnterprise_Eb2cFraud_Model_Build_Request
 	    ->setCurrencyCode($this->_order->getBaseCurrencyCode());
         $subPayloadShipment->setCostTotals($subPayloadCostTotals);
 
-	$subPayloadShipment->setShippingMethod($this->_getShippingMethodByType($type));
+	$subPayloadShipment->setShippingMethod($this->_shippingHelper->getMethodSdkId($shippingMethod));
         return $this;
     }
 

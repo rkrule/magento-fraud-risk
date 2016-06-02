@@ -36,7 +36,7 @@ class EbayEnterprise_RiskService_Sdk_OCResponse
          * @param  string
          * @return self
          */
-        public function setCreateTimestamp($createTimestamp)
+        public function setCreateTimestamp(DateTime $createTimestamp)
 	{
 		$this->_createTimestamp = $createTimestamp;
 		return $this;
@@ -66,12 +66,12 @@ class EbayEnterprise_RiskService_Sdk_OCResponse
 	{
 		parent::__construct($initParams);
 		$this->_extractionPaths = array(
-			'setOrderId' => 'x:OrderId',
-			'setStoreId' => 'x:StoreId',
-			'setOrderConfirmationAcknowledgement' => 'x:OrderConfirmationAcknowledgement',
+			'setOrderId' => 'string(x:OrderId)',
+			'setStoreId' => 'string(x:StoreId)',
+			'setOrderConfirmationAcknowledgement' => 'string(x:OrderConfirmationAcknowledgement)',
 		);
-		$this->_optionalExtractionPaths = array(
-			'setCreateTimestamp' => 'x:CreateTimestamp',
+		$this->_dateTimeExtractionPaths = array(
+                	'setCreateTimestamp' => 'string(x:CreateTimestamp)',
 		);
 	}
 
@@ -106,7 +106,7 @@ class EbayEnterprise_RiskService_Sdk_OCResponse
 	{
 		return $this->_serializeNode('OrderId', $this->getOrderId())
 			. $this->_serializeNode('StoreId', $this->getStoreId())
-			. $this->_serializeOptionalValue('CreateTimestamp', $this->getCreateTimestamp())
+			. $this->_serializeOptionalDateValue('CreateTimestamp', 'c', $this->getCreateTimestamp())
 			. $this->_serializeNode('OrderConfirmationAcknowledgement', $this->getOrderConfirmationAcknowledgement());
 	}
 }

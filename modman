@@ -10,4 +10,4 @@ src/app/design/frontend/base/default/template/* app/design/frontend/base/default
 # JS
 src/js/radial_eb2cfraud/* js/radial_eb2cfraud/
 # lib
-src/lib/ lib/
+src/lib/EbayEnterprise/RiskService/ lib/EbayEnterprise/RiskService/

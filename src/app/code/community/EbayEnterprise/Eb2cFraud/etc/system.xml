@@ -38,20 +38,65 @@ http://opensource.org/licenses/osl-3.0.php
 				<comment>API Response and Requests are logged</comment>
 				<frontend_type>select</frontend_type>
 				<source_model>adminhtml/system_config_source_yesno</source_model>
-				<sort_order>7</sort_order>
+				<sort_order>2</sort_order>
 				<show_in_default>1</show_in_default>
 				<show_in_website>0</show_in_website>
 				<show_in_store>0</show_in_store>
 			</debug>
                         <enabled translate="label">
                             <label>Fraud Files Installed?</label>
-                            <sort_order>1</sort_order>
+                            <sort_order>3</sort_order>
                             <frontend_type>label</frontend_type>
                             <backend_model>ebayenterprise_eb2cfraud/adminhtml_system_config_backend_jsinstalled</backend_model>
                             <show_in_default>1</show_in_default>
                             <show_in_website>0</show_in_website>
                             <show_in_store>0</show_in_store>
                         </enabled>
+			<maxretries translate="label">
+                            <label>Maximum Transmission Retries</label>
+                            <sort_order>4</sort_order>
+                            <frontend_type>text</frontend_type>
+                            <validate>validate-number</validate>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>0</show_in_store>
+                        </maxretries>
+			<maxmessagestatus translate="label">
+                            <label># Of Messages At Max Retry</label>
+                            <sort_order>5</sort_order>
+                            <frontend_type>label</frontend_type>
+                            <backend_model>ebayenterprise_eb2cfraud/adminhtml_system_config_backend_nummaxretry</backend_model>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>0</show_in_website>
+                            <show_in_store>0</show_in_store>
+                        </maxmessagestatus>
+			<reset_transmission_status translate="label">
+                            <label>Reset Max Transmission</label>
+                            <sort_order>6</sort_order>
+			    <frontend_type>button</frontend_type>
+                            <frontend_model>ebayenterprise_eb2cfraud/adminhtml_system_config_backend_messagereset</frontend_model>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>0</show_in_store>
+                        </reset_transmission_status>
+			<purge_retryqueue translate="label">
+                            <label>Purge Retry Queue</label>
+                            <sort_order>6</sort_order>
+                            <frontend_type>button</frontend_type>
+			    <frontend_model>ebayenterprise_eb2cfraud/adminhtml_system_config_backend_purgeretryqueue</frontend_model>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>0</show_in_store>
+                        </purge_retryqueue>
+			<fraud_email translate="label">
+                            <label>Fraud Admin Email</label>
+                            <sort_order>7</sort_order>
+                            <frontend_type>text</frontend_type>
+                            <validate>validate-alphanum</validate>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>0</show_in_website>
+                            <show_in_store>0</show_in_store>
+                        </fraud_email>
                     </fields>
                 </fraud>
             </groups>
