@@ -64,7 +64,7 @@ class Radial_Eb2cFraud_Helper_Http extends Mage_Core_Helper_Http
 
     public function getHttpHost($clean = true)
     {
-	return $this->_getHttpCleanValue('HTTP_ACCEPT', $clean);
+	return $this->_getHttpCleanValue('HTTP_HOST', $clean);
     }
 
     public function getHttpOrigin($clean = true)

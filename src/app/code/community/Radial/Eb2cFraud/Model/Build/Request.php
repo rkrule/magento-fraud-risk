@@ -869,7 +869,7 @@ class Radial_Eb2cFraud_Model_Build_Request
                 array( 'name' => 'referrer', 'message' => $this->_httpHelper->getHttpReferrer())
         );
         foreach ($httpHeaderZend as $headerProperty) {
-                if( isset($headerProperty['message']))
+                if( $headerProperty['message'] )
                 {
                 	$subPayloadHttpHeader = $subPayloadHttpHeaders->getEmptyHttpHeader();
                         $this->_buildHttpHeader($subPayloadHttpHeader, $headerProperty['name'], $headerProperty['message']);
