@@ -155,11 +155,6 @@ class Radial_Eb2cFraud_Model_Risk_Order
 
                         $response = $api->getResponseBody();
                 } catch (Exception $e) {
-			if( !$payload )
-                	{
-                        	$payload = $this->_request->serialize();
-                	}
-
                         $logMessage = sprintf('[%s] The following error has occurred while sending request: %s', __CLASS__, $e->getMessage());
                         Mage::log($logMessage, Zend_Log::WARN);
                         Mage::logException($e);
@@ -262,7 +257,7 @@ class Radial_Eb2cFraud_Model_Risk_Order
 		$this->_payloadXml = $payload->serialize();
 
 		$apiConfig = $this->_setupApiConfig($payload, $this->_getNewEmptyResponse());
-        	$response = $this->_sendRequest($this->_getApi($apiConfig), $order);
+        	$response = $this->_sendRequest($this->_getApi($apiConfig), $order, $this->_payloadXml);
 
 		// Set order state / status below, then use order history collection
         	$order->setState("processing", "risk_processing", 'Order is now processing in the Fraud System.', false);
@@ -291,7 +286,7 @@ class Radial_Eb2cFraud_Model_Risk_Order
 				$this->_payloadXml = $payload->serialize();
 
 				$apiConfig = $this->_setupApiConfig($payload, $this->_getNewOCREmptyResponse());
-                        	$response = $this->_sendRequest($this->_getApi($apiConfig), $orderNull);
+                        	$response = $this->_sendRequest($this->_getApi($apiConfig), $orderNull, $this->_payloadXml);
 			} catch( Exception $e ) {
 				$logMessage = sprintf('[%s] Error Payload OrderConfirmationRequest Body: %s', __CLASS__, $e->getMessage());
                 	        Mage::log($logMessage, Zend_Log::WARN);
