@@ -15,7 +15,7 @@ http://opensource.org/licenses/osl-3.0.php
 <layout>
     <eb2cfraud_javascript_collector>
         <reference name="before_body_end">
-            <block type="eb2cfraud/jsc" name="eb2cfraud_javascript_collector"/>
+            <block type="radial_eb2cfraud/jsc" name="eb2cfraud_javascript_collector"/>
         </reference>
     </eb2cfraud_javascript_collector>
     <checkout_onepage_index>
@@ -34,4 +34,12 @@ http://opensource.org/licenses/osl-3.0.php
             </action>
         </reference>
     </paypal_express_review>
+    <adminhtml_sales_order_view>
+	<update handle="eb2cfraud_javascript_collector"/>
+        <reference name="eb2cfraud_javascript_collector">
+            <action method="setTemplate">
+                <template>eb2cfraud/admin_checkout_jsc.phtml</template>
+            </action>
+        </reference>
+    </adminhtml_sales_order_view>
 </layout>
