@@ -128,4 +128,15 @@ $table = $installer->getConnection()
     ->setComment('Risk Service Event Log Details');
 $installer->getConnection()->createTable($table);
 
+$installer->run("
+DROP TABLE IF EXISTS {$installer->getTable('radial_eb2cfraud/retryqueue')};
+CREATE TABLE {$installer->getTable('radial_eb2cfraud/retryqueue')} (
+  `retryqueue_id` int(10) unsigned NOT NULL AUTO_INCREMENT COMMENT 'Answer Id',
+  `created_at` datetime NOT NULL COMMENT 'Created At',
+  `event_name` varchar(255) DEFAULT NULL COMMENT 'Event Name',
+  `message_content` text COMMENT 'Message Content',
+  `delivery_status` int(10) unsigned NOT NULL DEFAULT '0' COMMENT 'Delivery Status',
+  PRIMARY KEY (`retryqueue_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='Risk Service Event Log Details';");
+
 $installer->endSetup();
