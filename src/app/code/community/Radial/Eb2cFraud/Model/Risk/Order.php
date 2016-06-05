@@ -174,6 +174,7 @@ class Radial_Eb2cFraud_Model_Risk_Order
 					$emailTemplateVariables['myvar1'] = gmdate("Y-m-d\TH:i:s\Z");
 					$emailTemplateVariables['myvar2'] = $e->getMessage();
 					$emailTemplateVariables['myvar3'] = $e->getTraceAsString();
+					$emailTemplateVariables['myvar4'] = htmlspecialchars($payload);
 
 					$processedTemplate = $emailTemplate->getProcessedTemplate($emailTemplateVariables);
 			
@@ -276,21 +277,40 @@ class Radial_Eb2cFraud_Model_Risk_Order
                 $request = $this->_getNewOCREmptyRequest();
 
 		if( $order->getState() != Mage_Sales_Model_Order::STATE_NEW && $order->getState() != 'pending' )
-		{ 
-			try
-			{
-                		$payload = Mage::getModel('radial_eb2cfraud/build_OCRequest', array(
-                			'request' => $request,
-                		        'order' => $order,
-                		))->build();
-				$this->_payloadXml = $payload->serialize();
+		{
+			$allPending = true;
+			$collectionReturnSize = Mage::getResourceModel('sales/order_creditmemo_collection')
+						  ->addAttributeToFilter('increment_id', $order->getOrderId())->getSize();
+	
 
-				$apiConfig = $this->_setupApiConfig($payload, $this->_getNewOCREmptyResponse());
-                        	$response = $this->_sendRequest($this->_getApi($apiConfig), $orderNull, $this->_payloadXml);
-			} catch( Exception $e ) {
-				$logMessage = sprintf('[%s] Error Payload OrderConfirmationRequest Body: %s', __CLASS__, $e->getMessage());
-                	        Mage::log($logMessage, Zend_Log::WARN);
-			}	
+			if($order->hasInvoices())
+			{
+				foreach ($order->getInvoiceCollection() as $inv) {
+    					if( $inv->getState() !== Mage_Sales_Model_Order_Invoice::STATE_OPEN )
+					{
+						$allPending = false;
+						break;
+					}
+				}
+			}
+ 
+			if( !$allPending || $order->hasShipments() || $collectionReturnSize > 0 || $order->getState() === Mage_Sales_Model_Order::STATE_COMPLETE || $order->getState() === Mage_Sales_Model_Order::STATE_CLOSED || $order->getState() === Mage_Sales_Model_Order::STATE_CANCELED)
+			{
+				try
+				{
+                			$payload = Mage::getModel('radial_eb2cfraud/build_OCRequest', array(
+                				'request' => $request,
+                			        'order' => $order,
+                			))->build();
+					$this->_payloadXml = $payload->serialize();
+
+					$apiConfig = $this->_setupApiConfig($payload, $this->_getNewOCREmptyResponse());
+                        		$response = $this->_sendRequest($this->_getApi($apiConfig), $orderNull, $this->_payloadXml);
+				} catch( Exception $e ) {
+					$logMessage = sprintf('[%s] Error Payload OrderConfirmationRequest Body: %s', __CLASS__, $e->getMessage());
+                	        	Mage::log($logMessage, Zend_Log::WARN);
+				}	
+			}
 		}	
         }
 
@@ -349,6 +369,7 @@ class Radial_Eb2cFraud_Model_Risk_Order
                                 					$emailTemplateVariables['myvar1'] = gmdate("Y-m-d\TH:i:s\Z");
                                 					$emailTemplateVariables['myvar2'] = $e->getMessage();
 									$emailTemplateVariables['myvar3'] = $e->getTraceAsString();
+									$emailTemplateVariables['myvar4'] = htmlspecialchars($object->getMessageContent());
 
                                 					$processedTemplate = $emailTemplate->getProcessedTemplate($emailTemplateVariables);
 
@@ -396,6 +417,7 @@ class Radial_Eb2cFraud_Model_Risk_Order
                                 	$emailTemplateVariables['myvar1'] = gmdate("Y-m-d\TH:i:s\Z");
                                 	$emailTemplateVariables['myvar2'] = $e->getMessage();
 					$emailTemplateVariables['myvar3'] = $e->getTraceAsString();
+					$emailTemplateVariables['myvar4'] = htmlspecialchars($object->getMessageContent());
 
                                 	$processedTemplate = $emailTemplate->getProcessedTemplate($emailTemplateVariables);
                         		//Sending E-Mail to Fraud Admin Email.

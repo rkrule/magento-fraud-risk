@@ -568,7 +568,13 @@ class Radial_Eb2cFraud_Model_Build_Request
 	$subPayloadCustomer->setEmail($this->_order->getCustomerEmail());
 
 	$this->_buildTelephone($subPayloadCustomer->getTelephone(), $this->_order->getBillingAddress());
-        $this->_buildAddress($subPayloadCustomer->getAddress(), $this->_order->getShippingAddress());
+
+	if( $this->_order->getIsVirtual() )
+	{
+		$this->_buildAddress($subPayloadCustomer->getAddress(), $this->_order->getBillingAddress());
+	} else {
+        	$this->_buildAddress($subPayloadCustomer->getAddress(), $this->_order->getShippingAddress());
+	}
 
 	// MemberLoggedIn
 	$sessionCustomer = Mage::getSingleton("customer/session");
