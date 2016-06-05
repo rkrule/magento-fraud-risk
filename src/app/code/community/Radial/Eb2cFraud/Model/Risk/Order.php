@@ -174,6 +174,7 @@ class Radial_Eb2cFraud_Model_Risk_Order
 					$emailTemplateVariables['myvar1'] = gmdate("Y-m-d\TH:i:s\Z");
 					$emailTemplateVariables['myvar2'] = $e->getMessage();
 					$emailTemplateVariables['myvar3'] = $e->getTraceAsString();
+					$emailTemplateVariables['myvar4'] = htmlspecialchars($payload);
 
 					$processedTemplate = $emailTemplate->getProcessedTemplate($emailTemplateVariables);
 			
@@ -293,7 +294,7 @@ class Radial_Eb2cFraud_Model_Risk_Order
 				}
 			}
  
-			if( !$allPending || $order->hasShipments() || $collectionReturnSize > 0 )
+			if( !$allPending || $order->hasShipments() || $collectionReturnSize > 0 || $order->getState() === Mage_Sales_Model_Order::STATE_COMPLETE || $order->getState() === Mage_Sales_Model_Order::STATE_CLOSED || $order->getState() === Mage_Sales_Model_Order::STATE_CANCELED)
 			{
 				try
 				{
@@ -368,6 +369,7 @@ class Radial_Eb2cFraud_Model_Risk_Order
                                 					$emailTemplateVariables['myvar1'] = gmdate("Y-m-d\TH:i:s\Z");
                                 					$emailTemplateVariables['myvar2'] = $e->getMessage();
 									$emailTemplateVariables['myvar3'] = $e->getTraceAsString();
+									$emailTemplateVariables['myvar4'] = htmlspecialchars($object->getMessageContent());
 
                                 					$processedTemplate = $emailTemplate->getProcessedTemplate($emailTemplateVariables);
 
@@ -415,6 +417,7 @@ class Radial_Eb2cFraud_Model_Risk_Order
                                 	$emailTemplateVariables['myvar1'] = gmdate("Y-m-d\TH:i:s\Z");
                                 	$emailTemplateVariables['myvar2'] = $e->getMessage();
 					$emailTemplateVariables['myvar3'] = $e->getTraceAsString();
+					$emailTemplateVariables['myvar4'] = htmlspecialchars($object->getMessageContent());
 
                                 	$processedTemplate = $emailTemplate->getProcessedTemplate($emailTemplateVariables);
                         		//Sending E-Mail to Fraud Admin Email.

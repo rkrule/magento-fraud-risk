@@ -159,15 +159,15 @@ class Radial_Eb2cFraud_Model_Observer extends Radial_Eb2cFraud_Model_Abstract
             $responseCode = $event->getResponseCode();
             $reasonCode = $event->getReasonCode();
             $reasonCodeDesc = $event->getReasonCodeDescription();
-            $comment = "";
+            $comment = "Fraud Response Code: ". $responseCode. "\n";
 
             if($reasonCode)
             {
-                $comment = "Fraud Reason Code: ". $reasonCode;
+                $comment .= "Fraud Reason Code: ". $reasonCode;
 
                 if($reasonCodeDesc)
                 {
-                        $comment = "\nFraud Reason Code Description: ". $reasonCodeDesc;
+                        $comment .= "\nFraud Reason Code Description: ". $reasonCodeDesc;
                 }
             }
 
@@ -183,14 +183,14 @@ class Radial_Eb2cFraud_Model_Observer extends Radial_Eb2cFraud_Model_Abstract
 		$status = $order->getStatus();
 		$state = $order->getState();
 
-		$accept = [ "risk_submitted", "risk_processing", "risk_rejectpending", "risk_suspend", "risk_ignore" ];
+		$accept = [ "risk_submitted", "risk_processing", "risk_rejectpending", "risk_suspend", "risk_ignore", "risk_accept" ];
 
 		if( in_array( $status, $accept))
 		{
-                	$order->setState($this->_config->getOrderStateForResponseCode($responseCode), $this->_config->getOrderStatusForResponseCode($responseCode), $comment, true);
+                	$order->setState($this->_config->getOrderStateForResponseCode($responseCode), $this->_config->getOrderStatusForResponseCode($responseCode), $comment, false);
                 	$order->save();
             	} else {
-			$order->setState($state, $this->_config->getOrderStatusForResponseCode($responseCode), $comment, true);
+			$order->setState($state, $status, $comment, false);
 			$order->save();
 		}
 	    }
