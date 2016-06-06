@@ -216,7 +216,13 @@ class Radial_Eb2cFraud_Model_Risk_Order
 	        		$data = array('event_name' => $eventName, 'created_at' => $time, 'message_content' => $payload, 'delivery_status' => 0);
 	        		$object->setData($data);
 	        		$object->save();
-                	}
+                	} 
+	
+			if( $order->getId() )
+			{
+				$order->setState("pending", "risk_retrysubmit", 'Order Has NOT been transmitted to Fraud... Retrying... Contact Radial Fraud Team if the order continues to be in this state.', false);
+                                $order->save();
+			}
         	}
 
 		return $response;
