@@ -153,7 +153,7 @@ class Radial_Eb2cFraud_Helper_Http extends Mage_Core_Helper_Http
 
     public function getHttpReferrer($clean = true )
     {
-	return $this->_getHttpCleanValue('HTTP_REFERRER', $clean);
+	return $this->_getHttpCleanValue('HTTP_REFERER', $clean);
     }
 
     public function getHttpAcceptCharset($clean = true)
