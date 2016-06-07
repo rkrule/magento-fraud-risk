@@ -187,7 +187,7 @@ class Radial_Eb2cFraud_Model_Observer extends Radial_Eb2cFraud_Model_Abstract
 
 		if( in_array( $status, $accept))
 		{
-			if( $status === "risk_accept" )
+			if( strcmp($status,"risk_accept") === 0)
 			{
 				Mage::dispatchEvent("radial_eb2cfraud_dispatch_fraud_accept", array('order' => $order));
 			}
