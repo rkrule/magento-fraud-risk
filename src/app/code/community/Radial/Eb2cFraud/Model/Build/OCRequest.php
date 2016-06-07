@@ -119,31 +119,7 @@ class Radial_Eb2cFraud_Model_Build_OCRequest
 	$subPayloadOrder->setStatusDate($statusDate);
 
 	$subPayloadOrder->setConfirmationType($this->_config->getOrderStateForConfirmationFraudOCR($this->_order->getState()));
-	
-	$array_ignore = [ "completed", "canceled", "closed" ];
-
-	if( !in_array( $this->_order->getState(), $array_ignore))
-	{
-		$subPayloadOrder->setOrderStatus($this->_config->getOrderStateForFraudOCR($this->_order->getState()));
-	} else {
-		$allshipped = 0;
-
-		foreach($this->_order->getAllItems() as $item)
-		{
-			if( $item->getStatus() !=  Mage_Sales_Model_Order_Item::STATUS_SHIPPED )
-			{
-				$allshipped = 1;
-				break;
-			}
-		}
-
-		if( !$allshipped )
-		{
-			$subPayloadOrder->setOrderStatus("SHIPPED");
-		} else {
-			$subPayloadOrder->setOrderStatus("IN_PROCESS");
-		}
-	}
+	$subPayloadOrder->setOrderStatus($this->_config->getOrderStateForFraudOCR($this->_order->getState()));
 
 	$this->_buildLineDetails($subPayloadOrder->getLineDetails());
 
