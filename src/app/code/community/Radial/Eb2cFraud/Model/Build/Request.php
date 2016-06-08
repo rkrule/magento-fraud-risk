@@ -539,8 +539,6 @@ class Radial_Eb2cFraud_Model_Build_Request
 	$type
     )
     {
-	if( $type !== static::VIRTUAL_SHIPMENT_TYPE )
-	{
 		$shippingMethod = $this->_shippingHelper->getUsableMethod($orderShippingAddress);
 		$subPayloadShipment->setAddressId($orderShippingAddress->getId())
         		   ->setShipmentId($orderShippingAddress->getId());
@@ -552,7 +550,6 @@ class Radial_Eb2cFraud_Model_Build_Request
         	$subPayloadShipment->setCostTotals($subPayloadCostTotals);
 
 		$subPayloadShipment->setShippingMethod($this->_shippingHelper->getMethodSdkId($shippingMethod));
-	}        
 
 	return $this;
     }
