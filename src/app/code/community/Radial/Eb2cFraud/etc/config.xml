@@ -147,6 +147,15 @@ http://opensource.org/licenses/osl-3.0.php
             </updates>
         </layout>
     </frontend>
+    <adminhtml>
+        <layout>
+            <updates>
+                <radial_eb2cfraud module="radial_eb2cfraud">
+                    <file>radial_eb2cfraud.xml</file>
+                </radial_eb2cfraud>
+            </updates>
+        </layout>
+    </adminhtml>
     <default>
 	<radial_core>
 		<fraud>
