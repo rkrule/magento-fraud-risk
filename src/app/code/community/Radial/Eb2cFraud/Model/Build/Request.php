@@ -539,18 +539,19 @@ class Radial_Eb2cFraud_Model_Build_Request
 	$type
     )
     {
-	$shippingMethod = $this->_shippingHelper->getUsableMethod($orderShippingAddress);
-	$subPayloadShipment->setAddressId($orderShippingAddress->getId())
+		$shippingMethod = $this->_shippingHelper->getUsableMethod($orderShippingAddress);
+		$subPayloadShipment->setAddressId($orderShippingAddress->getId())
         		   ->setShipmentId($orderShippingAddress->getId());
 
-	$subPayloadCostTotals = $subPayloadShipment->getCostTotals();
-        $subPayloadCostTotals->setAmountBeforeTax($this->_order->getSubtotal())
-            ->setAmountAfterTax($this->_order->getGrandTotal())
-	    ->setCurrencyCode($this->_order->getBaseCurrencyCode());
-        $subPayloadShipment->setCostTotals($subPayloadCostTotals);
+		$subPayloadCostTotals = $subPayloadShipment->getCostTotals();
+        	$subPayloadCostTotals->setAmountBeforeTax($this->_order->getSubtotal())
+        	    ->setAmountAfterTax($this->_order->getGrandTotal())
+		    ->setCurrencyCode($this->_order->getBaseCurrencyCode());
+        	$subPayloadShipment->setCostTotals($subPayloadCostTotals);
 
-	$subPayloadShipment->setShippingMethod($this->_shippingHelper->getMethodSdkId($shippingMethod));
-        return $this;
+		$subPayloadShipment->setShippingMethod($this->_shippingHelper->getMethodSdkId($shippingMethod));
+
+	return $this;
     }
 
     /**
@@ -872,7 +873,7 @@ class Radial_Eb2cFraud_Model_Build_Request
                 array( 'name' => 'content-type', 'message' => $this->_httpHelper->getHttpContentType()),
                 array( 'name' => 'connection', 'message' => $this->_httpHelper->getHttpConnection()),
                 array( 'name' => 'accept-charset', 'message' => $this->_httpHelper->getHttpAcceptCharset()),
-                array( 'name' => 'referrer', 'message' => $this->_httpHelper->getHttpReferrer())
+                array( 'name' => 'referer', 'message' => $this->_httpHelper->getHttpReferrer())
         );
         foreach ($httpHeaderZend as $headerProperty) {
 		if( isset($headerProperty['message']) )
