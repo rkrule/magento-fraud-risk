@@ -88,7 +88,7 @@ class Radial_RiskService_Sdk_Http_Header
 	 */
 	protected function _serializeContents()
 	{
-		return $this->getHeader();
+		return $this->xmlEncode($this->getHeader());
 	}
 
 	/**
