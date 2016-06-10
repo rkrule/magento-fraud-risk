@@ -245,7 +245,7 @@ http://opensource.org/licenses/osl-3.0.php
 			<Accept>risk_accept</Accept>
 			<Manual_Accept>risk_accept</Manual_Accept>
 			<Cancel>risk_cancel</Cancel>
-			<Reject>risk_reject</Reject>
+			<Reject>risk_cancel</Reject>
 			<Ignore>risk_ignore</Ignore>
 			<Suspend>risk_suspend</Suspend>
 			<Reject_Pending>risk_rejectpending</Reject_Pending>
