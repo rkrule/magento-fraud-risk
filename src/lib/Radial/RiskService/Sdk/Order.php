@@ -27,6 +27,8 @@ class Radial_RiskService_Sdk_Order
 	protected $_shippingList;
 	/** @var Radial_RiskService_Sdk_Line_Items */
 	protected $_lineItems;
+	/** @var Radial_RiskService_Sdk_ExternalRiskResults */
+	protected $_externalRiskResults;
 	/** @var Radial_RiskService_Sdk_Payments */
 	protected $_formOfPayments;
 	/** @var Radial_RiskService_Sdk_Total */
@@ -37,10 +39,11 @@ class Radial_RiskService_Sdk_Order
 	public function __construct(array $initParams=array())
 	{
 		parent::__construct($initParams);
-        $this->setCustomerList($this->_buildPayloadForModel(static::CUSTOMER_LIST_MODEL));
+        	$this->setCustomerList($this->_buildPayloadForModel(static::CUSTOMER_LIST_MODEL));
 		$this->setShippingList($this->_buildPayloadForModel(static::SHIPPING_LIST_MODEL));
 		$this->setLineItems($this->_buildPayloadForModel(static::LINE_ITEMS_MODEL));
-        $this->setShoppingSession($this->_buildPayloadForModel(static::SHOPPING_SESSION_MODEL));
+        	$this->setExternalRiskResults($this->_buildPayloadForModel(static::EXTERNAL_RISK_RESULTS_MODEL));
+		$this->setShoppingSession($this->_buildPayloadForModel(static::SHOPPING_SESSION_MODEL));
 		$this->setTotalCost($this->_buildPayloadForModel(static::TOTAL_MODEL));
 		$this->_extractionPaths = array(
 			'setOrderId' => 'string(x:OrderId)',
@@ -52,6 +55,7 @@ class Radial_RiskService_Sdk_Order
             'setCustomerList' => 'x:CustomerList',
 			'setShippingList' => 'x:ShippingList',
 			'setLineItems' => 'x:LineItems',
+			'setExternalRiskResults' => 'x:ExternalRiskResults',
 			'setShoppingSession' => 'x:ShoppingSession',
 			'setTotalCost' => 'x:TotalCost',
 		);
@@ -107,6 +111,24 @@ class Radial_RiskService_Sdk_Order
     {
         $this->_customerList = $customerList;
         return $this;
+    }
+	
+    /**
+     * @return Radial_RiskService_Sdk_IExternalRiskResults
+     */
+    public function getExternalRiskResults()
+    {
+	return $this->_externalRiskResults;
+    }
+
+    /**
+     * @param  Radial_RiskService_Sdk_IExternalRiskResults
+     * @return self
+     */
+    public function setExternalRiskResults(Radial_RiskService_Sdk_IExternalRiskResults $externalRiskResults)
+    {
+	$this->_externalRiskResults = $externalRiskResults;
+	return $this;
     }
 
 	/**
@@ -200,9 +222,10 @@ class Radial_RiskService_Sdk_Order
 	{
 		return $this->_serializeNode('OrderId', $this->getOrderId())
 			. $this->_serializeOptionalValue('PromoCode', $this->getPromoCode())
-            . $this->getCustomerList()->serialize()
+	                . $this->getCustomerList()->serialize()
 			. $this->getShippingList()->serialize()
 			. $this->getLineItems()->serialize()
+			. $this->getExternalRiskResults()->serialize()
 			. $this->getShoppingSession()->serialize()
 			. $this->getTotalCost()->serialize();
 	}

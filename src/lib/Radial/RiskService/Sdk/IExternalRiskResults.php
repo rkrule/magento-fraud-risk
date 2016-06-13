@@ -15,12 +15,12 @@
  *
  */
 
-interface Radial_RiskService_Sdk_IExternalRiskResult extends Countable, Iterator, ArrayAccess, Radial_RiskService_Sdk_IIterable
+interface Radial_RiskService_Sdk_IExternalRiskResults extends Countable, Iterator, ArrayAccess, Radial_RiskService_Sdk_IIterable
 {
 	const ROOT_NODE = 'ExternalRiskResults';
 	const XML_NS = 'http://api.gsicommerce.com/schema/checkout/1.0';
 	const EXTERNAL_RISK_RESULT_MODEL ='Radial_RiskService_Sdk_ExternalRiskResult';	
-	SUBPAYLOAD_XPATH='ExternalRiskResult';
+	const SUBPAYLOAD_XPATH='ExternalRiskResult';
 
 	/**
      	* get an empty shipment

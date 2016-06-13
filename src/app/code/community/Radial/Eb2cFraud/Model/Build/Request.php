@@ -610,9 +610,9 @@ class Radial_Eb2cFraud_Model_Build_Request
      * @param  string
      * @return self
      */
-    protected function _buildExternalRiskResult( Radial_RiskService_Sdk_IExternalRiskResult $subPayloadExternaRiskResult, Mage_Sales_Model_Order_Payment $paymentObj)  
+    protected function _buildExternalRiskResult( Radial_RiskService_Sdk_IExternalRiskResult $subPayloadExternalRiskResult, Mage_Sales_Model_Order_Payment $paymentObj)  
     {
-	$subPayloadExternalRiskResult->setCode($paymentObj->getData('response_code'));
+	$subPayloadExternalRiskResult->setCode($paymentObj->getAdditionalInformation()['response_code']);
 	$subPayloadExternalRiskResult->setSource("ResponseToWeb");
 	return $this;
     }
@@ -745,7 +745,8 @@ class Radial_Eb2cFraud_Model_Build_Request
             ->setAmount($orderPayment->getAmountAuthorized())
             ->setPaymentTransactionTypeCode($this->_config->getTenderTypeForCcType($orderPayment->getCcType() ? $orderPayment->getCcType() : $orderPayment->getMethod()))
             ->setPaymentTransactionID($orderPayment->getId())
-	    ->setAccountID($paymentAdapterType->getExtractCardHolderName())
+	    ->setIsToken($paymentAdapterType->getExtractIsToken())
+	    ->setAccountID($paymentAdapterType->getExtractPaymentAccountUniqueId())
             ->setItemListRPH($itemcount);
         
         if( $orderPayment->getCcLast4())

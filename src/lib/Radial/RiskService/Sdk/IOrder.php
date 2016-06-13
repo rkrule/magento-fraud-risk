@@ -25,6 +25,7 @@ interface Radial_RiskService_Sdk_IOrder extends Radial_RiskService_Sdk_IPayload
 	const TOTAL_MODEL ='Radial_RiskService_Sdk_Total';
     const SHOPPING_SESSION_MODEL = 'Radial_RiskService_Sdk_ShoppingSession';
     const CUSTOMER_LIST_MODEL = 'Radial_RiskService_Sdk_Customer_List';
+	const EXTERNAL_RISK_RESULTS_MODEL = 'Radial_RiskService_Sdk_ExternalRiskResults';
 
 	/**
 	 * Unique identifier of the order in the web site.
@@ -64,6 +65,17 @@ interface Radial_RiskService_Sdk_IOrder extends Radial_RiskService_Sdk_IPayload
      * @return self
      */
     public function setCustomerList(Radial_RiskService_Sdk_Customer_IList $customerList);
+
+    /**
+     * @return Radial_RiskService_Sdk_IExternalRiskResults
+     */
+    public function getExternalRiskResults();
+
+    /**
+     * @param  Radial_RiskService_Sdk_IExternalRiskResults
+     * @return self
+     */
+    public function setExternalRiskResults(Radial_RiskService_Sdk_IExternalRiskResults $externalRiskResults);
 
 	/**
 	 * @return Radial_RiskService_Sdk_Shipping_IList

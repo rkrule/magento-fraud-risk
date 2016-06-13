@@ -1,4 +1,5 @@
-opyright (c) 2015 Radial, Inc.
+<?php
+/* Copyright (c) 2015 Radial, Inc.
  *
  * NOTICE OF LICENSE
  *
