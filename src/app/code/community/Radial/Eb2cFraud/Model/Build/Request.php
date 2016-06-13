@@ -240,9 +240,13 @@ class Radial_Eb2cFraud_Model_Build_Request
     protected function _buildExternalRiskResults(Radial_RiskService_Sdk_IExternalRiskResults $subPayloadExternalRiskResults)
     {
 	$paymentObj = $this->_order->getPayment();
-	$subPayloadExternalRiskResult = $subPayloadExternalRiskResults->getEmptyExternalRiskResult();
-	$this->_buildExternalRiskResult($subPayloadExternalRiskResult, $paymentObj);
-	$subPayloadExternalRiskResults->offsetSet($subPayloadExternalRiskResult);
+
+	if( isset($paymentObj->getAdditionalInformation()['response_code']))
+        {
+		$subPayloadExternalRiskResult = $subPayloadExternalRiskResults->getEmptyExternalRiskResult();
+		$this->_buildExternalRiskResult($subPayloadExternalRiskResult, $paymentObj);
+		$subPayloadExternalRiskResults->offsetSet($subPayloadExternalRiskResult);
+	}
 
 	return $this;
     }
