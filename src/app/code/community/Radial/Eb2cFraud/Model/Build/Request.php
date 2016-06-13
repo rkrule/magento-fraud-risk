@@ -558,9 +558,24 @@ class Radial_Eb2cFraud_Model_Build_Request
 	$type
     )
     {
+		$shipping = $this->_order->getShippingAddress();
+
 		$shippingMethod = $this->_shippingHelper->getUsableMethod($orderShippingAddress);
-		$subPayloadShipment->setAddressId($orderShippingAddress->getId())
-        		   ->setShipmentId($orderShippingAddress->getId());
+
+		if( strcmp($type, 'virtual') === 0 )
+                {
+			if( $shipping )
+			{
+				$subPayloadShipment->setAddressId($shipping->getId())
+        			   ->setShipmentId($orderShippingAddress->getId());
+			} else {
+				$subPayloadShipment->setAddressId($orderShippingAddress->getId())
+                                   ->setShipmentId($orderShippingAddress->getId());
+			}
+		} else {
+			$subPayloadShipment->setAddressId($orderShippingAddress->getId())
+                           ->setShipmentId($orderShippingAddress->getId());
+		}
 
 		$subPayloadCostTotals = $subPayloadShipment->getCostTotals();
         	$subPayloadCostTotals->setAmountBeforeTax($this->_order->getSubtotal())
@@ -568,9 +583,14 @@ class Radial_Eb2cFraud_Model_Build_Request
 		    ->setCurrencyCode($this->_order->getBaseCurrencyCode());
         	$subPayloadShipment->setCostTotals($subPayloadCostTotals);
 
-		$subPayloadShipment->setShippingMethod($this->_shippingHelper->getMethodSdkId($shippingMethod));
+		if( strcmp($type, 'virtual') === 0 )
+		{
+			$subPayloadShipment->setShippingMethod("EMAIL");
+		} else {
+			$subPayloadShipment->setShippingMethod($this->_shippingHelper->getMethodSdkId($shippingMethod));
+		}
 
-	return $this;
+		return $this;
     }
 
     /**

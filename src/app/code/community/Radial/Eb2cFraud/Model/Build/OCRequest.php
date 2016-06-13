@@ -227,8 +227,13 @@ class Radial_Eb2cFraud_Model_Build_OCRequest
 		$subPayloadLineDetail->setShippingVendorCode($this->_config->getShipVendorForShipCarrier($quad['carrier_code']));
 	}
 
-	$subPayloadLineDetail->setDeliveryMethod($quad['delivery_method']);
-	
+	if( $orderItem->getIsVirtual() === 1)
+	{
+		$subPayloadLineDetail->setDeliveryMethod("EMAIL");
+	} else {
+		$subPayloadLineDetail->setDeliveryMethod($quad['delivery_method']);
+	}	
+
 	if( $quad['shipacount'] )
 	{
 		$subPayloadLineDetail->setShipScheduledDate($quad['shipacount']);
