@@ -581,7 +581,11 @@ class Radial_Eb2cFraud_Model_Build_Request
     )
     {
 	$this->_buildPersonName($subPayloadCustomer->getPersonName(), $this->_order->getBillingAddress()); 
-	$subPayloadCustomer->setEmail($this->_order->getCustomerEmail());
+
+	if( $this->_hasVirtualItems())
+	{
+		$subPayloadCustomer->setEmail($this->_order->getCustomerEmail());
+	}
 
 	$this->_buildTelephone($subPayloadCustomer->getTelephone(), $this->_order->getBillingAddress());
 
