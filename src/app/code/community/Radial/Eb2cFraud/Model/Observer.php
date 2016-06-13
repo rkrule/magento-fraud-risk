@@ -191,8 +191,15 @@ class Radial_Eb2cFraud_Model_Observer extends Radial_Eb2cFraud_Model_Abstract
 			{
 				Mage::dispatchEvent("radial_eb2cfraud_dispatch_fraud_accept", array('order' => $order));
 			}
+			
+			if( $this->_config->getOrderStateForResponseCode($responseCode) === Mage_Sales_Model_Order::STATE_CANCELED )
+			{
+				$order->cancel();
+				$order->setState($this->_config->getOrderStateForResponseCode($responseCode), $this->_config->getOrderStatusForResponseCode($responseCode), $comment, false);
+			} else {
+                		$order->setState($this->_config->getOrderStateForResponseCode($responseCode), $this->_config->getOrderStatusForResponseCode($responseCode), $comment, false);
+			}
 
-                	$order->setState($this->_config->getOrderStateForResponseCode($responseCode), $this->_config->getOrderStatusForResponseCode($responseCode), $comment, false);
                 	$order->save();
             	} else {
 			$order->setState($state, $status, $comment, false);
