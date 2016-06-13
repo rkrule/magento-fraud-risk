@@ -258,6 +258,7 @@ class Radial_RiskService_Sdk_Api
         {
              $xml = preg_replace('#(\<(?:Encrypted)?CardSecurityCode\>).*(\</(?:Encrypted)?CardSecurityCode\>)#', '$1***$2', $xml);
              $xml = preg_replace('#(\<(?:Encrypted)?PaymentAccountUniqueId.*?\>).*(\</(?:Encrypted)?PaymentAccountUniqueId\>)#', '$1***$2', $xml);
+             $xml = preg_replace('#(\<(?:Encrypted)?AccountID.*?\>).*(\</(?:Encrypted)?AccountID\>)#', '$1***$2', $xml);
              return $xml;
         }
 }

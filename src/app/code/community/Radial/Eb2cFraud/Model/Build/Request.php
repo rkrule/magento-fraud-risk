@@ -227,9 +227,28 @@ class Radial_Eb2cFraud_Model_Build_Request
 	$this->_buildCustomerList($subPayloadOrder->getCustomerList())
              ->_buildShippingList($subPayloadOrder->getShippingList())
              ->_buildLineItems($subPayloadOrder->getLineItems())
+	     ->_buildExternalRiskResults($subPayloadOrder->getExternalRiskResults())
 	     ->_buildShoppingSession($subPayloadOrder->getShoppingSession())
              ->_buildTotalCost($subPayloadOrder->getTotalCost());
         return $this;
+    }
+
+    /**
+     * @param Radial_RiskService_Sdk_ExternalRiskResults
+     * @return self
+     */
+    protected function _buildExternalRiskResults(Radial_RiskService_Sdk_IExternalRiskResults $subPayloadExternalRiskResults)
+    {
+	$paymentObj = $this->_order->getPayment();
+
+	if( isset($paymentObj->getAdditionalInformation()['response_code']))
+        {
+		$subPayloadExternalRiskResult = $subPayloadExternalRiskResults->getEmptyExternalRiskResult();
+		$this->_buildExternalRiskResult($subPayloadExternalRiskResult, $paymentObj);
+		$subPayloadExternalRiskResults->offsetSet($subPayloadExternalRiskResult);
+	}
+
+	return $this;
     }
 
     /**
@@ -566,7 +585,11 @@ class Radial_Eb2cFraud_Model_Build_Request
     )
     {
 	$this->_buildPersonName($subPayloadCustomer->getPersonName(), $this->_order->getBillingAddress()); 
-	$subPayloadCustomer->setEmail($this->_order->getCustomerEmail());
+
+	if( $this->_hasVirtualItems())
+	{
+		$subPayloadCustomer->setEmail($this->_order->getCustomerEmail());
+	}
 
 	$this->_buildTelephone($subPayloadCustomer->getTelephone(), $this->_order->getBillingAddress());
 
@@ -587,6 +610,19 @@ class Radial_Eb2cFraud_Model_Build_Request
 
 	$subPayloadCustomer->setCurrencyCode($this->_order->getBaseCurrencyCode());
         return $this;
+    }
+
+    /**
+     * @param  Radial_RiskService_Sdk_IExternalRiskResult
+     * @param  Mage_Sales_Model_Order_Payment
+     * @param  string
+     * @return self
+     */
+    protected function _buildExternalRiskResult( Radial_RiskService_Sdk_IExternalRiskResult $subPayloadExternalRiskResult, Mage_Sales_Model_Order_Payment $paymentObj)  
+    {
+	$subPayloadExternalRiskResult->setCode($paymentObj->getAdditionalInformation()['response_code']);
+	$subPayloadExternalRiskResult->setSource("ResponseToWeb");
+	return $this;
     }
 
     /**
@@ -717,6 +753,8 @@ class Radial_Eb2cFraud_Model_Build_Request
             ->setAmount($orderPayment->getAmountAuthorized())
             ->setPaymentTransactionTypeCode($this->_config->getTenderTypeForCcType($orderPayment->getCcType() ? $orderPayment->getCcType() : $orderPayment->getMethod()))
             ->setPaymentTransactionID($orderPayment->getId())
+	    ->setIsToken($paymentAdapterType->getExtractIsToken())
+	    ->setAccountID($paymentAdapterType->getExtractPaymentAccountUniqueId())
             ->setItemListRPH($itemcount);
         
         if( $orderPayment->getCcLast4())

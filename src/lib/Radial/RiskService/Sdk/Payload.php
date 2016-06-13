@@ -317,7 +317,7 @@ abstract class Radial_RiskService_Sdk_Payload
 	 */
 	protected function _serializeNode($nodeName, $value)
 	{
-		return sprintf('<%s>%s</%1$s>', $nodeName, $this->_helper->escapeHtml($value));
+		return sprintf('<%s>%s</%1$s>', $nodeName, $this->xmlEncode($this->_helper->escapeHtml($value)));
 	}
 
 	protected function _serializeAmountNode($nodeName, $amount, $currencyCode)
@@ -383,4 +383,16 @@ abstract class Radial_RiskService_Sdk_Payload
 	{
 		return $date ? "<$nodeName>{$date->format($format)}</$nodeName>" : '';
 	}
+
+       /**
+     	* encode the passed in string to be safe for xml if it is not null,
+     	* otherwise simply return the null parameter.
+     	*
+     	* @param string|null
+     	* @return string|null
+     	*/
+    	protected function xmlEncode($value = null)
+    	{
+    	    return !is_null($value) ? htmlentities($value, ENT_XML1) : $value;
+    	}
 }

@@ -15,20 +15,17 @@
  *
  */
 
-interface Radial_RiskService_Sdk_IExternalRiskResult extends Radial_RiskService_Sdk_IPayload
+interface Radial_RiskService_Sdk_IExternalRiskResults extends Countable, Iterator, ArrayAccess, Radial_RiskService_Sdk_IIterable
 {
 	const ROOT_NODE = 'ExternalRiskResults';
 	const XML_NS = 'http://api.gsicommerce.com/schema/checkout/1.0';
 	const EXTERNAL_RISK_RESULT_MODEL ='Radial_RiskService_Sdk_ExternalRiskResult';	
+	const SUBPAYLOAD_XPATH='ExternalRiskResult';
 
 	/**
-	 * @return Radial_RiskService_Sdk_ExternalRiskResult
-	 */
-	public function getExternalRiskResults();
-
-	/**
-	 * @param  Radial_RiskService_Sdk_ExternalRiskResult
-	 * @return self
-	 */
-	public function setExternalRiskResults(Radial_RiskService_Sdk_ExternalRiskResults $externalRiskResults);
+     	* get an empty shipment
+     	*
+     	* @return Radial_RiskService_Sdk_IExternalRiskResult
+     	*/
+     	public function getEmptyExternalRiskResult();
 }

@@ -1,4 +1,5 @@
-opyright (c) 2015 Radial, Inc.
+<?php
+/* Copyright (c) 2015 Radial, Inc.
  *
  * NOTICE OF LICENSE
  *
@@ -14,45 +15,37 @@ opyright (c) 2015 Radial, Inc.
  */
 
 class Radial_RiskService_Sdk_ExternalRiskResults
-	extends Radial_RiskService_Sdk_Payload
+	extends Radial_RiskService_Sdk_Iterable
 	implements Radial_RiskService_Sdk_IExternalRiskResults
 {
-	/** @var Radial_RiskService_Sdk_ExternalRiskResults */
-	protected $_externalRiskResults;
-	
-	public function __construct(array $initParams=array())
-	{
-		parent::__construct($initParams);
-		$this->setExternalRiskResults($this->_buildPayloadForModel(static::EXTERNAL_RISK_RESULT_MODEL));	
-	}
-
 	/**
-	 * @see Radial_RiskService_Sdk_ExternalRiskResults::getExternalRiskResults()
+	 * Get an empty instance of the external risk result payload
+	 *
+	 * @return Radial_RiskService_Sdk_IExternalRiskResult
 	 */
-	public function getExternalRiskResults()
+	public function getEmptyExternalRiskResult()
 	{
-		return $this->_externalRiskResults;
+		return $this->_buildPayloadForModel(static::EXTERNAL_RISK_RESULT_MODEL);
 	}
 
 	/**
-	 * @see Radial_RiskService_Sdk_IExternalRiskResults::setExternalRiskResults()
+	 * @see Radial_RiskService_Sdk_Iterable::_getNewSubpayload()
 	 */
-	public function setExternalRiskResults(Radial_RiskService_Sdk_ExternalRiskResults $externalRiskResults)
+	protected function _getNewSubpayload()
 	{
-		$this->_externalRiskResults = $externalRiskResults;
-		return $this;
+		return $this->getEmptyExternalRiskResult();
 	}
 
 	/**
-	 * @see Radial_RiskService_Sdk_Payload::setHttpHeaders()
+	 * @see Radial_RiskService_Sdk_Iterable::_getSubpayloadXPath()
 	 */
-	protected function _canSerialize()
+	protected function _getSubpayloadXPath()
 	{
-		return (trim($this->getExternalRiskResults()->serialize()) !== '');
+		return 'x:' . static::SUBPAYLOAD_XPATH;
 	}
 
 	/**
-	 * @see Radial_RiskService_Sdk_Payload::_getRootNodeName()
+	 * @see Radial_RiskService_Sdk_Iterable::_getRootNodeName()
 	 */
 	protected function _getRootNodeName()
 	{
@@ -60,18 +53,10 @@ class Radial_RiskService_Sdk_ExternalRiskResults
 	}
 
 	/**
-	 * @see Radial_RiskService_Sdk_Payload::_getXmlNamespace()
+	 * @see Radial_RiskService_Sdk_Iterable::_getXmlNamespace()
 	 */
 	protected function _getXmlNamespace()
 	{
 		return self::XML_NS;
-	}
-
-	/**
-	 * @see Radial_RiskService_Sdk_Payload::_serializeContents()
-	 */
-	protected function _serializeContents()
-	{
-		return $this->getExternalRiskResults()->serialize();
-	}
+	}	
 }
