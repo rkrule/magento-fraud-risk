@@ -813,11 +813,10 @@ class Radial_Eb2cFraud_Model_Build_Request
         Radial_RiskService_Sdk_IAuthorization $subPayloadAuthorization
     )
     {
-	$orderM = Mage::getModel('sales/order')->load($this->_order->getId());
-        $payment = $orderM->getPayment();
+        $payment = $this->_order->getPayment();
         $paymentAdditional = $payment->getAdditionalInformation(); 
 
-	if( !array_key_exists('response_code', $paymentAdditional) )
+	if( !isset($paymentAdditional['response_code']) )
 	{
 		$subPayloadAuthorization->setDecline("true");
 	} else {
