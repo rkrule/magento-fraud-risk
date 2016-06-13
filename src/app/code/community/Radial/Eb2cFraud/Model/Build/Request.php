@@ -227,9 +227,24 @@ class Radial_Eb2cFraud_Model_Build_Request
 	$this->_buildCustomerList($subPayloadOrder->getCustomerList())
              ->_buildShippingList($subPayloadOrder->getShippingList())
              ->_buildLineItems($subPayloadOrder->getLineItems())
+	     ->_buildExternalRiskResults($subPayloadOrder->getExternalRiskResults())
 	     ->_buildShoppingSession($subPayloadOrder->getShoppingSession())
              ->_buildTotalCost($subPayloadOrder->getTotalCost());
         return $this;
+    }
+
+    /**
+     * @param Radial_RiskService_Sdk_ExternalRiskResults
+     * @return self
+     */
+    protected function _buildExternalRiskResults(Radial_RiskService_Sdk_IExternalRiskResults $subPayloadExternalRiskResults)
+    {
+	$paymentObj = $this->_order->getPayment();
+	$subPayloadExternalRiskResult = $subPayloadExternalRiskResults->getEmptyExternalRiskResult();
+	$this->_buildExternalRiskResult($subPayloadExternalRiskResult, $paymentObj);
+	$subPayloadExternalRiskResults->offsetSet($subPayloadExternalRiskResult);
+
+	return $this;
     }
 
     /**
@@ -590,6 +605,19 @@ class Radial_Eb2cFraud_Model_Build_Request
     }
 
     /**
+     * @param  Radial_RiskService_Sdk_IExternalRiskResult
+     * @param  Mage_Sales_Model_Order_Payment
+     * @param  string
+     * @return self
+     */
+    protected function _buildExternalRiskResult( Radial_RiskService_Sdk_IExternalRiskResult $subPayloadExternaRiskResult, Mage_Sales_Model_Order_Payment $paymentObj)  
+    {
+	$subPayloadExternalRiskResult->setCode($paymentObj->getData('response_code'));
+	$subPayloadExternalRiskResult->setSource("ResponseToWeb");
+	return $this;
+    }
+
+    /**
      * @param  Radial_RiskService_Sdk_Person_IName
      * @param  Mage_Customer_Model_Address_Abstract
      * @return self
@@ -717,6 +745,7 @@ class Radial_Eb2cFraud_Model_Build_Request
             ->setAmount($orderPayment->getAmountAuthorized())
             ->setPaymentTransactionTypeCode($this->_config->getTenderTypeForCcType($orderPayment->getCcType() ? $orderPayment->getCcType() : $orderPayment->getMethod()))
             ->setPaymentTransactionID($orderPayment->getId())
+	    ->setAccountID($paymentAdapterType->getExtractCardHolderName())
             ->setItemListRPH($itemcount);
         
         if( $orderPayment->getCcLast4())
