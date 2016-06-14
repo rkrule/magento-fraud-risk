@@ -282,6 +282,9 @@ class Radial_Eb2cFraud_Model_Risk_Order
 
                 $request = $this->_getNewOCREmptyRequest();
 
+		Mage::Log("Order Status: ". $order->getStatus());
+		Mage::Log("Order State: ". $order->getState());
+
 		if( $order->getState() != Mage_Sales_Model_Order::STATE_NEW && $order->getState() != 'pending' )
 		{
 			$allPending = true;
