@@ -21,6 +21,9 @@
 $installer = $this;
 $installer->startSetup();
 
+// Get status model
+$status = Mage::getModel('sales/order_status');
+
 //Add a new status
 $status->setStatus('risk_retrysubmit')
        ->setLabel('Fraud Retry Submit')
