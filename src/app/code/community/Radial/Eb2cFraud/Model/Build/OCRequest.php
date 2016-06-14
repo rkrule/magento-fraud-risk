@@ -257,19 +257,22 @@ class Radial_Eb2cFraud_Model_Build_OCRequest
                         $this->_buildLineDetail($subPayloadLineDetail, $orderItem, $quaduple, $trueDiff, 0);
                         $subPayloadLineDetails->offsetSet($subPayloadLineDetail);
 
-			if( (int)$qtyReturned !== 0 )
+			if( $trueDiff !== 0 )
 			{
-				$subPayloadLineDetail = $subPayloadLineDetails->getEmptyLineDetail();
-                        	$this->_buildLineDetail($subPayloadLineDetail, $orderItem, $quaduple, $qtyReturned, 3);
-                        	$subPayloadLineDetails->offsetSet($subPayloadLineDetail);
-			}
+				if( (int)$qtyReturned !== 0 )
+				{
+					$subPayloadLineDetail = $subPayloadLineDetails->getEmptyLineDetail();
+                        		$this->_buildLineDetail($subPayloadLineDetail, $orderItem, $quaduple, $qtyReturned, 3);
+                        		$subPayloadLineDetails->offsetSet($subPayloadLineDetail);
+				}
 
-			if( (int)$qtyCanceled !== 0 )
-                        {
-                                $subPayloadLineDetail = $subPayloadLineDetails->getEmptyLineDetail();
-                                $this->_buildLineDetail($subPayloadLineDetail, $orderItem, $quaduple, $qtyCanceled, 2);
-                                $subPayloadLineDetails->offsetSet($subPayloadLineDetail);
-                        }
+				if( (int)$qtyCanceled !== 0 )
+                        	{
+                                	$subPayloadLineDetail = $subPayloadLineDetails->getEmptyLineDetail();
+                                	$this->_buildLineDetail($subPayloadLineDetail, $orderItem, $quaduple, $qtyCanceled, 2);
+                                	$subPayloadLineDetails->offsetSet($subPayloadLineDetail);
+                        	}
+			}
 		}
 	    } else {
 		 $quaduple = array( 'tracking_number' => '', 'carrier_code' => '', 'delivery_method' => '', 'shipacount' => '');
