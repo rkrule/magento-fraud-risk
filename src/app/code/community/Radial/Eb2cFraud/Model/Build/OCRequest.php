@@ -183,8 +183,6 @@ class Radial_Eb2cFraud_Model_Build_OCRequest
 	    $quaduple = array();
 	    $qtyShipped = $orderItem->getQtyShipped(); 
 	    $qtyOrdered = $orderItem->getQtyOrdered();
-	    $qtyCanceled = $orderItem->getQtyCanceled();
-	    $qtyReturned = $orderItem->getQtyReturned(); 
 
 	    foreach($this->_order->getShipmentsCollection() as $shipment){
             	foreach ($shipment->getAllItems() as $product){
@@ -215,27 +213,13 @@ class Radial_Eb2cFraud_Model_Build_OCRequest
 		if( (int)$qtyShipped !== 0 )
 		{
 			$quaduple = array( 'tracking_number' => '', 'carrier_code' => '', 'delivery_method' => '', 'shipacount' => '');
-			$diff = (int)$qtyOrdered - (int)$qtyShipped - (int)$qtyCanceled - (int)$qtyReturned;
+			$diff = (int)$qtyOrdered - (int)$qtyShipped;
 
-			if( (int)$diff !== 0 )
+			if( $diff !== 0 )
 			{
 				$subPayloadLineDetail = $subPayloadLineDetails->getEmptyLineDetail();
                 		$this->_buildLineDetail($subPayloadLineDetail, $orderItem, $quaduple, $diff, 0);
                 		$subPayloadLineDetails->offsetSet($subPayloadLineDetail);
-
-				if( (int)$qtyCanceled !== 0 )
-				{
-					$subPayloadLineDetail = $subPayloadLineDetails->getEmptyLineDetail();
-                                	$this->_buildLineDetail($subPayloadLineDetail, $orderItem, $quaduple, $qtyCanceled, 2);
-                                	$subPayloadLineDetails->offsetSet($subPayloadLineDetail);
-				}
-
-				if( (int)$qtyReturned !== 0 )
-				{
-					$subPayloadLineDetail = $subPayloadLineDetails->getEmptyLineDetail();
-                                        $this->_buildLineDetail($subPayloadLineDetail, $orderItem, $quaduple, $qtyReturned, 3);
-                                        $subPayloadLineDetails->offsetSet($subPayloadLineDetail);
-				}
 			}
 
 			$subPayloadLineDetail = $subPayloadLineDetails->getEmptyLineDetail();
@@ -243,10 +227,9 @@ class Radial_Eb2cFraud_Model_Build_OCRequest
                         $subPayloadLineDetails->offsetSet($subPayloadLineDetail);
 		} else {
 			$quaduple = array( 'tracking_number' => '', 'carrier_code' => '', 'delivery_method' => '', 'shipacount' => '');
-			$trueDiff = (int)$qtyOrdered - (int)$qtyReturned - (int)$qtyCanceled;
 
                         $subPayloadLineDetail = $subPayloadLineDetails->getEmptyLineDetail();
-                        $this->_buildLineDetail($subPayloadLineDetail, $orderItem, $quaduple, $trueDiff, 0);
+                        $this->_buildLineDetail($subPayloadLineDetail, $orderItem, $quaduple, $qtyOrdered, 0);
                         $subPayloadLineDetails->offsetSet($subPayloadLineDetail);
 
 			if( $trueDiff !== 0 )
@@ -268,27 +251,13 @@ class Radial_Eb2cFraud_Model_Build_OCRequest
 		}
 	    } else {
 		 $quaduple = array( 'tracking_number' => '', 'carrier_code' => '', 'delivery_method' => '', 'shipacount' => '');
-                 $diff = (int)$qtyOrdered - (int)$qtyShipped - (int)$qtyCanceled - (int)$qtyReturned;
+                 $diff = (int)$qtyOrdered - (int)$qtyShipped;
 
-                 if( (int)$diff !== 0 )
+                 if( $diff !== 0 )
                  {
                  	$subPayloadLineDetail = $subPayloadLineDetails->getEmptyLineDetail();
                         $this->_buildLineDetail($subPayloadLineDetail, $orderItem, $quaduple, $diff, 0);
                         $subPayloadLineDetails->offsetSet($subPayloadLineDetail);
-
-			if( (int)$qtyCanceled !== 0 )
-                        {
-                        	$subPayloadLineDetail = $subPayloadLineDetails->getEmptyLineDetail();
-                                $this->_buildLineDetail($subPayloadLineDetail, $orderItem, $quaduple, $qtyCanceled, 2);
-                                $subPayloadLineDetails->offsetSet($subPayloadLineDetail);
-                        }
-
-                        if( (int)$qtyReturned !== 0 )
-                        {
-                        	$subPayloadLineDetail = $subPayloadLineDetails->getEmptyLineDetail();
-                                $this->_buildLineDetail($subPayloadLineDetail, $orderItem, $quaduple, $qtyReturned, 3);
-                                $subPayloadLineDetails->offsetSet($subPayloadLineDetail);
-                        }
                  }
 	    }
 	}
@@ -308,17 +277,11 @@ class Radial_Eb2cFraud_Model_Build_OCRequest
 	$subPayloadLineDetail->setSKU($orderItem->getSku());
 	$subPayloadLineDetail->setQuantity((int) $qty);
 
-	if( $status === 0 )
+	if( $status !== 1 )
 	{
 		$subPayloadLineDetail->setItemStatus($this->_config->getItemStateForFraudOCR($orderItem->getStatus()));
-	} elseif( $status === 1 ) {
-		$subPayloadLineDetail->setItemStatus("SHIPPED");
-	} elseif( $status === 2 ) {
-		$subPayloadLineDetail->setItemStatus("CANCELLED");
-	} elseif( $status === 3 ) {
-		 $subPayloadLineDetail->setItemStatus("RETURNED");
 	} else {
-		$subPayloadLineDetail->setItemStatus($this->_config->getItemStateForFraudOCR($orderItem->getStatus()));
+		$subPayloadLineDetail->setItemStatus("SHIPPED");
 	}
 
 	$subPayloadLineDetail->setTrackingNumber($quad['tracking_number']);
