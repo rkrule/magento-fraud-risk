@@ -28,8 +28,8 @@ class Radial_RiskService_Sdk_CustomAttribute
 	{
 		parent::__construct($initParams);
 		$this->_extractionPaths = array(
-			'setAttributeName' => 'x:AttributeName',
-			'setAttributeValue' => 'x:AttributeValue',
+			'setAttributeName' => 'string(x:AttributeName)',
+			'setAttributeValue' => 'string(x:AttributeValue)',
 		);
 	}
 
