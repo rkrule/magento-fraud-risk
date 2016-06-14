@@ -79,7 +79,7 @@ class Radial_RiskService_Sdk_Payment
 			'setAuthorization' => 'x:Authorization',
 		);
 		$this->_booleanExtractionPaths = array(
-                        'setIsToken' => 'string(x:PaymentAccountUniqueId/@isToken)',
+                        'setIsToken' => 'string(x:AccountID/@isToken)',
                 );
 
 	}

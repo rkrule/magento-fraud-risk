@@ -175,7 +175,6 @@ class Radial_Eb2cFraud_Model_Risk_Order
 					$emailTemplateVariables['myvar2'] = $e->getMessage();
 					$emailTemplateVariables['myvar3'] = $e->getTraceAsString();
 					$emailTemplateVariables['myvar4'] = htmlspecialchars($payload);
-
 					$processedTemplate = $emailTemplate->getProcessedTemplate($emailTemplateVariables);
 			
 					//Sending E-Mail to Fraud Admin Email.
@@ -263,8 +262,11 @@ class Radial_Eb2cFraud_Model_Risk_Order
 
 		$this->_payloadXml = $payload->serialize();
 
-		$apiConfig = $this->_setupApiConfig($payload, $this->_getNewEmptyResponse());
-        	$response = $this->_sendRequest($this->_getApi($apiConfig), $order, $this->_payloadXml);
+               $object = Mage::getModel('radial_eb2cfraud/retryQueue');
+               $time = time();
+               $data = array('event_name' => 'risk_assessment_request', 'created_at' => $time, 'message_content' => $this->_payloadXml, 'delivery_status' => 0);
+               $object->setData($data);
+               $object->save();
 
 		// Set order state / status below, then use order history collection
         	$order->setState("processing", "risk_processing", 'Order is now processing in the Fraud System.', false);
@@ -310,8 +312,11 @@ class Radial_Eb2cFraud_Model_Risk_Order
                 			))->build();
 					$this->_payloadXml = $payload->serialize();
 
-					$apiConfig = $this->_setupApiConfig($payload, $this->_getNewOCREmptyResponse());
-                        		$response = $this->_sendRequest($this->_getApi($apiConfig), $orderNull, $this->_payloadXml);
+					$object = Mage::getModel('radial_eb2cfraud/retryQueue');
+               				$time = time();
+               				$data = array('event_name' => 'order_confirmation_request', 'created_at' => $time, 'message_content' => $this->_payloadXml, 'delivery_status' => 0);
+               				$object->setData($data);
+               				$object->save();
 				} catch( Exception $e ) {
 					$logMessage = sprintf('[%s] Error Payload OrderConfirmationRequest Body: %s', __CLASS__, $e->getMessage());
                 	        	Mage::log($logMessage, Zend_Log::WARN);
