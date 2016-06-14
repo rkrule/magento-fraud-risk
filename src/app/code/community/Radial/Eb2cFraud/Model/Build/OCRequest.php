@@ -126,7 +126,7 @@ class Radial_Eb2cFraud_Model_Build_OCRequest
 	$collectionReturnSize = Mage::getResourceModel('sales/order_creditmemo_collection')
                                                   ->addAttributeToFilter('increment_id', $this->_order->getOrderId())->getSize();
 
-	if( $collectionReturnSize > 0 || $this->_order->getState() === Mage_Sales_Model_Order::STATE_CANCELED )
+	if( $collectionReturnSize > 0 )
 	{
 		$this->_buildCustomAttributesList($subPayloadOrder->getCustomAttributesList());
 	}
@@ -169,14 +169,6 @@ class Radial_Eb2cFraud_Model_Build_OCRequest
 
 			$grandTotal = sprintf('%01.2F', $grandTotal);
 			$subPayloadCustomAttribute->setAttributeValue($grandTotal);	
-		}
-
-		if( $this->_order->getState() === Mage_Sales_Model_Order::STATE_CANCELED )
-		{
-			$subPayloadCustomAttribute->setAttributeName($attributeName);
-			$grandTotal = $this->_order->getGrandTotal();
-			$grandTotal = sprintf('%01.2F', $grandTotal);
-			$subPayloadCustomAttribute->setAttributeValue($grandTotal);
 		}
 	}
     }
