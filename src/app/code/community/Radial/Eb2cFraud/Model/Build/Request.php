@@ -411,9 +411,12 @@ class Radial_Eb2cFraud_Model_Build_Request
     protected function _buildLineItems(Radial_RiskService_Sdk_Line_IItems $subPayloadLineItems)
     {
         foreach ($this->_order->getAllItems() as $orderItem) {
-            $subPayloadLineItem = $subPayloadLineItems->getEmptyLineItem();
-            $this->_buildLineItem($subPayloadLineItem, $orderItem);
-            $subPayloadLineItems->offsetSet($subPayloadLineItem);
+	    if( $orderItem->getProductType() === Mage_Catalog_Model_Product_Type::TYPE_SIMPLE || $orderItem->getProductType() === Mage_Catalog_Model_Product_Type::TYPE_VIRTUAL )
+	    {
+            	$subPayloadLineItem = $subPayloadLineItems->getEmptyLineItem();
+            	$this->_buildLineItem($subPayloadLineItem, $orderItem);
+            	$subPayloadLineItems->offsetSet($subPayloadLineItem);
+	    }
         }
         return $this;
     }

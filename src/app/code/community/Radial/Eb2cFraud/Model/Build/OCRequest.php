@@ -185,116 +185,119 @@ class Radial_Eb2cFraud_Model_Build_OCRequest
     protected function _buildLineDetails(Radial_RiskService_Sdk_Line_IDetails $subPayloadLineDetails)
     {
         foreach ($this->_order->getAllItems() as $orderItem) {
-	    $quaduple = array();
-	    $qtyShipped = $orderItem->getQtyShipped(); 
-	    $qtyOrdered = $orderItem->getQtyOrdered();
-	    $qtyCanceled = $orderItem->getQtyCanceled();
-	    $qtyReturned = $orderItem->getQtyReturned(); 
+	    if( $orderItem->getProductType() === Mage_Catalog_Model_Product_Type::TYPE_SIMPLE || $orderItem->getProductType() === Mage_Catalog_Model_Product_Type::TYPE_VIRTUAL )
+	    {
+	    	$quaduple = array();
+	    	$qtyShipped = $orderItem->getQtyShipped(); 
+	    	$qtyOrdered = $orderItem->getQtyOrdered();
+	    	$qtyCanceled = $orderItem->getQtyCanceled();
+	    	$qtyReturned = $orderItem->getQtyReturned(); 
 
-	    foreach($this->_order->getShipmentsCollection() as $shipment){
-            	foreach ($shipment->getAllItems() as $product){
-               	    if( strcmp($product->getSku(),$orderItem->getSku()) === 0)
-            	    {
-                        //This product is on this shipment, so record, NOTE Magento does not assign items tracking numbers but shipments, shipments may have multiple tracking numbers
-                        foreach($shipment->getAllTracks() as $tracking_number){
-                                $track_num = $tracking_number->getNumber();
-                                $carrier_code = $tracking_number->getCarrierCode();
-                                $delivery_method = $this->_shippingHelper->getMethodSdkId($this->_order->getShippingMethod());
-				$shipacount = $this->_helper->getNewDateTime($tracking_number->getCreatedAt());
+	    	foreach($this->_order->getShipmentsCollection() as $shipment){
+            		foreach ($shipment->getAllItems() as $product){
+               		    if( strcmp($product->getSku(),$orderItem->getSku()) === 0)
+            		    {
+                	        //This product is on this shipment, so record, NOTE Magento does not assign items tracking numbers but shipments, shipments may have multiple tracking numbers
+                	        foreach($shipment->getAllTracks() as $tracking_number){
+                        	        $track_num = $tracking_number->getNumber();
+                        	        $carrier_code = $tracking_number->getCarrierCode();
+                        	        $delivery_method = $this->_shippingHelper->getMethodSdkId($this->_order->getShippingMethod());
+					$shipacount = $this->_helper->getNewDateTime($tracking_number->getCreatedAt());
 
-				$quaduple[] = array( 'tracking_number' => $track_num, 'carrier_code' => $carrier_code, 'delivery_method' => $delivery_method, 'shipacount' => $shipacount);
+					$quaduple[] = array( 'tracking_number' => $track_num, 'carrier_code' => $carrier_code, 'delivery_method' => $delivery_method, 'shipacount' => $shipacount);
+				}
+		     	     }
 			}
-		     }
-		}
-	    }
+	    	}
 
-	    foreach( $quaduple as $quad )
-	    {
-	    	$subPayloadLineDetail = $subPayloadLineDetails->getEmptyLineDetail();
-            	$this->_buildLineDetail($subPayloadLineDetail, $orderItem, $quad, $qtyShipped, 1);
-            	$subPayloadLineDetails->offsetSet($subPayloadLineDetail);
-            }
+	    	foreach( $quaduple as $quad )
+	    	{
+	    		$subPayloadLineDetail = $subPayloadLineDetails->getEmptyLineDetail();
+            		$this->_buildLineDetail($subPayloadLineDetail, $orderItem, $quad, $qtyShipped, 1);
+            		$subPayloadLineDetails->offsetSet($subPayloadLineDetail);
+            	}
 
-	    if( empty($quaduple))
-	    {
-		if( (int)$qtyShipped !== 0 )
-		{
-			$quaduple = array( 'tracking_number' => '', 'carrier_code' => '', 'delivery_method' => '', 'shipacount' => '');
-			$diff = (int)$qtyOrdered - (int)$qtyShipped - (int)$qtyCanceled - (int)$qtyReturned;
-
-			if( (int)$diff !== 0 )
+	    	if( empty($quaduple))
+	    	{
+			if( (int)$qtyShipped !== 0 )
 			{
+				$quaduple = array( 'tracking_number' => '', 'carrier_code' => '', 'delivery_method' => '', 'shipacount' => '');
+				$diff = (int)$qtyOrdered - (int)$qtyShipped - (int)$qtyCanceled - (int)$qtyReturned;
+
+				if( (int)$diff !== 0 )
+				{
+					$subPayloadLineDetail = $subPayloadLineDetails->getEmptyLineDetail();
+                			$this->_buildLineDetail($subPayloadLineDetail, $orderItem, $quaduple, $diff, 0);
+                			$subPayloadLineDetails->offsetSet($subPayloadLineDetail);
+
+					if( (int)$qtyCanceled !== 0 )
+					{
+						$subPayloadLineDetail = $subPayloadLineDetails->getEmptyLineDetail();
+                                		$this->_buildLineDetail($subPayloadLineDetail, $orderItem, $quaduple, $qtyCanceled, 2);
+                                		$subPayloadLineDetails->offsetSet($subPayloadLineDetail);
+					}
+
+					if( (int)$qtyReturned !== 0 )
+					{
+						$subPayloadLineDetail = $subPayloadLineDetails->getEmptyLineDetail();
+                                        	$this->_buildLineDetail($subPayloadLineDetail, $orderItem, $quaduple, $qtyReturned, 3);
+                                        	$subPayloadLineDetails->offsetSet($subPayloadLineDetail);
+					}
+				}
+
 				$subPayloadLineDetail = $subPayloadLineDetails->getEmptyLineDetail();
-                		$this->_buildLineDetail($subPayloadLineDetail, $orderItem, $quaduple, $diff, 0);
-                		$subPayloadLineDetails->offsetSet($subPayloadLineDetail);
+                       		$this->_buildLineDetail($subPayloadLineDetail, $orderItem, $quaduple, $qtyShipped, 1);
+                        	$subPayloadLineDetails->offsetSet($subPayloadLineDetail);
+			} else {
+				$quaduple = array( 'tracking_number' => '', 'carrier_code' => '', 'delivery_method' => '', 'shipacount' => '');
+				$trueDiff = (int)$qtyOrdered - (int)$qtyReturned - (int)$qtyCanceled;
 
-				if( (int)$qtyCanceled !== 0 )
-				{
-					$subPayloadLineDetail = $subPayloadLineDetails->getEmptyLineDetail();
-                                	$this->_buildLineDetail($subPayloadLineDetail, $orderItem, $quaduple, $qtyCanceled, 2);
-                                	$subPayloadLineDetails->offsetSet($subPayloadLineDetail);
-				}
+                        	$subPayloadLineDetail = $subPayloadLineDetails->getEmptyLineDetail();
+                        	$this->_buildLineDetail($subPayloadLineDetail, $orderItem, $quaduple, $trueDiff, 0);
+                        	$subPayloadLineDetails->offsetSet($subPayloadLineDetail);
 
-				if( (int)$qtyReturned !== 0 )
+				if( $trueDiff !== 0 )
 				{
-					$subPayloadLineDetail = $subPayloadLineDetails->getEmptyLineDetail();
-                                        $this->_buildLineDetail($subPayloadLineDetail, $orderItem, $quaduple, $qtyReturned, 3);
-                                        $subPayloadLineDetails->offsetSet($subPayloadLineDetail);
+					if( (int)$qtyReturned !== 0 )
+					{
+						$subPayloadLineDetail = $subPayloadLineDetails->getEmptyLineDetail();
+                        			$this->_buildLineDetail($subPayloadLineDetail, $orderItem, $quaduple, $qtyReturned, 3);
+                        			$subPayloadLineDetails->offsetSet($subPayloadLineDetail);
+					}
+
+					if( (int)$qtyCanceled !== 0 )
+                        		{
+                                		$subPayloadLineDetail = $subPayloadLineDetails->getEmptyLineDetail();
+                                		$this->_buildLineDetail($subPayloadLineDetail, $orderItem, $quaduple, $qtyCanceled, 2);
+                                		$subPayloadLineDetails->offsetSet($subPayloadLineDetail);
+                        		}
 				}
 			}
+	    	} else {
+		 	$quaduple = array( 'tracking_number' => '', 'carrier_code' => '', 'delivery_method' => '', 'shipacount' => '');
+                 	$diff = (int)$qtyOrdered - (int)$qtyShipped - (int)$qtyCanceled - (int)$qtyReturned;
 
-			$subPayloadLineDetail = $subPayloadLineDetails->getEmptyLineDetail();
-                       	$this->_buildLineDetail($subPayloadLineDetail, $orderItem, $quaduple, $qtyShipped, 1);
-                        $subPayloadLineDetails->offsetSet($subPayloadLineDetail);
-		} else {
-			$quaduple = array( 'tracking_number' => '', 'carrier_code' => '', 'delivery_method' => '', 'shipacount' => '');
-			$trueDiff = (int)$qtyOrdered - (int)$qtyReturned - (int)$qtyCanceled;
-
-                        $subPayloadLineDetail = $subPayloadLineDetails->getEmptyLineDetail();
-                        $this->_buildLineDetail($subPayloadLineDetail, $orderItem, $quaduple, $trueDiff, 0);
-                        $subPayloadLineDetails->offsetSet($subPayloadLineDetail);
-
-			if( $trueDiff !== 0 )
-			{
-				if( (int)$qtyReturned !== 0 )
-				{
-					$subPayloadLineDetail = $subPayloadLineDetails->getEmptyLineDetail();
-                        		$this->_buildLineDetail($subPayloadLineDetail, $orderItem, $quaduple, $qtyReturned, 3);
-                        		$subPayloadLineDetails->offsetSet($subPayloadLineDetail);
-				}
+                 	if( (int)$diff !== 0 )
+                 	{
+                 		$subPayloadLineDetail = $subPayloadLineDetails->getEmptyLineDetail();
+                        	$this->_buildLineDetail($subPayloadLineDetail, $orderItem, $quaduple, $diff, 0);
+                        	$subPayloadLineDetails->offsetSet($subPayloadLineDetail);
 
 				if( (int)$qtyCanceled !== 0 )
                         	{
-                                	$subPayloadLineDetail = $subPayloadLineDetails->getEmptyLineDetail();
+                        		$subPayloadLineDetail = $subPayloadLineDetails->getEmptyLineDetail();
                                 	$this->_buildLineDetail($subPayloadLineDetail, $orderItem, $quaduple, $qtyCanceled, 2);
                                 	$subPayloadLineDetails->offsetSet($subPayloadLineDetail);
                         	}
-			}
-		}
-	    } else {
-		 $quaduple = array( 'tracking_number' => '', 'carrier_code' => '', 'delivery_method' => '', 'shipacount' => '');
-                 $diff = (int)$qtyOrdered - (int)$qtyShipped - (int)$qtyCanceled - (int)$qtyReturned;
 
-                 if( (int)$diff !== 0 )
-                 {
-                 	$subPayloadLineDetail = $subPayloadLineDetails->getEmptyLineDetail();
-                        $this->_buildLineDetail($subPayloadLineDetail, $orderItem, $quaduple, $diff, 0);
-                        $subPayloadLineDetails->offsetSet($subPayloadLineDetail);
-
-			if( (int)$qtyCanceled !== 0 )
-                        {
-                        	$subPayloadLineDetail = $subPayloadLineDetails->getEmptyLineDetail();
-                                $this->_buildLineDetail($subPayloadLineDetail, $orderItem, $quaduple, $qtyCanceled, 2);
-                                $subPayloadLineDetails->offsetSet($subPayloadLineDetail);
-                        }
-
-                        if( (int)$qtyReturned !== 0 )
-                        {
-                        	$subPayloadLineDetail = $subPayloadLineDetails->getEmptyLineDetail();
-                                $this->_buildLineDetail($subPayloadLineDetail, $orderItem, $quaduple, $qtyReturned, 3);
-                                $subPayloadLineDetails->offsetSet($subPayloadLineDetail);
-                        }
-                 }
+                        	if( (int)$qtyReturned !== 0 )
+                        	{
+                        		$subPayloadLineDetail = $subPayloadLineDetails->getEmptyLineDetail();
+                                	$this->_buildLineDetail($subPayloadLineDetail, $orderItem, $quaduple, $qtyReturned, 3);
+                                	$subPayloadLineDetails->offsetSet($subPayloadLineDetail);
+                        	}
+                 	}
+	    	}
 	    }
 	}
         return $this;
