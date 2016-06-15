@@ -45,9 +45,9 @@ class Radial_RiskService_Sdk_Line_Detail
 			'setItemStatus' => 'string(x:ItemStatus)',
 		);
 		$this->_optionalExtractionPaths = array(
-			'setTrackingNumber' => 'string(x:TrackingNumber)',
-			'setShippingVendorCode' => 'string(x:ShippingVendorCode)',
-			'setDeliveryMethod' => 'string(x:DeliveryMethod)',
+			'setTrackingNumber' => 'x:TrackingNumber',
+			'setShippingVendorCode' => 'x:ShippingVendorCode',
+			'setDeliveryMethod' => 'x:DeliveryMethod',
 		);
 		$this->_dateTimeExtractionPaths = array(
                 	'setShipScheduledDate' => 'string(x:ShipScheduledDate)',

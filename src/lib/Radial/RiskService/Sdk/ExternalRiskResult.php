@@ -29,9 +29,9 @@ class Radial_RiskService_Sdk_ExternalRiskResult
 	{
 		parent::__construct($initParams);
 		$this->_optionalExtractionPaths = array(
-			'setScore' => 'string(x:Score)',
-			'setCode'  => 'string(x:Code)',
-			'setSource' => 'string(x:Source)',
+			'setScore' => 'x:Score',
+			'setCode'  => 'x:Code',
+			'setSource' => 'x:Source',
 		);
 	}
 
