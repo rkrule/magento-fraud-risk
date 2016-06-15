@@ -918,6 +918,7 @@ class Radial_Eb2cFraud_Model_Build_Request
      */
     protected function _buildHttpHeaders(Radial_RiskService_Sdk_Http_IHeaders $subPayloadHttpHeaders)
     {
+	 $httpHeaderZend = array();
 	 $httpHeaderZend = array(
                 array( 'name' => 'host', 'message' => $this->_httpHelper->getHttpHost()),
                 array( 'name' => 'origin', 'message' => $this->_httpHelper->getHttpOrigin()),

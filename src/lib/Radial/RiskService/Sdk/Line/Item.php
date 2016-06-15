@@ -54,7 +54,7 @@ class Radial_RiskService_Sdk_Line_Item
 			'setQuantity' => 'number(x:Quantity)',
 		);
 		$this->_optionalExtractionPaths = array(
-			'setUnitCost' => 'number(x:UnitCostAmount)',
+			'setUnitCost' => 'x:UnitCostAmount',
 			'setProductName' => 'x:ProductName',
 			'setDescription' => 'x:ProductDescription',
 			'setUnitWeight' =>  'x:UnitWeight',

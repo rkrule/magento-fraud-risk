@@ -49,7 +49,7 @@ class Radial_RiskService_Sdk_Order
 			'setOrderId' => 'string(x:OrderId)',
 		);
         $this->_optionalExtractionPaths = array (
-            'setPromoCode' => 'string(x:PromoCode)',
+            'setPromoCode' => 'x:PromoCode',
         );
 		$this->_subpayloadExtractionPaths = array(
             'setCustomerList' => 'x:CustomerList',

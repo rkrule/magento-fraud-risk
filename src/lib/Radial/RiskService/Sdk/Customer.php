@@ -40,7 +40,7 @@ class Radial_RiskService_Sdk_Customer
 	    'setMemberLoggedIn' => 'string(x:MemberLoggedIn)',
         );
         $this->_optionalExtractionPaths = array (
-            'setEmail' => 'string(x:PromoCode)',
+            'setEmail' => 'x:Email',
         );
     	$this->_subpayloadExtractionPaths = array(
 	    'setPersonName' => 'x:PersonName',
