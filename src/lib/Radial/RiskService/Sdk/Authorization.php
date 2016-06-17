@@ -30,8 +30,8 @@ class Radial_RiskService_Sdk_Authorization
 		$this->_optionalExtractionPaths = array(
 			'setCode' =>	 'x:Code',
 		);
-        	$this->_extractionPaths = array (
-            		'setDecline' => 'boolean(x:Decline)',
+        	$this->_booleanExtractionPaths = array (
+            		'setDecline' => 'string(x:Decline)',
         	);
 	}
 

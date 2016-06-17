@@ -335,8 +335,12 @@ class Radial_Eb2cFraud_Model_Risk_Order
 
         foreach( $objectCollection as $object )
         {
-		$xml = simplexml_load_string($object->getMessageContent());
-                if( strcmp($xml->getName(), "RiskOrderConfirmationRequest") === 0)
+		$this->payloadXml = null;
+                $apiConfig = null;
+                $this->_request = $this->_getNewSdkInstance('Radial_RiskService_Sdk_Request');
+                $this->_OCrequest = $this->_getNewSdkInstance('Radial_RiskService_Sdk_OrderConfirmationRequest');
+
+                if( strcmp($object->getEventName(), "order_confirmation_request") === 0)
                 {
 			$this->_payloadXml = $this->_OCrequest->deserialize($object->getMessageContent());
                 	$apiConfig = $this->_setupApiConfig($this->_payloadXml, $this->_getNewOCREmptyResponse());

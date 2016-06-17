@@ -34,6 +34,10 @@ class Radial_RiskService_Sdk_ShoppingSession
 	    'setReturnCustomer' => 'boolean(x:ReturnCustomer)',
 	    'setItemsRemoved'     => 'boolean(x:ItemsRemoved)',
         );
+	$this->_booleanExtractionPaths = array(
+	    'setReturnCustomer' => 'string(x:ReturnCustomer)',
+            'setItemsRemoved'     => 'string(x:ItemsRemoved)',
+	);
     }
 
     /**
