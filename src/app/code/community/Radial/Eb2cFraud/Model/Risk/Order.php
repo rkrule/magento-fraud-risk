@@ -52,7 +52,7 @@ class Radial_Eb2cFraud_Model_Risk_Order
 			$this->_nullCoalesce($initParams, 'http_helper', Mage::helper('radial_eb2cfraud/http')),
 		        $this->_nullCoalesce($initParams, 'request', $this->_getNewSdkInstance('Radial_RiskService_Sdk_Request')),
 			$this->_nullCoalesce($initParams, 'config', Mage::helper('radial_eb2cfraud/config')),
-			$this->_nullCoalesce($initParams, 'request', $this->_getNewSdkInstance('Radial_RiskService_Sdk_Response')),
+			$this->_nullCoalesce($initParams, 'response', $this->_getNewSdkInstance('Radial_RiskService_Sdk_Response')),
 			$this->_nullCoalesce($initParams, 'logger', Mage::helper('ebayenterprise_magelog')),
 			$this->_nullCoalesce($initParams, 'context', Mage::helper('ebayenterprise_magelog/context')),
 			$this->_nullCoalesce($initParams, 'ocrequest', $this->_getNewSdkInstance('Radial_RiskService_Sdk_OrderConfirmationRequest'))
@@ -340,19 +340,19 @@ class Radial_Eb2cFraud_Model_Risk_Order
                 $this->_request = $this->_getNewSdkInstance('Radial_RiskService_Sdk_Request');
                 $this->_OCrequest = $this->_getNewSdkInstance('Radial_RiskService_Sdk_OrderConfirmationRequest');
 
-                if( strcmp($object->getEventName(), "order_confirmation_request") === 0)
-                {
-			$this->_payloadXml = $this->_OCrequest->deserialize($object->getMessageContent());
-                	$apiConfig = $this->_setupApiConfig($this->_payloadXml, $this->_getNewOCREmptyResponse());
-		} else {
-			$this->_payloadXml = $this->_request->deserialize($object->getMessageContent());
-                        $apiConfig = $this->_setupApiConfig($this->_payloadXml, $this->_getNewEmptyResponse());
-                }
-
 		try
 		{
 			if ( $object->getDeliveryStatus() < $this->_config->getMaxRetries())
 			{
+				if( strcmp($object->getEventName(), "order_confirmation_request") === 0)
+                		{
+                        		$this->_payloadXml = $this->_OCrequest->deserialize($object->getMessageContent());
+                        		$apiConfig = $this->_setupApiConfig($this->_payloadXml, $this->_getNewOCREmptyResponse());
+                		} else {
+                        		$this->_payloadXml = $this->_request->deserialize($object->getMessageContent());
+                        		$apiConfig = $this->_setupApiConfig($this->_payloadXml, $this->_getNewEmptyResponse());
+                		}
+
         			$response = $this->_sendRequest($this->_getApi($apiConfig), $order, $object->getMessageContent(), 1 );
 				if( $response )
 				{
