@@ -33,15 +33,13 @@ class Radial_RiskService_Sdk_Server_Info
 		parent::__construct($initParams);
 		$this->_extractionPaths = array(
 			'setTZOffset' => 'number(x:TZOffset)',
+			'setDSTActive' => 'boolean(x:DSTActive)',
 		);
 		$this->_dateTimeExtractionPaths = array(
                         'setTime' => 'string(x:Time)',
                 );
 		$this->_optionalExtractionPaths = array(
 			'setTZOffsetRaw' => 'x:TZOffsetRaw',
-		);
-		$this->_booleanExtractionPaths = array(
-			'setDSTActive' => 'string(x:DSTActive)',
 		);
 	}
 
