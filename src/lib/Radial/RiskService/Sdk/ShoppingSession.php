@@ -31,8 +31,6 @@ class Radial_RiskService_Sdk_ShoppingSession
         parent::__construct($initParams);
         $this->_extractionPaths = array(
             'setTimeOnSite' => 'number(x:TimeOnSite)',
-	    'setReturnCustomer' => 'boolean(x:ReturnCustomer)',
-	    'setItemsRemoved'     => 'boolean(x:ItemsRemoved)',
         );
 	$this->_booleanExtractionPaths = array(
 	    'setReturnCustomer' => 'string(x:ReturnCustomer)',
