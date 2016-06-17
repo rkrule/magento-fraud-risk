@@ -38,7 +38,7 @@ class Radial_RiskService_Sdk_Server_Info
 		$this->_dateTimeExtractionPaths = array(
                         'setTime' => 'string(x:Time)',
                 );
-		$this->_optionalExtractionPaths = array (
+		$this->_optionalExtractionPaths = array(
 			'setTZOffsetRaw' => 'x:TZOffsetRaw',
 		);
 	}
