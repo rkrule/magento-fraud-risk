@@ -333,7 +333,7 @@ class Radial_RiskService_Sdk_Payment
         protected function _serializeAccountID()
         {
                 $isToken = $this->getIsToken();
-                $isToken = !is_null($isToken) ? $isToken : false;
+                $isToken = !is_null($isToken) ? "true" : "false";
                 $accountID = $this->getAccountID();
                 return $accountID ? "<AccountID isToken=\"{$isToken}\">{$accountID}</AccountID>" : '';
         }
