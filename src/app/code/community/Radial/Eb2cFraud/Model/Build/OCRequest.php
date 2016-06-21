@@ -136,35 +136,27 @@ class Radial_Eb2cFraud_Model_Build_OCRequest
 		$qtyShipped = $orderItem->getQtyShipped();
 		$qtyOrdered = $orderItem->getQtyOrdered();
 
-		if( $qtyCanceled > 0 )
-		{
-			$canceledItems = 1;
-		}		
-
-		if( $qtyReturned > 0 )
-		{
-			$returnedItems = 1;
-		}
-
-		if( $qtyRefunded > 0 )
-		{
-			$refundedItems = 1;
-		}
-
-		if( $qtyInvoiced > 0 )
-		{
-			$invoicedItems = 1;
-		}
-
 		$shippedItems += $qtyShipped;
-		$orderedItems += $qtyOrdered;
+                $orderedItems += $qtyOrdered;
+                $canceledItems += $qtyCanceled;
+                $returnedItems += $qtyReturned;
+                $refundedItems += $qtyRefunded;
+                $invoicedItems += $qtyInvoiced;
 	     }
 	}
 			
 	if( $canceledItems && !$returnedItems && !$refundedItems)
 	{
 		$subPayloadOrder->setConfirmationType("CANCEL");
-        	$subPayloadOrder->setOrderStatus("IN_PROCESS");
+	
+		//Find out how many invoiced only items are left.
+                $diff = (int)$invoicedItems -(int)$shippedItems;
+                if($diff)
+                {
+                        $subPayloadOrder->setOrderStatus("IN_PROCESS");
+                } else {
+                        $subPayloadOrder->setOrderStatus("COMPLETED");
+                }
 	} elseif ($canceledItems && $returnedItems && !$refundedItems) {
 		$subPayloadOrder->setConfirmationType("RETURN PROCESSED");
                 $subPayloadOrder->setOrderStatus("COMPLETED");
