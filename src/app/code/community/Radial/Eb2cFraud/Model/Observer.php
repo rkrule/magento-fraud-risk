@@ -202,7 +202,7 @@ class Radial_Eb2cFraud_Model_Observer extends Radial_Eb2cFraud_Model_Abstract
 
                 	$order->save();
             	} else {
-			$order->setState($state, $status, $comment, false);
+			$order->addStatusHistoryComment($comment);
 			$order->save();
 		}
 	    }
