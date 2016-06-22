@@ -320,6 +320,23 @@ abstract class Radial_RiskService_Sdk_Payload
 		return sprintf('<%s>%s</%1$s>', $nodeName, $this->xmlEncode($this->_helper->escapeHtml($value)));
 	}
 
+	/**
+         * Serialize the boolean value as an xml element with the given node name.
+         *
+         * @param  string
+         * @param  mixed
+         * @return string
+         */
+	protected function _serializeBooleanNode($nodeName, $value)
+	{
+		if(!$this->_helper->convertStringToBoolean($value))
+		{
+			return sprintf('<%s>0</%1$s>', $nodeName);
+		} else {
+			return sprintf('<%s>%s</%1$s>', $nodeName, $this->_helper->convertStringToBoolean($value));
+		}
+	}
+
 	protected function _serializeAmountNode($nodeName, $amount, $currencyCode)
 	{
 		if( $currencyCode)

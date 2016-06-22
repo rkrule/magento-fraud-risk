@@ -125,7 +125,7 @@ class Radial_RiskService_Sdk_Customer
 	       . $this->_serializeOptionalValue('Email', $this->getEmail())
 	       . $this->getTelephone()->serialize()
 	       . $this->getAddress()->serialize()
-               . $this->_serializeNode('MemberLoggedIn', $this->getMemberLoggedIn())
+               . $this->_serializeBooleanNode('MemberLoggedIn', $this->getMemberLoggedIn())
                . $this->_serializeNode('CurrencyCode', $this->getCurrencyCode());
     }
 }

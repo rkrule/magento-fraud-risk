@@ -98,7 +98,7 @@ class Radial_RiskService_Sdk_Authorization
 	 */
 	protected function _serializeContents()
 	{
-		return $this->_serializeNode('Decline', $this->getDecline())
+		return $this->_serializeBooleanNode('Decline', $this->getDecline())
 			. $this->_serializeOptionalValue('Code', $this->getCode());
 	}
 }

@@ -760,7 +760,7 @@ class Radial_Eb2cFraud_Model_Build_Request
         $paymentAdapterType = $this->_getPaymentAdapter()->getAdapter();
         $this->_buildPaymentCard($subPayloadPayment->getPaymentCard(), $paymentAdapterType);
 
-	if( $orderPayment->getCcLast4())
+	if( $orderPayment->getCcType())
 	{
 		$this->_buildAuthorization($subPayloadPayment->getAuthorization());
 	}            
@@ -780,7 +780,7 @@ class Radial_Eb2cFraud_Model_Build_Request
 	    ->setAccountID($paymentAdapterType->getExtractPaymentAccountUniqueId())
             ->setItemListRPH($itemcount);
         
-        if( $orderPayment->getCcLast4())
+        if( $orderPayment->getCcType())
         {
             $subPayloadPayment->setTenderClass("CreditCard");
         } else {

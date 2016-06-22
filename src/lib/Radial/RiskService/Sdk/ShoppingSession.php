@@ -117,7 +117,7 @@ class Radial_RiskService_Sdk_ShoppingSession
     protected function _serializeContents()
     {
         return $this->_serializeNode('TimeOnSite', $this->getTimeOnSite())
-        . $this->_serializeNode('ReturnCustomer', $this->getReturnCustomer())
-        . $this->_serializeNode('ItemsRemoved', $this->getItemsRemoved());
+        . $this->_serializeBooleanNode('ReturnCustomer', $this->getReturnCustomer())
+        . $this->_serializeBooleanNode('ItemsRemoved', $this->getItemsRemoved());
     }
 }
