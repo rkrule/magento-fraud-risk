@@ -260,10 +260,14 @@ class Radial_Eb2cFraud_Model_Build_Request
 	$customerID = $this->_order->getCustomerId();
 	$customerData = Mage::getModel('customer/customer')->load($customerID); // then load customer by customer id
 
-        $subPayloadCustomer = $subPayloadCustomerList->getEmptyCustomer();
-        $this->_buildCustomer($subPayloadCustomer, $customerData);
-        $subPayloadCustomerList->offsetSet($subPayloadCustomer);
-        
+	$shipments = $this->_getOrderShippingData();
+	
+	foreach ($shipments as $shipment) {
+        	$subPayloadCustomer = $subPayloadCustomerList->getEmptyCustomer();
+        	$this->_buildCustomer($subPayloadCustomer, $customerData, $shipment['address']);
+        	$subPayloadCustomerList->offsetSet($subPayloadCustomer);
+	}        
+
         return $this;
     }
 
@@ -604,7 +608,8 @@ class Radial_Eb2cFraud_Model_Build_Request
      */
     protected function _buildCustomer(
         Radial_RiskService_Sdk_ICustomer $subPayloadCustomer,
-        Mage_Customer_Model_Customer $orderCustomer
+        Mage_Customer_Model_Customer $orderCustomer,
+	Mage_Customer_Model_Address_Abstract $orderShippingAddress
     )
     {
 	$this->_buildPersonName($subPayloadCustomer->getPersonName(), $this->_order->getBillingAddress()); 
@@ -620,7 +625,7 @@ class Radial_Eb2cFraud_Model_Build_Request
 	{
 		$this->_buildAddress($subPayloadCustomer->getAddress(), $this->_order->getBillingAddress());
 	} else {
-        	$this->_buildAddress($subPayloadCustomer->getAddress(), $this->_order->getShippingAddress());
+        	$this->_buildAddress($subPayloadCustomer->getAddress(), $orderShippingAddress);
 	}
 
 	// MemberLoggedIn
