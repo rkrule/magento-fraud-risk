@@ -134,6 +134,6 @@ class Radial_RiskService_Sdk_Server_Info
 	{
 		return $this->_serializeOptionalDateValue('Time', 'c', $this->getTime()) 
 			. $this->_serializeNode('TZOffset', $this->getTZOffset())
-	                . $this->_serializeNode('DSTActive', $this->getDSTActive());
+	                . $this->_serializeBooleanNode('DSTActive', $this->getDSTActive());
 	}
 }

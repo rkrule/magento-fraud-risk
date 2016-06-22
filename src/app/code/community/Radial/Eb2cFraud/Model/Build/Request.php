@@ -543,7 +543,7 @@ class Radial_Eb2cFraud_Model_Build_Request
 	{
 		$subPayloadServerInfo->setDSTActive("true");
 	} else {
-		$subPayloadServerInfo->setDSTActive(0);
+		$subPayloadServerInfo->setDSTActive("false");
 	}
 
         return $this;
@@ -628,7 +628,7 @@ class Radial_Eb2cFraud_Model_Build_Request
 	if($sessionCustomer->isLoggedIn()) {
 		$subPayloadCustomer->setMemberLoggedIn("true");
 	} else {
-		$subPayloadCustomer->setMemberLoggedIn(0);
+		$subPayloadCustomer->setMemberLoggedIn("false");
 	}
 
 	$subPayloadCustomer->setCurrencyCode($this->_order->getBaseCurrencyCode());
@@ -845,7 +845,7 @@ class Radial_Eb2cFraud_Model_Build_Request
 	} else {
 		if( strcmp($paymentAdditional['response_code'], "APPROVED") === 0 )
         	{
-			$subPayloadAuthorization->setDecline(0);
+			$subPayloadAuthorization->setDecline("false");
 			$subPayloadAuthorization->setCode($paymentAdditional['bank_authorization_code']);
 		} else {
 			$subPayloadAuthorization->setDecline("true");
@@ -879,7 +879,7 @@ class Radial_Eb2cFraud_Model_Build_Request
 	{
 		$subPayloadShoppingSession->setReturnCustomer("true");
 	} else {
-		$subPayloadShoppingSession->setReturnCustomer(0);
+		$subPayloadShoppingSession->setReturnCustomer("false");
 	} 
 
 	// ADD REMOVED ITEM FROM CART ATTRIBUTE	
@@ -889,7 +889,7 @@ class Radial_Eb2cFraud_Model_Build_Request
 	{
 		$subPayloadShoppingSession->setItemsRemoved("true");
 	} else {
-		$subPayloadShoppingSession->setItemsRemoved(0);
+		$subPayloadShoppingSession->setItemsRemoved("false");
 	}
 		
         return $this;
