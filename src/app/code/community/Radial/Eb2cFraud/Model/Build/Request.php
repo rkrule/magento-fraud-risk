@@ -612,30 +612,29 @@ class Radial_Eb2cFraud_Model_Build_Request
      */
     protected function _buildCustomer(
         Radial_RiskService_Sdk_ICustomer $subPayloadCustomer,
-        Mage_Customer_Model_Customer $orderCustomer,
-	Mage_Customer_Model_Address_Abstract $orderShippingAddress
+        Mage_Customer_Model_Customer $orderCustomer
     )
     {
-	$this->_buildPersonName($subPayloadCustomer->getPersonName(), $this->_order->getBillingAddress()); 
-	if( $this->_hasVirtualItems())
-	{
-		$subPayloadCustomer->setEmail($this->_order->getCustomerEmail());
-	}
-	$this->_buildTelephone($subPayloadCustomer->getTelephone(), $this->_order->getBillingAddress());
-	if( $this->_order->getIsVirtual() )
-	{
-		$this->_buildAddress($subPayloadCustomer->getAddress(), $this->_order->getBillingAddress());
-	} else {
-        	$this->_buildAddress($subPayloadCustomer->getAddress(), $orderShippingAddress);
-	}
-	// MemberLoggedIn
-	$sessionCustomer = Mage::getSingleton("customer/session");
-	if($sessionCustomer->isLoggedIn()) {
-		$subPayloadCustomer->setMemberLoggedIn("true");
-	} else {
-		$subPayloadCustomer->setMemberLoggedIn("false");
-	}
-	$subPayloadCustomer->setCurrencyCode($this->_order->getBaseCurrencyCode());
+        $this->_buildPersonName($subPayloadCustomer->getPersonName(), $this->_order->getBillingAddress());
+        if( $this->_hasVirtualItems())
+        {
+                $subPayloadCustomer->setEmail($this->_order->getCustomerEmail());
+        }
+        $this->_buildTelephone($subPayloadCustomer->getTelephone(), $this->_order->getBillingAddress());
+        if( $this->_order->getIsVirtual() )
+        {
+                $this->_buildAddress($subPayloadCustomer->getAddress(), $this->_order->getBillingAddress());
+        } else {
+                $this->_buildAddress($subPayloadCustomer->getAddress(), $this->_order->getShippingAddress());
+        }
+        // MemberLoggedIn
+        $sessionCustomer = Mage::getSingleton("customer/session");
+        if($sessionCustomer->isLoggedIn()) {
+                $subPayloadCustomer->setMemberLoggedIn("true");
+        } else {
+                $subPayloadCustomer->setMemberLoggedIn("false");
+        }
+        $subPayloadCustomer->setCurrencyCode($this->_order->getBaseCurrencyCode());
         return $this;
     }
     /**
