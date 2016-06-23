@@ -23,8 +23,8 @@ interface Radial_RiskService_Sdk_IOrder extends Radial_RiskService_Sdk_IPayload
 	const LINE_ITEMS_MODEL ='Radial_RiskService_Sdk_Line_Items';
 	const PAYMENTS_MODEL ='Radial_RiskService_Sdk_Payments';
 	const TOTAL_MODEL ='Radial_RiskService_Sdk_Total';
-    const SHOPPING_SESSION_MODEL = 'Radial_RiskService_Sdk_ShoppingSession';
-    const CUSTOMER_LIST_MODEL = 'Radial_RiskService_Sdk_Customer_List';
+        const SHOPPING_SESSION_MODEL = 'Radial_RiskService_Sdk_ShoppingSession';
+        const CUSTOMER_LIST_MODEL = 'Radial_RiskService_Sdk_Customer_List';
 	const EXTERNAL_RISK_RESULTS_MODEL = 'Radial_RiskService_Sdk_ExternalRiskResults';
 
 	/**

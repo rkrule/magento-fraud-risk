@@ -25,17 +25,21 @@ class Radial_RiskService_Sdk_Request
     protected $_serverInfo;
     /** @var Radial_RiskService_Sdk_Device_Info */
     protected $_deviceInfo;
+	/** @var Radial_RiskService_Sdk_CustomProperties */
+	protected $_customProperties;
 
 	public function __construct(array $initParams=array())
 	{
 		parent::__construct($initParams);
 		$this->setOrder($this->_buildPayloadForModel(static::ORDER_MODEL));
-        $this->setServerInfo($this->_buildPayloadForModel(static::SERVER_INFO_MODEL));
-        $this->setDeviceInfo($this->_buildPayloadForModel(static::DEVICE_INFO_MODEL));
+        	$this->setServerInfo($this->_buildPayloadForModel(static::SERVER_INFO_MODEL));
+        	$this->setDeviceInfo($this->_buildPayloadForModel(static::DEVICE_INFO_MODEL));
+		$this->setCustomProperties($this->_buildPayloadForModel(static::CUSTOM_PROPERTIES_MODEL));
 		$this->_subpayloadExtractionPaths = array(
 			'setOrder' => 'x:Order',
-            'setServerInfo' => 'x:ServerInfo',
-            'setDeviceInfo' => 'x:DeviceInfo',
+            		'setServerInfo' => 'x:ServerInfo',
+            		'setDeviceInfo' => 'x:DeviceInfo',
+			'setCustomProperties' => 'x:CustomProperties',
 		);
 	}
 
@@ -90,9 +94,27 @@ class Radial_RiskService_Sdk_Request
         return $this;
     }
 
-	/**
-	 * @see Radial_RiskService_Sdk_Payload_Top::_getSchemaFile()
-	 */
+    /**
+     * @return Radial_RiskService_Sdk_ICustomProperties
+     */
+    public function getCustomProperties()
+    {
+	return $this->_customProperties;
+    }
+
+    /**
+     * @param Radial_RiskService_Sdk_ICustomProperties
+     * @return  self
+     */
+    public function setCustomProperties(Radial_RiskService_Sdk_ICustomProperties $customProperties)
+    {
+	$this->_customProperties = $customProperties;
+	return $this;
+    }
+
+    /**
+     * @see Radial_RiskService_Sdk_Payload_Top::_getSchemaFile()
+     */
 	protected function _getSchemaFile()
 	{
 		return $this->_getSchemaDir() . self::XSD;
@@ -121,6 +143,7 @@ class Radial_RiskService_Sdk_Request
 	{
 		return $this->getOrder()->serialize()
 			. $this->getServerInfo()->serialize()
-            . $this->getDeviceInfo()->serialize();
+            		. $this->getDeviceInfo()->serialize()
+			. $this->getCustomProperties()->serialize();
 	}
 }

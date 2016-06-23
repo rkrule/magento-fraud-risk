@@ -25,6 +25,8 @@ abstract class Radial_RiskService_Sdk_Iterable
 	protected $_includeIfEmpty = false;
 	/** @var bool */
 	protected $_buildRootNode = true;
+	/** @var array - used only for root attributes of iterables **/
+	protected $_extractionPaths = array();
 
 	/**
 	 * @param array $initParams Must have this key:
@@ -78,11 +80,20 @@ abstract class Radial_RiskService_Sdk_Iterable
 	 */
 	public function serialize()
 	{
-		$format = $this->_buildRootNode ? '<%1$s>%2$s</%1$s>' : '%2$s';
-		$serializedSubpayloads = $this->_serializeContents();
-		return ($this->_includeIfEmpty || $serializedSubpayloads)
-			? sprintf($format, $this->_getRootNodeName(), $serializedSubpayloads)
-			: '';
+		if( !empty($this->_getRootAttributes()))
+		{
+			$format = $this->_buildRootNode ? '<%1$s %2$s>%3$s</%1$s>' : '%3$s';
+			$serializedSubpayloads = $this->_serializeContents();
+                	return ($this->_includeIfEmpty || $serializedSubpayloads)
+                        	? sprintf($format, $this->_getRootNodeName(), $this->_serializeRootAttributes(), $serializedSubpayloads)
+                        	: '';
+		} else {
+			$format = $this->_buildRootNode ? '<%1$s>%2$s</%1$s>' : '%2$s';
+                        $serializedSubpayloads = $this->_serializeContents();
+                        return ($this->_includeIfEmpty || $serializedSubpayloads)
+                                ? sprintf($format, $this->_getRootNodeName(), $serializedSubpayloads)
+                                : '';
+		}
 	}
 
 	/**
@@ -91,6 +102,7 @@ abstract class Radial_RiskService_Sdk_Iterable
 	public function deserialize($serializedData)
 	{
 		$xpath = $this->_helper->getPayloadAsXPath($serializedData, $this->_getXmlNamespace());
+		$this->_deserializeExtractionPaths($xpath);
 		foreach ($xpath->query($this->_getSubpayloadXPath()) as $subpayloadNode) {
 			$pl = $this->_getNewSubpayload()->deserialize($subpayloadNode->C14N());
 			$this->offsetSet($pl);
@@ -149,4 +161,41 @@ abstract class Radial_RiskService_Sdk_Iterable
 	 * @return string
 	 */
 	abstract protected function _getRootNodeName();
+
+        /**
+         * Serialize Root Attributes
+         *
+         * @return string
+         */
+        protected function _serializeRootAttributes()
+        {
+                $rootAttributes = $this->_getRootAttributes();
+                $qualifyAttributes = function ($name) use ($rootAttributes) {
+                        return sprintf('%s="%s"', $name, $rootAttributes[$name]);
+                };
+                $qualifiedAttributes = array_map($qualifyAttributes, array_keys($rootAttributes));
+                return implode(' ', $qualifiedAttributes);
+        }
+
+	/**
+         * Name, value pairs of root attributes
+         *
+         * @return array
+         */
+        protected function _getRootAttributes()
+        {
+                return array();
+        }
+
+	/**
+         * @param  DOMXPath
+         * @return self
+         */
+        protected function _deserializeExtractionPaths(DOMXPath $xpath)
+        {
+                foreach ($this->_extractionPaths as $setter => $path) {
+                        $this->$setter($xpath->evaluate($path));
+                }
+                return $this;
+        }
 }
