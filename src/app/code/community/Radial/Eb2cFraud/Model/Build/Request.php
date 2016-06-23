@@ -14,7 +14,6 @@
  * @license     http://www.radial.com/files/pdf/Magento_Connect_Extensions_EULA_050714.pdf  Radial Magento Extensions End User License Agreement
  *
  */
-
 class Radial_Eb2cFraud_Model_Build_Request
     extends Radial_Eb2cFraud_Model_Abstract
     implements Radial_Eb2cFraud_Model_Build_IRequest
@@ -41,6 +40,8 @@ class Radial_Eb2cFraud_Model_Build_Request
     protected $_billingId;
     /** @var Radial_Core_Helper_Shipping */
     protected $_shippingHelper; 
+    /** order id array **/
+    protected $_orderIds;
 
     /**
      * @param array $initParams Must have this key:
@@ -54,6 +55,11 @@ class Radial_Eb2cFraud_Model_Build_Request
      */
     public function __construct(array $initParams=array())
     {
+	if( isset($initParams['order_ids']))
+	{
+		$this->_orderIds = $initParams['order_ids'];
+	}
+
         list($this->_request, $this->_order, $this->_quote, $this->_helper, $this->_httpHelper, $this->_product, $this->_config, $this->_service, $this->_shippingHelper) = $this->_checkTypes(
             $this->_nullCoalesce($initParams, 'request', $this->_getNewSdkInstance('Radial_RiskService_Sdk_Request')),
             $this->_nullCoalesce($initParams, 'order', $initParams['order']),
@@ -66,7 +72,6 @@ class Radial_Eb2cFraud_Model_Build_Request
 	    $this->_nullCoalesce($initParams, 'shipping_helper', Mage::helper('radial_core/shipping'))
         );
     }
-
     /**
      * Type hinting for self::__construct $initParams
      *
@@ -94,13 +99,11 @@ class Radial_Eb2cFraud_Model_Build_Request
     ) {
         return array($request, $order, $quote, $helper, $httpHelper, $product, $config, $service, $shippingHelper);
     }
-
     public function build()
     {
         $this->_buildRequest();
         return $this->_request;
     }
-
     /**
      * @return string | null
      */
@@ -109,7 +112,6 @@ class Radial_Eb2cFraud_Model_Build_Request
         $quote = $this->_quote->loadByIdWithoutStore($this->_order->getQuoteId());
         return $quote->getId() ? $this->_getPaymentCreatedDate($quote) : null;
     }
-
     /**
      * @param  Mage_Sales_Model_Quote
      * @return string | null
@@ -119,7 +121,6 @@ class Radial_Eb2cFraud_Model_Build_Request
         $payment = $quote->getPayment();
         return $payment ? $payment->getCreatedAt() : null;
     }
-
     /**
      * @return array
      */
@@ -128,7 +129,6 @@ class Radial_Eb2cFraud_Model_Build_Request
         $headers = $this->_service->getHttpHeaders();
         return $headers ? json_decode($headers, true) : array();
     }
-
     /**
      * @return string | null
      */
@@ -137,10 +137,18 @@ class Radial_Eb2cFraud_Model_Build_Request
         if (!$this->_shippingId) {
             $shippingAddress = $this->_order->getShippingAddress();
             $this->_shippingId = $shippingAddress ? $shippingAddress->getId() : null;
+
+	    if( $shippingAddress )
+	    {
+		if( !$shippingAddress->getId())
+		{
+			$this->_shippingId = $shippingAddress->getCustomerAddressId();
+		}
+	    }
+		
         }
         return $this->_shippingId;
     }
-
     /**
      * @return string | null
      */
@@ -151,7 +159,6 @@ class Radial_Eb2cFraud_Model_Build_Request
         }
         return $this->_billingId;
     }
-
     /**
      * @param  Mage_Core_Model_Abstract
      * @return string | null
@@ -161,7 +168,6 @@ class Radial_Eb2cFraud_Model_Build_Request
         $product = $this->_product->load($item->getProductId());
         return $product->getId() ? $this->_getCategoryName($product) : null;
     }
-
     /**
      * Get category collection.
      *
@@ -172,7 +178,6 @@ class Radial_Eb2cFraud_Model_Build_Request
         return Mage::getResourceModel('catalog/category_collection')
             ->addAttributeToSelect('name');
     }
-
     /**
      * @param  Mage_Core_Model_Abstract
      * @return string | null
@@ -195,7 +200,6 @@ class Radial_Eb2cFraud_Model_Build_Request
         }
         return $categoryName;
     }
-
     /**
      * @param string
      */
@@ -203,7 +207,6 @@ class Radial_Eb2cFraud_Model_Build_Request
     {
         return $categoryName ? ',' : '';
     }
-
     /**
      * @return self
      */
@@ -212,9 +215,14 @@ class Radial_Eb2cFraud_Model_Build_Request
         $this->_buildOrder($this->_request->getOrder());
 	$this->_buildServerInfo($this->_request->getServerInfo());
         $this->_buildDeviceInfo($this->_request->getDeviceInfo());
+
+	if( count($this->_orderIds) > 0 )
+	{
+		$this->_buildCustomProperties($this->_request->getCustomProperties());
+	}
+
         return $this;
     }
-
     /**
      * @param  Radial_RiskService_Sdk_IOrder
      * @return self
@@ -223,7 +231,6 @@ class Radial_Eb2cFraud_Model_Build_Request
     {
         $subPayloadOrder->setOrderId($this->_order->getIncrementId());
 	$subPayloadOrder->setPromoCode($this->_order->getCouponCode());	
-
 	$this->_buildCustomerList($subPayloadOrder->getCustomerList())
              ->_buildShippingList($subPayloadOrder->getShippingList())
              ->_buildLineItems($subPayloadOrder->getLineItems())
@@ -232,7 +239,6 @@ class Radial_Eb2cFraud_Model_Build_Request
              ->_buildTotalCost($subPayloadOrder->getTotalCost());
         return $this;
     }
-
     /**
      * @param Radial_RiskService_Sdk_ExternalRiskResults
      * @return self
@@ -240,17 +246,14 @@ class Radial_Eb2cFraud_Model_Build_Request
     protected function _buildExternalRiskResults(Radial_RiskService_Sdk_IExternalRiskResults $subPayloadExternalRiskResults)
     {
 	$paymentObj = $this->_order->getPayment();
-
 	if( isset($paymentObj->getAdditionalInformation()['response_code']))
         {
 		$subPayloadExternalRiskResult = $subPayloadExternalRiskResults->getEmptyExternalRiskResult();
 		$this->_buildExternalRiskResult($subPayloadExternalRiskResult, $paymentObj);
 		$subPayloadExternalRiskResults->offsetSet($subPayloadExternalRiskResult);
 	}
-
 	return $this;
     }
-
     /**
      * @param  Radial_RiskService_Sdk_Customer_IList
      * @return self
@@ -259,14 +262,12 @@ class Radial_Eb2cFraud_Model_Build_Request
     {
 	$customerID = $this->_order->getCustomerId();
 	$customerData = Mage::getModel('customer/customer')->load($customerID); // then load customer by customer id
-
         $subPayloadCustomer = $subPayloadCustomerList->getEmptyCustomer();
         $this->_buildCustomer($subPayloadCustomer, $customerData);
         $subPayloadCustomerList->offsetSet($subPayloadCustomer);
         
         return $this;
     }
-
     /**
      * @param  Radial_RiskService_Sdk_Shipping_IList
      * @return self
@@ -281,7 +282,6 @@ class Radial_Eb2cFraud_Model_Build_Request
         }
         return $this;
     }
-
     /**
      * When the order is virtual simply return virtual shipment data otherwise
      * find out if the order has any items that are virtual to return a combination
@@ -296,7 +296,6 @@ class Radial_Eb2cFraud_Model_Build_Request
             ? $this->_getVirtualOrderShippingData()
             : $this->_getPhysicalVirtualShippingData();
     }
-
     /**
      * Determine if the order has an virtual items, if so,
      * simply return a combination of physical and virtual shipment
@@ -310,7 +309,6 @@ class Radial_Eb2cFraud_Model_Build_Request
             ? array_merge($this->_getPhysicalOrderShippingData(), $this->_getVirtualOrderShippingData())
             : $this->_getPhysicalOrderShippingData();
     }
-
     /**
      * Returns virtual shipment data.
      *
@@ -323,7 +321,6 @@ class Radial_Eb2cFraud_Model_Build_Request
             'address' => $this->_order->getBillingAddress(),
         ));
     }
-
     /**
      * Returns physical shipment data.
      *
@@ -336,7 +333,6 @@ class Radial_Eb2cFraud_Model_Build_Request
             'address' => $this->_order->getShippingAddress(),
         ));
     }
-
     /**
      * Returns true when the item is virtual otherwise false.
      *
@@ -347,7 +343,6 @@ class Radial_Eb2cFraud_Model_Build_Request
     {
         return ((int) $item->getIsVirtual() === 1);
     }
-
     /**
      * Returns true when the passed in type is a physical shipment type
      * otherwise false.
@@ -359,7 +354,6 @@ class Radial_Eb2cFraud_Model_Build_Request
     {
         return ($type !== static::PHYSICAL_SHIPMENT_TYPE);
     }
-
     /**
      * Returns true if any items in the order is virtual, otherwise,
      * return false.
@@ -377,7 +371,6 @@ class Radial_Eb2cFraud_Model_Build_Request
         }
         return $hasVirtual;
     }
-
     /**
      * Returns the billing id if the item is virtual otherwise returns
      * the shipping id.
@@ -389,7 +382,6 @@ class Radial_Eb2cFraud_Model_Build_Request
     {
         return $this->_isItemVirtual($item) ? $this->_getBillingId() : $this->_getShippingId();
     }
-
     /**
      * Returns the virtual shipping method when the types is a virtual shipment
      * otherwise returns the shipping method in the order.
@@ -403,7 +395,6 @@ class Radial_Eb2cFraud_Model_Build_Request
             ? static::VIRTUAL_SHIPPING_METHOD
             : $this->_order->getShippingMethod();
     }
-
     /**
      * @param  Radial_RiskService_Sdk_Line_IItems
      * @return self
@@ -420,7 +411,6 @@ class Radial_Eb2cFraud_Model_Build_Request
         }
         return $this;
     }
-
     /**
      * @param  Radial_RiskService_Sdk_ITotal
      * @return self
@@ -434,24 +424,19 @@ class Radial_Eb2cFraud_Model_Build_Request
         $subPayloadTotalCost->setCostTotals($subPayloadCostTotals);
        
 	$failedCc = Mage::getSingleton('core/session')->getCCAttempts() - 1;
-
         if($failedCc < 0 )
         {
                 $failedCc = 0;
         }
-
         $subPayloadTotalCost->setFailedCc($failedCc);
  
 	$orderBillingAddress = $this->_order->getBillingAddress();
         $orderPayment = $this->_order->getPayment();
-
         if ($orderBillingAddress && $orderPayment) {
             $this->_buildPayment($subPayloadTotalCost->getFormOfPayment(), $orderBillingAddress, $orderPayment);
         }
-
 	return $this;
     }
-
     /**
      * @param  Radial_RiskService_Sdk_Device_IInfo
      * @return self
@@ -459,28 +444,49 @@ class Radial_Eb2cFraud_Model_Build_Request
     protected function _buildDeviceInfo(Radial_RiskService_Sdk_Device_IInfo $subPayloadDeviceInfo)
     {
 	$sessionId = Mage::getSingleton('core/session')->getEncryptedSessionId();
-
 	$subPayloadDeviceInfo->setJSCData($this->_httpHelper->getJavaScriptFraudData());
 	$subPayloadDeviceInfo->setSessionID($sessionId);
 	$subPayloadDeviceInfo->setDeviceIP($this->getNewRemoteAddr());
 	$subPayloadDeviceInfo->setDeviceHostname(gethostbyaddr($this->getNewRemoteAddr()));
 	$this->_buildHttpHeaders($subPayloadDeviceInfo->getHttpHeaders());
 	$subPayloadDeviceInfo->setUserCookie($this->_httpHelper->getCookiesString());
-
         return $this;
+    }
+
+    /**
+     * @param  Radial_RiskService_Sdk_ICustomProperties
+     * @return self
+     */
+    protected function _buildCustomProperties(Radial_RiskService_Sdk_ICustomProperties $subPayloadCustomProperties)
+    {
+	$subPayloadCustomPropertyGroup = $subPayloadCustomProperties->getEmptyCustomPropertyGroup();
+	$subPayloadCustomPropertyGroup->setName("GSI_CUSTOM");
+        $this->_buildCustomProperty($subPayloadCustomPropertyGroup, "SPLIT_ORDER", "Y");
+	$this->_buildCustomProperty($subPayloadCustomPropertyGroup, "SPLIT_ORDER_REF_ORD_IDS", implode(',',$this->_orderIds));
+        $subPayloadCustomProperties->offsetSet($subPayloadCustomPropertyGroup);
+    }
+
+    /**
+     * @param  Radial_RiskService_Sdk_ICustomPropertyGroup, PropertyName, PropertyValue (String)
+     * @return self
+     */
+    protected function _buildCustomProperty(Radial_RiskService_Sdk_ICustomPropertyGroup $subPayloadCustomPropertyGroup, $propertyName, $propertyValue)
+    {
+	$subPayloadCustomProperty = $subPayloadCustomPropertyGroup->getEmptyCustomProperty();
+        $subPayloadCustomProperty->setName($propertyName);
+	$subPayloadCustomProperty->setStringValue($propertyValue);
+        $subPayloadCustomPropertyGroup->offsetSet($subPayloadCustomProperty);
     }
 
     private function getNewRemoteAddr()
     {
 	$remoteAddr = Mage::helper('core/http')->getRemoteAddr();
-
 	if( $this->ip_is_private($remoteAddr))
 	{
 		if(isset($_SERVER['HTTP_X_FORWARDED_FOR']))
         	{
         		$ip_array=array_values(array_filter(explode(',',$_SERVER['HTTP_X_FORWARDED_FOR'])));
                 	$remoteAddr = $ip_array[0];
-
                 	if(!$remoteAddr)
                 	{
                 		$remoteAddr = Mage::helper('core/http')->getRemoteAddr();
@@ -488,22 +494,18 @@ class Radial_Eb2cFraud_Model_Build_Request
          	} else {
          		$remoteAddr = Mage::helper('core/http')->getRemoteAddr();
          	}
-
 	 	return $remoteAddr;
     	}
     }
-
     private function ip_is_private($ip)
     {
         $privateAddresses = [ '10.0.0.0|10.255.255.255', '172.16.0.0|172.31.255.255', '192.168.0.0|192.168.255.255', '169.254.0.0|169.254.255.255', '127.0.0.0|127.255.255.255' ];
-
         $long_ip = ip2long($ip);
         if($long_ip != -1) 
 	{
             foreach($privateAddresses as $pri_addr)
             {
                 list($start, $end) = explode('|', $pri_addr);
-
                 // IF IS PRIVATE
                 if($long_ip >= ip2long($start) && $long_ip <= ip2long($end))
 		{
@@ -511,10 +513,8 @@ class Radial_Eb2cFraud_Model_Build_Request
 		}
             }
     	}
-
 	return false;
     }
-
     /**
      * @param  Radial_RiskService_Sdk_Server_IInfo
      * @return self
@@ -522,33 +522,25 @@ class Radial_Eb2cFraud_Model_Build_Request
     protected function _buildServerInfo(Radial_RiskService_Sdk_Server_IInfo $subPayloadServerInfo)
     {
 	$createdAt = $this->_order->getPayment()->getCreatedAt();
-
 	// SERVER INFO - TYPE
 	$subPayloadServerInfo->setTime($this->_helper->getNewDateTime($this->_getPaymentTransactionDate()));
-
 	$storeTimeZone = Mage::getStoreConfig('general/locale/timezone');
 	$offset = (timezone_offset_get(new DateTimeZone($storeTimeZone), new DateTime()) / 60) / 60;
-
 	$subPayloadServerInfo->setTZOffset(floatval($offset));
-
-	if( strtotime($this->_order->getCreatedAtStoreDate()) != time() )
+	if( strtotime($this->_order->getCreatedAt()) != time() )
 	{
 		$subPayloadServerInfo->setTZOffsetRaw(floatval($offset));
 	}
-
 	date_default_timezone_set($storeTimeZone);
 	$bool = date('I'); // this will be 1 in DST or else 0
-
 	if( $bool )
 	{
 		$subPayloadServerInfo->setDSTActive("true");
 	} else {
 		$subPayloadServerInfo->setDSTActive("false");
 	}
-
         return $this;
     }
-
     /**
      * @param  Radial_RiskService_Sdk_IShipment
      * @param  Mage_Customer_Model_Address_Abstract
@@ -562,40 +554,55 @@ class Radial_Eb2cFraud_Model_Build_Request
     )
     {
 		$shipping = $this->_order->getShippingAddress();
+		$shippingId = "";
+		
+		if( $shipping )
+		{
+			if( !$shipping->getId())
+			{
+				$shippingId = $shipping->getCustomerAddressId();
+			} else {
+				$shippingId = $shipping->getId();
+			}
+		} 	
+		
+		$orderShippingAddressId = "";
+	
+		if( !$orderShippingAddress->getId())
+                {
+			$orderShippingAddressId = $orderShippingAddress->getCustomerAddressId();
+                } else {
+                	$orderShippingAddressId = $orderShippingAddress->getId();
+		}
 
 		$shippingMethod = $this->_shippingHelper->getUsableMethod($orderShippingAddress);
-
 		if( strcmp($type, 'virtual') === 0 )
                 {
 			if( $shipping )
 			{
-				$subPayloadShipment->setAddressId($shipping->getId())
-        			   ->setShipmentId($orderShippingAddress->getId());
+				$subPayloadShipment->setAddressId($shippingId)
+        			   ->setShipmentId($orderShippingAddressId);
 			} else {
-				$subPayloadShipment->setAddressId($orderShippingAddress->getId())
-                                   ->setShipmentId($orderShippingAddress->getId());
+				$subPayloadShipment->setAddressId($orderShippingAddressId)
+                                   ->setShipmentId($orderShippingAddressId);
 			}
 		} else {
-			$subPayloadShipment->setAddressId($orderShippingAddress->getId())
-                           ->setShipmentId($orderShippingAddress->getId());
+			$subPayloadShipment->setAddressId($orderShippingAddressId)
+                           ->setShipmentId($orderShippingAddressId);
 		}
-
 		$subPayloadCostTotals = $subPayloadShipment->getCostTotals();
         	$subPayloadCostTotals->setAmountBeforeTax($this->_order->getSubtotal())
         	    ->setAmountAfterTax($this->_order->getGrandTotal())
 		    ->setCurrencyCode($this->_order->getBaseCurrencyCode());
         	$subPayloadShipment->setCostTotals($subPayloadCostTotals);
-
 		if( strcmp($type, 'virtual') === 0 )
 		{
 			$subPayloadShipment->setShippingMethod("EMAIL");
 		} else {
 			$subPayloadShipment->setShippingMethod($this->_shippingHelper->getMethodSdkId($shippingMethod));
 		}
-
 		return $this;
     }
-
     /**
      * @param  Radial_RiskService_Sdk_ICustomer
      * @param  Mage_Customer_Model_Customer
@@ -608,21 +615,17 @@ class Radial_Eb2cFraud_Model_Build_Request
     )
     {
 	$this->_buildPersonName($subPayloadCustomer->getPersonName(), $this->_order->getBillingAddress()); 
-
 	if( $this->_hasVirtualItems())
 	{
 		$subPayloadCustomer->setEmail($this->_order->getCustomerEmail());
 	}
-
 	$this->_buildTelephone($subPayloadCustomer->getTelephone(), $this->_order->getBillingAddress());
-
 	if( $this->_order->getIsVirtual() )
 	{
 		$this->_buildAddress($subPayloadCustomer->getAddress(), $this->_order->getBillingAddress());
 	} else {
         	$this->_buildAddress($subPayloadCustomer->getAddress(), $this->_order->getShippingAddress());
 	}
-
 	// MemberLoggedIn
 	$sessionCustomer = Mage::getSingleton("customer/session");
 	if($sessionCustomer->isLoggedIn()) {
@@ -630,11 +633,9 @@ class Radial_Eb2cFraud_Model_Build_Request
 	} else {
 		$subPayloadCustomer->setMemberLoggedIn("false");
 	}
-
 	$subPayloadCustomer->setCurrencyCode($this->_order->getBaseCurrencyCode());
         return $this;
     }
-
     /**
      * @param  Radial_RiskService_Sdk_IExternalRiskResult
      * @param  Mage_Sales_Model_Order_Payment
@@ -647,7 +648,6 @@ class Radial_Eb2cFraud_Model_Build_Request
 	$subPayloadExternalRiskResult->setSource("ResponseToWeb");
 	return $this;
     }
-
     /**
      * @param  Radial_RiskService_Sdk_Person_IName
      * @param  Mage_Customer_Model_Address_Abstract
@@ -663,7 +663,6 @@ class Radial_Eb2cFraud_Model_Build_Request
             ->setFirstName($orderAddress->getFirstname());
         return $this;
     }
-
     /**
      * @param  Radial_RiskService_Sdk_ITelephone
      * @param  Mage_Customer_Model_Address_Abstract
@@ -680,7 +679,6 @@ class Radial_Eb2cFraud_Model_Build_Request
             ->setExtension(null);
         return $this;
     }
-
     /**
      * @param  Radial_RiskService_Sdk_IAddress
      * @param  Mage_Customer_Model_Address_Abstract
@@ -698,11 +696,17 @@ class Radial_Eb2cFraud_Model_Build_Request
             ->setCity($orderAddress->getCity())
             ->setPostalCode($orderAddress->getPostcode())
             ->setMainDivision($orderAddress->getRegionCode())
-            ->setCountryCode($orderAddress->getCountryId())
-	    ->setAddressID($orderAddress->getId());
+            ->setCountryCode($orderAddress->getCountryId());
+	
+	if(!$orderAddress->getId())
+	{
+		$subPayloadAddress->setAddressID($orderAddress->getCustomerAddressId());	
+	} else {	
+		$subPayloadAddress->setAddressID($orderAddress->getId());
+	}
+
         return $this;
     }
-
     /**
      * @param  Radial_RiskService_Sdk_Line_IItem
      * @param  Mage_Core_Model_Abstract
@@ -714,6 +718,14 @@ class Radial_Eb2cFraud_Model_Build_Request
     )
     {
 	$lineItemAmount = (int)$orderItem->getQtyOrdered() * $orderItem->getPrice();
+	$itemId="";
+
+	if( !$orderItem->getId())
+	{
+		$itemId = $orderItem->getQuoteItemId();
+	} else {
+		$itemId = $orderItem->getId();
+	}
 
 	$subPayloadLineItem->setLineTotalAmount($lineItemAmount)
 			   ->setUnitCost($orderItem->getPrice())
@@ -726,12 +738,10 @@ class Radial_Eb2cFraud_Model_Build_Request
 			   ->setCategory($this->_getItemCategory($orderItem))
 			   ->setPromoCode($this->_order->getCouponCode())
 			   ->setProductId($orderItem->getSku())
-			   ->setLineItemId($orderItem->getId())
+			   ->setLineItemId($itemId)
 			   ->setShipmentId($this->_getShipmentIdByItem($orderItem));
-
         return $this;
     }
-
     /**
      * @return Radial_RiskService_Model_Payment_IAdapter
      */
@@ -741,7 +751,6 @@ class Radial_Eb2cFraud_Model_Build_Request
             'order' => $this->_order
         ));
     }
-
     /**
      * @param  Radial_RiskService_Sdk_Line_IItem
      * @param  Mage_Customer_Model_Address_Abstract
@@ -756,20 +765,16 @@ class Radial_Eb2cFraud_Model_Build_Request
     {
         $items = $this->_order->getAllItems();
         $itemcount= count($items);
-
         $paymentAdapterType = $this->_getPaymentAdapter()->getAdapter();
         $this->_buildPaymentCard($subPayloadPayment->getPaymentCard(), $paymentAdapterType);
-
 	if( $orderPayment->getCcType())
 	{
 		$this->_buildAuthorization($subPayloadPayment->getAuthorization());
 	}            
-
 	$this->_buildPersonName($subPayloadPayment->getPersonName(), $orderBillingAddress)
             ->_buildTelephone($subPayloadPayment->getTelephone(), $orderBillingAddress)
             ->_buildAddress($subPayloadPayment->getAddress(), $orderBillingAddress)
             ->_buildTransactionResponses($subPayloadPayment->getTransactionResponses(), $paymentAdapterType);
-
 	$subPayloadPayment->setEmail($this->_order->getCustomerEmail())
             ->setPaymentTransactionDate($this->_helper->getNewDateTime($this->_getPaymentTransactionDate()))
             ->setCurrencyCode($this->_order->getBaseCurrencyCode())
@@ -786,10 +791,8 @@ class Radial_Eb2cFraud_Model_Build_Request
         } else {
             $subPayloadPayment->setTenderClass("Other");
         }
-
         return $this;
     }
-
     /**
      * @param  Radial_RiskService_Sdk_Payment_ICard
      * @param  Radial_Eb2cFraud_Model_Payment_Adapter_IType
@@ -808,7 +811,6 @@ class Radial_Eb2cFraud_Model_Build_Request
             ->setCardType($paymentAdapterType->getExtractCardType());
         return $this;
     }
-
     /**
      * @param  Radial_RiskService_Sdk_Transaction_IResponses
      * @param  Radial_Eb2cFraud_Model_Payment_Adapter_IType
@@ -827,7 +829,6 @@ class Radial_Eb2cFraud_Model_Build_Request
         }
         return $this;
     }
-
     /**
      * @param  Radial_RiskService_Sdk_IAuthorization
      * @return self
@@ -838,7 +839,6 @@ class Radial_Eb2cFraud_Model_Build_Request
     {
         $payment = $this->_order->getPayment();
         $paymentAdditional = $payment->getAdditionalInformation(); 
-
 	if( !isset($paymentAdditional['response_code']) )
 	{
 		$subPayloadAuthorization->setDecline("true");
@@ -851,10 +851,8 @@ class Radial_Eb2cFraud_Model_Build_Request
 			$subPayloadAuthorization->setDecline("true");
         	}
 	}	 
-
         return $this;
     }
-
     /**
      * @param  Radial_RiskService_Sdk_IShoppingSession
      * @return self
@@ -867,24 +865,19 @@ class Radial_Eb2cFraud_Model_Build_Request
 	$visitorData = Mage::getSingleton('core/session')->getVisitorData();
 	$lastVisit = $visitorData['first_visit_at'];
 	$newVisitor = $visitorData['is_new_visitor'];
-
 	$lastVisitorInt = strtotime($lastVisit);
 	$nowtime = time();
 	$diff = $nowtime - $lastVisitorInt;
 	$minutes = date('i.s', $diff);
-
 	$subPayloadShoppingSession->setTimeOnSite($minutes);
-
 	if( !$newVisitor )
 	{
 		$subPayloadShoppingSession->setReturnCustomer("true");
 	} else {
 		$subPayloadShoppingSession->setReturnCustomer("false");
 	} 
-
 	// ADD REMOVED ITEM FROM CART ATTRIBUTE	
 	$removed = Mage::getSingleton('core/session')->getPrevItemQuoteRemoval();
-
 	if( $removed )
 	{
 		$subPayloadShoppingSession->setItemsRemoved("true");
@@ -894,7 +887,6 @@ class Radial_Eb2cFraud_Model_Build_Request
 		
         return $this;
     }
-
     /**
      * @param  Radial_RiskService_Sdk_Transaction_IResponse
      * @param  string
@@ -911,7 +903,6 @@ class Radial_Eb2cFraud_Model_Build_Request
             ->setResponseType($type);
         return $this;
     }
-
     /**
      * @param  Radial_RiskService_Sdk_Http_IHeaders
      * @return self
@@ -947,10 +938,8 @@ class Radial_Eb2cFraud_Model_Build_Request
                 	}
 		}
         }
-
         return $this;
     }
-
     /**
      * @param  Radial_RiskService_Sdk_Http_IHeader
      * @param  string

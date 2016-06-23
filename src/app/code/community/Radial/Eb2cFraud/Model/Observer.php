@@ -88,13 +88,14 @@ class Radial_Eb2cFraud_Model_Observer extends Radial_Eb2cFraud_Model_Abstract
                 }
 
 
-		$orders = (array) $observer->getEvent()->getOrders();
-		
-		if( !empty($orders))
+		$ordersIds = Mage::getSingleton('core/session')->getOrderIds();
+	
+		if( !empty($ordersIds))
 		{
-			foreach ($orders as $index => $order) {
+			foreach( $ordersIds as $orderId ) {
+				$order = Mage::getModel('sales/order')->loadByIncrementId($orderId);
 				if ($this->_isValidOrder($order)) {
-					$this->_riskOrder->processRiskOrder($order, $observer);
+					$this->_riskOrder->processRiskOrder($order, $observer, $ordersIds);
 				} else {
 					$logMessage = sprintf('[%s] No sales/order instances was found.', __CLASS__);
                         		$this->_helper->logWarning($logMessage);

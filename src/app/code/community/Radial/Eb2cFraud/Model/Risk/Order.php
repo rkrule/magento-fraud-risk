@@ -248,7 +248,7 @@ class Radial_Eb2cFraud_Model_Risk_Order
 	}
 
 	public function processRiskOrder(
-		Mage_Sales_Model_Order $order, Varien_Event_Observer $observer
+		Mage_Sales_Model_Order $order, Varien_Event_Observer $observer, $orderIds = null
 	)
 	{
         $request = $this->_getNewEmptyRequest();
@@ -258,6 +258,7 @@ class Radial_Eb2cFraud_Model_Risk_Order
         	$payload = Mage::getModel('radial_eb2cfraud/build_request', array(
         	    'request' => $request,
         	    'order' => $order,
+		    'order_ids' => $orderIds
         	))->build();
 
 		$this->_payloadXml = $payload->serialize();

@@ -21,8 +21,9 @@ interface Radial_RiskService_Sdk_IRequest extends Radial_RiskService_Sdk_Payload
 	const XML_NS = 'http://api.gsicommerce.com/schema/checkout/1.0';
 	const XSD = 'Risk-Service-RiskAssessment-1.0.xsd';
 	const ORDER_MODEL ='Radial_RiskService_Sdk_Order';
-    const SERVER_INFO_MODEL = 'Radial_RiskService_Sdk_Server_Info';
-    const DEVICE_INFO_MODEL = 'Radial_RiskService_Sdk_Device_Info';
+    	const SERVER_INFO_MODEL = 'Radial_RiskService_Sdk_Server_Info';
+    	const DEVICE_INFO_MODEL = 'Radial_RiskService_Sdk_Device_Info';
+	const CUSTOM_PROPERTIES_MODEL = 'Radial_RiskService_Sdk_CustomProperties';
 
 	/**
 	 * Contain order detail information.
@@ -58,4 +59,15 @@ interface Radial_RiskService_Sdk_IRequest extends Radial_RiskService_Sdk_Payload
      * @return self
      */
     public function setServerInfo(Radial_RiskService_Sdk_Server_IInfo $serverInfo);
+
+	/**
+         * @return Radial_RiskService_Sdk_ICustomProperties
+         */
+        public function getCustomProperties();
+
+        /**
+         * @param Radial_RiskService_Sdk_ICustomProperties
+         * @return  self
+         */
+        public function setCustomProperties(Radial_RiskService_Sdk_ICustomProperties $customProperties);
 }
