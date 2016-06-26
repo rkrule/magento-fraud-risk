@@ -210,7 +210,7 @@ class Radial_Eb2cFraud_Model_Risk_Order
 					$eventName = 'not_supported';
 				}
 
-				$object = Mage::getModel('radial_eb2cfraud/retryQueue');
+				$object = Mage::getModel('radial_core/retryQueue');
 	        		$time = time();
 	        		$data = array('event_name' => $eventName, 'created_at' => $time, 'message_content' => $payload, 'delivery_status' => 0);
 	        		$object->setData($data);
@@ -262,7 +262,7 @@ class Radial_Eb2cFraud_Model_Risk_Order
 
 		$this->_payloadXml = $payload->serialize();
 
-               $object = Mage::getModel('radial_eb2cfraud/retryQueue');
+               $object = Mage::getModel('radial_core/retryQueue');
                $time = time();
                $data = array('event_name' => 'risk_assessment_request', 'created_at' => $time, 'message_content' => $this->_payloadXml, 'delivery_status' => 0);
                $object->setData($data);
@@ -312,7 +312,7 @@ class Radial_Eb2cFraud_Model_Risk_Order
                 			))->build();
 					$this->_payloadXml = $payload->serialize();
 
-					$object = Mage::getModel('radial_eb2cfraud/retryQueue');
+					$object = Mage::getModel('radial_core/retryQueue');
                				$time = time();
                				$data = array('event_name' => 'order_confirmation_request', 'created_at' => $time, 'message_content' => $this->_payloadXml, 'delivery_status' => 0);
                				$object->setData($data);
@@ -330,7 +330,7 @@ class Radial_Eb2cFraud_Model_Risk_Order
      * Sends the event from the database to Sonic, as configured in local.xml
      */
     public function sendEvent() {
-        $objectCollection = Mage::getModel('radial_eb2cfraud/retryQueue')->getCollection()->setPageSize(100);
+        $objectCollection = Mage::getModel('radial_core/retryQueue')->getCollection()->setPageSize(100);
 	$order = Mage::getModel('sales/order');
 
         foreach( $objectCollection as $object )

@@ -17,8 +17,8 @@ class Radial_Eb2cFraud_Model_Adminhtml_System_Config_Backend_Nummaxretry extends
 {
     public function _afterLoad()
     {
-	$maxretries = Mage::helper('radial_eb2cfraud/config')->getMaxRetries();
-	$objectCollectionSize = Mage::getModel('radial_eb2cfraud/retryQueue')->getCollection()->addFieldToFilter('delivery_status', $maxretries)->getSize();	
+	$maxretries = Mage::helper('radial_core/config')->getMaxRetries();
+	$objectCollectionSize = Mage::getModel('radial_core/retryQueue')->getCollection()->addFieldToFilter('delivery_status', $maxretries)->getSize();	
 	
 	$publicDisplay = '# of Messages At Max Transmission Retries: '. $objectCollectionSize;
 
