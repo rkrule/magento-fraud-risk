@@ -10,13 +10,10 @@
     { "name": "Ryan Tulino", "email": "rtulino@radial.com", "role": "Developer" }
   ],
   "type": "magento-module",
-  "repositories": [
-    { "type": "vcs", "url": "https://github.com/rkrule/magento-core.git" },
-    { "type": "composer", "url": "https://packages.firegento.com/" }
-  ],
   "require": {
     "php": ">=5.4.0",
-    "rmccue/requests": ">=1.0"
+    "rmccue/requests": ">=1.0",
+    "radial/magento-core": "dev-master"
   },
   "require-dev": {
     "ecomdev/ecomdev_phpunit": ">=0.3",
