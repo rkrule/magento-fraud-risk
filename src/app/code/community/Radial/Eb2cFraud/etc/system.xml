@@ -53,7 +53,7 @@ http://opensource.org/licenses/osl-3.0.php
                             <show_in_store>0</show_in_store>
                         </enabled>
 			<maxretries translate="label">
-                            <label>Maximum Transmission Retries</label>
+                            <label>Maximum Fraud Transmission Retries</label>
                             <sort_order>4</sort_order>
                             <frontend_type>text</frontend_type>
                             <validate>validate-number</validate>
@@ -62,7 +62,7 @@ http://opensource.org/licenses/osl-3.0.php
                             <show_in_store>0</show_in_store>
                         </maxretries>
 			<maxmessagestatus translate="label">
-                            <label># Of Messages At Max Retry</label>
+                            <label># Of Fraud Messages At Max Retry</label>
                             <sort_order>5</sort_order>
                             <frontend_type>label</frontend_type>
                             <backend_model>radial_eb2cfraud/adminhtml_system_config_backend_nummaxretry</backend_model>
@@ -71,7 +71,7 @@ http://opensource.org/licenses/osl-3.0.php
                             <show_in_store>0</show_in_store>
                         </maxmessagestatus>
 			<totalmessagestatus translate="label">
-                            <label>Total # Of Messages In Queue</label>
+                            <label>Total # Of Fraud Messages In Queue</label>
                             <sort_order>6</sort_order>
                             <frontend_type>label</frontend_type>
                             <backend_model>radial_eb2cfraud/adminhtml_system_config_backend_totalnumretry</backend_model>
@@ -80,7 +80,7 @@ http://opensource.org/licenses/osl-3.0.php
                             <show_in_store>0</show_in_store>
                         </totalmessagestatus>
 			<reset_transmission_status translate="label">
-                            <label>Reset Max Transmission</label>
+                            <label>Reset Fraud Max Transmission</label>
                             <sort_order>7</sort_order>
 			    <frontend_type>button</frontend_type>
                             <frontend_model>radial_eb2cfraud/adminhtml_system_config_backend_messagereset</frontend_model>
@@ -89,7 +89,7 @@ http://opensource.org/licenses/osl-3.0.php
                             <show_in_store>0</show_in_store>
                         </reset_transmission_status>
 			<purge_retryqueue translate="label">
-                            <label>Purge Retry Queue</label>
+                            <label>Purge Fraud Retry Queue</label>
                             <sort_order>8</sort_order>
                             <frontend_type>button</frontend_type>
 			    <frontend_model>radial_eb2cfraud/adminhtml_system_config_backend_purgeretryqueue</frontend_model>
