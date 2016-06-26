@@ -16,8 +16,7 @@
   ],
   "require": {
     "php": ">=5.4.0",
-    "rmccue/requests": ">=1.0",
-    "radial/magento-core": "dev-master"
+    "rmccue/requests": ">=1.0"
   },
   "require-dev": {
     "ecomdev/ecomdev_phpunit": ">=0.3",
