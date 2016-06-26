@@ -429,7 +429,8 @@ class Radial_Eb2cFraud_Model_Build_OCRequest
 
 	if( $orderItem->getIsVirtual() === 1)
 	{
-		$subPayloadLineDetail->setDeliveryMethod("EMAIL");
+		$virtShipId = Mage::getStoreConfig('radial_core/shipping/virtual_shipping_method_id');
+		$subPayloadLineDetail->setDeliveryMethod($virtShipId);
 	} else {
 		$subPayloadLineDetail->setDeliveryMethod($quad['delivery_method']);
 	}	
