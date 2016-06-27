@@ -16,10 +16,19 @@ class Radial_Eb2cFraud_Adminhtml_AdminhtmlController extends Mage_Adminhtml_Cont
      */ 
     public function messageResetAction()
     {
-        Mage::getSingleton('adminhtml/session')->addSuccess("Successfully Reset Messages at Maximum Transmission");
+        Mage::getSingleton('adminhtml/session')->addSuccess("Successfully Reset Fraud Messages at Maximum Transmission");
 	$maxretries = Mage::helper('radial_eb2cfraud/config')->getMaxRetries();
 
-	$objectCollection = Mage::getModel('radial_eb2cfraud/retryQueue')->getCollection()->setPageSize(100)->addFieldToFilter('delivery_status', $maxretries);
+	$objectCollection = Mage::getModel('radial_eb2cfraud/retryQueue')->getCollection()->setPageSize(100)
+					->addFieldToFilter('delivery_status', $maxretries)
+					->addFieldToFilter(
+                                                   array('event_name'),
+                                                        array(
+                                                                array('eq'=>'risk_assessment_request'),
+                                                                array('eq'=>'order_confirmation_request')
+                                                        )
+                                        );	
+	
         $pages = $objectCollection->getLastPageNumber();
         $currentPage = 1;
 
@@ -46,9 +55,16 @@ class Radial_Eb2cFraud_Adminhtml_AdminhtmlController extends Mage_Adminhtml_Cont
      */ 
     public function purgeRetryQueueAction()
     {
-        Mage::getSingleton('adminhtml/session')->addSuccess("Successfully Purged Retry Messages Queue");
+        Mage::getSingleton('adminhtml/session')->addSuccess("Successfully Purged Retry Fraud Messages Queue");
 
-	$objectCollection = Mage::getModel('radial_eb2cfraud/retryQueue')->getCollection()->setPageSize(100);
+	$objectCollection = Mage::getModel('radial_eb2cfraud/retryQueue')->getCollection()->setPageSize(100)
+								->addFieldToFilter(
+                                                   				array('event_name'),
+                                                       				array(
+                                                               				array('eq'=>'risk_assessment_request'),
+                                                               				array('eq'=>'order_confirmation_request')
+                                                       				)
+                                        			);	
         $pages = $objectCollection->getLastPageNumber();
         $currentPage = 1;
 
