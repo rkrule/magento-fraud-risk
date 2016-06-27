@@ -465,6 +465,9 @@ class Radial_Eb2cFraud_Model_Risk_Order
 				}
 			}
         	}
+
+		$currentPage++;
+                $objectCollection->clear();
         } while ($currentPage <= $pages);
     }
 }
