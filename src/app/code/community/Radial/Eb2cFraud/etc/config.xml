@@ -15,23 +15,14 @@ http://opensource.org/licenses/osl-3.0.php
 <config>
     <modules>
         <Radial_Eb2cFraud>
-            <version>0.9.7</version>
+            <version>0.9.8</version>
         </Radial_Eb2cFraud>
     </modules>
     <global>
         <models>
 	    <radial_eb2cfraud>
                 <class>Radial_Eb2cFraud_Model</class>
-                <resourceModel>radial_eb2cfraud_resource</resourceModel>
             </radial_eb2cfraud>
-            <radial_eb2cfraud_resource>
-                <class>Radial_Eb2cFraud_Model_Resource</class>
-                <entities>
-                    <retryqueue>
-                        <table>retryqueue</table>
-                    </retryqueue>
-                </entities>
-            </radial_eb2cfraud_resource>
 	</models>
         <fieldsets>
             <sales_convert_quote>
