@@ -17,7 +17,14 @@ class Radial_Eb2cFraud_Model_Adminhtml_System_Config_Backend_Totalnumretry exten
 {
     public function _afterLoad()
     {
-	$objectCollectionSize = Mage::getModel('radial_eb2cfraud/retryQueue')->getCollection()->getSize();	
+	$objectCollectionSize = Mage::getModel('radial_eb2cfraud/retryQueue')->getCollection()
+						->addFieldToFilter(
+                                                                array('event_name'),
+                                                                         array(
+                                                                                array('eq'=>'risk_assessment_request'),
+                                                                                array('eq'=>'order_confirmation_request')
+                                                                         )
+                                                )->getSize();
 	
 	$publicDisplay = '# of Messages Waiting For Transmission Retry: '. $objectCollectionSize;
 
