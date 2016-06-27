@@ -311,5 +311,13 @@ http://opensource.org/licenses/osl-3.0.php
             </eb2cfraud>
         </routers>
     </admin>
+    <crontab>
+            <jobs>
+                <radial_core_retry_sendevent>
+                    <schedule><cron_expr>* * * * *</cron_expr></schedule>
+                    <run><model>radial_core/risk_order::sendEvent</model></run>
+                </radial_core_retry_sendevent>
+            </jobs>
+     </crontab>
 </config>
 
