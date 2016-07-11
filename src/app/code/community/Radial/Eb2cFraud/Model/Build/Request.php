@@ -563,7 +563,7 @@ class Radial_Eb2cFraud_Model_Build_Request
     {
 		$shipping = $this->_order->getShippingAddress();
 
-		$shippingMethod = $this->_shippingHelper->getUsableMethod($orderShippingAddress);
+		$shippingMethod = Mage::getSingleton('checkout/session')->getQuote()->getShippingAddress()->getShippingMethod();
 
 		if( strcmp($type, 'virtual') === 0 )
                 {
