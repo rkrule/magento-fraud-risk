@@ -564,6 +564,8 @@ class Radial_Eb2cFraud_Model_Build_Request
 		$shipping = $this->_order->getShippingAddress();
 
 		$shippingMethod = Mage::getSingleton('checkout/session')->getQuote()->getShippingAddress()->getShippingMethod();
+		$shipCostPreTax = Mage::getSingleton('checkout/session')->getQuote()->getShippingAddress()->getShippingAmount();
+                $shipCostAfterTax = $this->_order->getShippingInclTax();
 
 		if( strcmp($type, 'virtual') === 0 )
                 {
@@ -581,8 +583,8 @@ class Radial_Eb2cFraud_Model_Build_Request
 		}
 
 		$subPayloadCostTotals = $subPayloadShipment->getCostTotals();
-        	$subPayloadCostTotals->setAmountBeforeTax($this->_order->getSubtotal())
-        	    ->setAmountAfterTax($this->_order->getGrandTotal())
+        	$subPayloadCostTotals->setAmountBeforeTax($shipCostPreTax)
+        	    ->setAmountAfterTax($shipCostAfterTax)
 		    ->setCurrencyCode($this->_order->getBaseCurrencyCode());
         	$subPayloadShipment->setCostTotals($subPayloadCostTotals);
 
