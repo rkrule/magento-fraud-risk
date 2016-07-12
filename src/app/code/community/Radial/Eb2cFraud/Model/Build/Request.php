@@ -565,7 +565,7 @@ class Radial_Eb2cFraud_Model_Build_Request
 
 		$shippingMethod = Mage::getSingleton('checkout/session')->getQuote()->getShippingAddress()->getShippingMethod();
 		$shipCostPreTax = Mage::getSingleton('checkout/session')->getQuote()->getShippingAddress()->getShippingAmount();
-		$shipCostAfterTax = $this->_order->getShippingInclTax();
+                $shipCostAfterTax = $this->_order->getShippingInclTax();
 
 		if( strcmp($type, 'virtual') === 0 )
                 {
